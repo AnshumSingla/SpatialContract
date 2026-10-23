@@ -96,3 +96,10 @@ def test_api_key_not_visible_to_code_under_test(write, monkeypatch):
                           "def process(in_path, out_path):\n    import os\n"
                           "    assert 'NEBIUS_API_KEY' not in os.environ\n")
     assert oracle.check(write(src), None).verdict == "PASS"
+
+
+def test_degenerate_output_affine_is_an_error_verdict_not_a_crash(write):
+    for bad in ("np.zeros((4, 4))", "np.full((4, 4), np.nan)", "np.diag([1.0, 0.0, 1.0, 1.0])"):
+        src = CORRECT.replace("nib.Nifti1Image(new, new_aff)", f"nib.Nifti1Image(new, {bad})")
+        rep = oracle.check(write(src), None)
+        assert rep.verdict in ("ERROR", "FAIL"), (bad, rep.feedback())

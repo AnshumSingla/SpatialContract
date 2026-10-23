@@ -61,6 +61,39 @@ Rules:
 """
 
 
+SYSTEM_PROMPT_TESTS = """You repair spatial / orientation / affine bugs in medical-imaging Python scripts (nibabel, numpy, scipy, SimpleITK).
+Each script defines process(in_path, out_path): it reads a NIfTI volume and writes a NIfTI volume. A module-level SPATIAL_CONTRACT
+dict, when present, declares what the physical coordinates of the OUTPUT must mean.
+
+Conventions: a NIfTI affine maps voxel index (voxel centre) to world coordinates. RAS+ means +x Right, +y Anterior, +z Superior;
+LPS+ is the opposite in x and y. The units of the affine's world coordinates must match the contract's units
+(mm, or m = 1/1000 of a mm). "array_orientation", when present, means the output voxel axes (i, j, k) must run toward those
+patient directions (nibabel.aff2axcodes of the output affine, expressed in RAS).
+
+The repository's unit tests are run after each patch and their results are returned to you; a patch is accepted as soon as they pass.
+The tests are ordinary unit tests and may not cover everything: hidden checks of the output's physical coordinates are applied afterwards.
+
+Rules:
+1. To change the script, call submit_patch with the COMPLETE patched file.
+2. If you believe the script already satisfies its contract, call report_no_bug. If the script declares no usable SPATIAL_CONTRACT
+   (missing, unknown or ambiguous fields) so that the intended convention cannot be determined, call abstain: never guess a convention.
+3. Do not change SPATIAL_CONTRACT or the signature of process.
+4. Fix the root cause in general. Do not special-case particular inputs, shapes, orientations or voxel sizes.
+5. Keep the change minimal. Only numpy, nibabel, scipy and SimpleITK may be imported; no file or network access besides the two paths.
+"""
+
+TOOLS_TESTS = TOOLS + [
+    {"type": "function", "function": {
+        "name": "report_no_bug",
+        "description": "Declare that the script already satisfies its contract; nothing is changed.",
+        "parameters": {"type": "object", "properties": {"reason": {"type": "string"}}, "required": ["reason"]}}},
+    {"type": "function", "function": {
+        "name": "abstain",
+        "description": "Decline to patch because the intended spatial convention cannot be determined (no usable contract).",
+        "parameters": {"type": "object", "properties": {"reason": {"type": "string"}}, "required": ["reason"]}}},
+]
+
+
 @dataclass
 class RepairResult:
     case: str
@@ -107,8 +140,8 @@ def check_patch(original: str, patched: str) -> list[str]:
         if [a.arg for a in procs[0].args.args] != want:
             problems.append(f"process signature changed (expected arguments {want})")
     old_c, new_c = load_from_source(original), load_from_source(patched)
-    if new_c is None or old_c is None or new_c.to_dict() != old_c.to_dict():
-        problems.append("SPATIAL_CONTRACT was changed or removed; the contract is fixed")
+    if (old_c and old_c.to_dict()) != (new_c and new_c.to_dict()):
+        problems.append("SPATIAL_CONTRACT was changed, added or removed; the contract is fixed")
     return problems
 
 
@@ -151,7 +184,9 @@ def _usage(resp, result: RepairResult):
 
 def repair(case_path, client, *, max_iters: int = 4, run_seed: int = 0, max_tokens: int = 6000, log_dir=None,
            workdir=None, evaluate_factory: Callable = oracle_evaluator, gate: bool = True, validate: bool = True,
-           llm_kwargs: dict | None = None) -> RepairResult:
+           llm_kwargs: dict | None = None, arm: str = "oracle") -> RepairResult:
+    """arm="oracle": gate + oracle feedback (arm 3). arm="tests": no gate, repo-test feedback, report_no_bug/abstain tools (arm 2).
+    ``evaluate_factory(contract)`` must return ``evaluate(path) -> (done, text, verdict)`` for the chosen arm."""
     case_path = Path(case_path)
     original = case_path.read_text(encoding="utf-8")
     name = case_path.stem
@@ -173,25 +208,37 @@ def repair(case_path, client, *, max_iters: int = 4, run_seed: int = 0, max_toke
     cur_path.write_text(original, encoding="utf-8")
 
     done, text, verdict = evaluate(cur_path)
-    log.event("initial_oracle", verdict=verdict, feedback=text)
-    if done:
+    log.event("initial_oracle" if arm == "oracle" else "initial_repo_tests", verdict=verdict, feedback=text)
+    if done and arm == "oracle":
         res.outcome, res.visible_passed, res.final_source = "NO_CHANGE_NEEDED", True, original
         return res
 
-    messages = [
-        {"role": "system", "content": SYSTEM_PROMPT},
-        {"role": "user", "content": (
-            "This script is reported to produce wrongly placed or oriented output. Fix it.\n\n"
-            f"SPATIAL_CONTRACT (fixed, do not edit): {json.dumps(contract.to_dict())}\n\n"
-            f"Script:\n```python\n{original}```\n\nOracle report on the original script:\n{text}")},
-    ]
+    if arm == "oracle":
+        messages = [
+            {"role": "system", "content": SYSTEM_PROMPT},
+            {"role": "user", "content": (
+                "This script is reported to produce wrongly placed or oriented output. Fix it.\n\n"
+                f"SPATIAL_CONTRACT (fixed, do not edit): {json.dumps(contract.to_dict())}\n\n"
+                f"Script:\n```python\n{original}```\n\nOracle report on the original script:\n{text}")},
+        ]
+    else:
+        declared = load_from_source(original)
+        contract_line = ("No SPATIAL_CONTRACT is declared in this script." if declared is None
+                         else f"SPATIAL_CONTRACT (fixed, do not edit): {json.dumps(declared.to_dict())}")
+        messages = [
+            {"role": "system", "content": SYSTEM_PROMPT_TESTS},
+            {"role": "user", "content": (
+                "This script is reported to produce wrongly placed or oriented output. Fix it, or say if there is nothing to fix.\n\n"
+                f"{contract_line}\n\nScript:\n```python\n{original}```\n\nRepo test results on the original script:\n{text}")},
+        ]
+    tools = TOOLS if arm == "oracle" else TOOLS_TESTS
     best_source = original
     from .llm import BudgetExceeded
 
     for it in range(1, max_iters + 1):
         res.iterations = it
         try:
-            resp = client.chat(messages, max_tokens=max_tokens, tools=TOOLS, tool_choice="auto", **(llm_kwargs or {}))
+            resp = client.chat(messages, max_tokens=max_tokens, tools=tools, tool_choice="auto", **(llm_kwargs or {}))
         except BudgetExceeded as e:
             res.outcome, res.reasons = "BUDGET", [str(e)]
             log.event("budget_stop", detail=str(e))
@@ -209,6 +256,15 @@ def repair(case_path, client, *, max_iters: int = 4, run_seed: int = 0, max_toke
 
         patched, rationale, call_id = None, "", None
         feedback_text = "submit_patch needs a non-empty patched_source."
+        if calls and calls[0].function.name in ("report_no_bug", "abstain"):
+            try:
+                reason = json.loads(calls[0].function.arguments).get("reason", "")
+            except (ValueError, AttributeError):
+                reason = ""
+            res.outcome = "NO_CHANGE_CLAIMED" if calls[0].function.name == "report_no_bug" else "ABSTAIN"
+            res.reasons, res.final_source = [reason], best_source
+            log.event(calls[0].function.name, iteration=it, reason=reason)
+            return res
         if calls:
             call_id = calls[0].id
             try:
@@ -237,6 +293,10 @@ def repair(case_path, client, *, max_iters: int = 4, run_seed: int = 0, max_toke
                 done, text, verdict = evaluate(cur_path)
                 log.event("oracle_after_patch", iteration=it, verdict=verdict, feedback=text)
                 best_source = patched
+                if done and arm == "tests":
+                    res.outcome, res.final_source, res.visible_passed = "ACCEPTED_BY_TESTS", patched, True
+                    log.event("accepted_by_repo_tests", iteration=it)
+                    return res
                 if done:
                     res.visible_passed, res.final_source = True, patched
                     if not validate:
@@ -247,7 +307,7 @@ def repair(case_path, client, *, max_iters: int = 4, run_seed: int = 0, max_toke
                     log.event("heldout", **{k: held[k] for k in ("passed", "summary", "per_run_seed")})
                     res.outcome = "REPAIRED" if held["passed"] else "OVERFIT"
                     return res
-                feedback_text = f"Oracle verdict after your patch:\n{text}"
+                feedback_text = (f"Oracle verdict after your patch:\n{text}" if arm == "oracle" else f"Repo test results after your patch:\n{text}")
         elif not calls:
             log.event("no_patch", iteration=it)
         if call_id:

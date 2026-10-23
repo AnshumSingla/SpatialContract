@@ -110,3 +110,51 @@ def test_budget_exhaustion_stops_cleanly(tmp_path):
 def test_plain_code_block_fallback(tmp_path):
     fake = Fake(text_resp("Here you go:\n```python\n" + src("K01_R_reference") + "```\n"))
     assert run(tmp_path, "R05_stale_affine", fake).outcome == "REPAIRED"
+
+
+# ---------------------------------------------------------------- arm 2 (repo tests, no gate, report_no_bug / abstain)
+def tool_named(name, **args):
+    call = NS(id="c0", function=NS(name=name, arguments=json.dumps(args)))
+    return NS(choices=[NS(message=NS(content=None, tool_calls=[call], reasoning_content=None), finish_reason="tool_calls")],
+              usage=NS(prompt_tokens=10, completion_tokens=5))
+
+
+def arm2_factory(base, spec=None):
+    from spatialcontract import repo_tests
+
+    def factory(_contract):
+        def evaluate(p):
+            r = repo_tests.run_repo_tests(p, base, spec or {})
+            return r.passed, r.text(), "PASS" if r.passed else "FAIL"
+        return evaluate
+    return factory
+
+
+def run2(tmp_path, cid, fake, base, **kw):
+    return agent.repair(CORPUS / f"{cid}.py", fake, log_dir=tmp_path / "log", evaluate_factory=arm2_factory(base),
+                        gate=False, validate=False, arm="tests", **kw)
+
+
+def test_arm2_is_not_gated_and_sees_repo_test_results(tmp_path):
+    fake = Fake(tool_named("abstain", reason="no contract"))
+    r = run2(tmp_path, "A02_no_contract_buggy", fake, "R")
+    assert r.outcome == "ABSTAIN" and r.llm_calls == 1               # the LLM was called: there is no deterministic gate
+    first_user = fake.calls[0][1]["content"]
+    assert "No SPATIAL_CONTRACT is declared" in first_user and "Repo test results" in first_user
+
+
+def test_arm2_report_no_bug_leaves_code_unchanged(tmp_path):
+    r = run2(tmp_path, "K01_R_reference", Fake(tool_named("report_no_bug", reason="looks right")), "R")
+    assert r.outcome == "NO_CHANGE_CLAIMED" and r.final_source == src("K01_R_reference")
+
+
+def test_arm2_stops_when_repo_tests_pass_even_if_oracle_would_not(tmp_path):
+    # C01 (stale affine in a crop) is invisible to the crop repo tests: a do-nothing "patch" is accepted by them.
+    fake = Fake(tool_resp(src("C01_stale_affine") + "\n# touched\n"))
+    r = run2(tmp_path, "C01_stale_affine", fake, "C")
+    assert r.outcome == "ACCEPTED_BY_TESTS" and r.iterations == 1
+
+
+def test_arm2_can_add_nothing_to_a_missing_contract(tmp_path):
+    added = src("A02_no_contract_buggy").replace("import numpy as np", 'import numpy as np\nSPATIAL_CONTRACT = {"world_frame": "RAS"}')
+    assert any("contract" in p.lower() for p in agent.check_patch(src("A02_no_contract_buggy"), added))

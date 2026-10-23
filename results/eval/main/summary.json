@@ -1,0 +1,191 @@
+{
+ "run": "main",
+ "n_rows": 343,
+ "harness_errors": [],
+ "repair": {
+  "arm1": {
+   "repaired": [
+    0.7741935483870968,
+    0.6129032258064516,
+    0.9032258064516129
+   ],
+   "visible": [
+    0.7741935483870968,
+    0.6129032258064516,
+    0.9032258064516129
+   ],
+   "overfit": [
+    0,
+    24
+   ],
+   "tokens_per_case": 0.0,
+   "calls_per_case": 0.0,
+   "screenings_per_case": 163.38709677419354,
+   "n_rows": 31
+  },
+  "arm2": {
+   "repaired": [
+    0.8602150537634409,
+    0.7526881720430108,
+    0.9462365591397851
+   ],
+   "visible": [
+    0.8602150537634409,
+    0.7526881720430108,
+    0.9462365591397851
+   ],
+   "overfit": [
+    0,
+    80
+   ],
+   "tokens_per_case": 1890.8494623655913,
+   "calls_per_case": 1.053763440860215,
+   "screenings_per_case": 0.0,
+   "n_rows": 93
+  },
+  "arm3": {
+   "repaired": [
+    0.9784946236559139,
+    0.946236559139785,
+    1.0
+   ],
+   "visible": [
+    0.9784946236559139,
+    0.946236559139785,
+    1.0
+   ],
+   "overfit": [
+    0,
+    91
+   ],
+   "tokens_per_case": 3213.05376344086,
+   "calls_per_case": 1.1612903225806452,
+   "screenings_per_case": 0.0,
+   "n_rows": 93
+  }
+ },
+ "arm3_minus_arm2": [
+  0.11827956989247311,
+  0.03225806451612903,
+  0.21505376344086027
+ ],
+ "arm3_minus_arm1": [
+  0.20430107526881722,
+  0.06451612903225806,
+  0.3548387096774194
+ ],
+ "by_repo_test_detection": {
+  "arm1": {
+   "flagged": [
+    0.7894736842105263,
+    0.5789473684210527,
+    0.9473684210526315
+   ],
+   "not_flagged": [
+    0.75,
+    0.5,
+    1.0
+   ]
+  },
+  "arm2": {
+   "flagged": [
+    0.9473684210526315,
+    0.8947368421052629,
+    1.0
+   ],
+   "not_flagged": [
+    0.7222222222222222,
+    0.47222222222222227,
+    0.9444444444444443
+   ]
+  },
+  "arm3": {
+   "flagged": [
+    1.0,
+    1.0,
+    1.0
+   ],
+   "not_flagged": [
+    0.9444444444444443,
+    0.8611111111111112,
+    1.0
+   ]
+  }
+ },
+ "repo_tests_flag": [
+  "C04_flip_cropped",
+  "M02_centimetres",
+  "M03_not_converted",
+  "M04_converted_twice",
+  "R01_swap_transpose",
+  "R02_swap_target_codes",
+  "R03_flip_post",
+  "R04_flip_pre",
+  "R05_stale_affine",
+  "R06_stale_header",
+  "R07_voxel_identity",
+  "R08_voxel_spacing_only",
+  "R09_units_milli",
+  "R10_units_cm",
+  "R11_affine_transposed",
+  "R12_affine_inverted",
+  "S02_stale_affine",
+  "S04_units_cm_voxel",
+  "S05_swap_transpose"
+ ],
+ "controls": {
+  "arm1": {
+   "modified": [
+    0,
+    11
+   ],
+   "broken": [
+    0,
+    11
+   ]
+  },
+  "arm2": {
+   "modified": [
+    18,
+    33
+   ],
+   "broken": [
+    8,
+    33
+   ]
+  },
+  "arm3": {
+   "modified": [
+    0,
+    33
+   ],
+   "broken": [
+    0,
+    33
+   ]
+  }
+ },
+ "abstention": {
+  "arm1": {
+   "tp": 7,
+   "n_must": 7,
+   "guessed": 0,
+   "fp": 0,
+   "n_other": 42
+  },
+  "arm2": {
+   "tp": 2,
+   "n_must": 21,
+   "guessed": 16,
+   "fp": 4,
+   "n_other": 126
+  },
+  "arm3": {
+   "tp": 21,
+   "n_must": 21,
+   "guessed": 0,
+   "fp": 0,
+   "n_other": 126
+  }
+ }
+}

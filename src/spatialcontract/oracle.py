@@ -135,7 +135,7 @@ def _run_code(code_path: Path, in_path: Path, out_path: Path, cwd: Path,
     return True, ""
 
 
-def _check_one(code_path: Path, contract: SpatialContract, ph: Phantom, tol_mm: float, tmp: Path,
+def _check_one_inner(code_path: Path, contract: SpatialContract, ph: Phantom, tol_mm: float, tmp: Path,
                python: str | None = None, pythonpath: list | None = None) -> PhantomResult:
     in_path = tmp / f"phantom_{ph.seed}.nii.gz"
     out_path = tmp / f"out_{ph.seed}.nii.gz"
@@ -189,6 +189,15 @@ def _check_one(code_path: Path, contract: SpatialContract, ph: Phantom, tol_mm: 
     if res.orientation_ok is False or not all(lm.ok for lm in res.landmarks):
         res.status = "FAIL"
     return res
+
+
+def _check_one(*args, **kwargs) -> PhantomResult:
+    """The oracle must be total: output it cannot analyse (NaN or all-zero affine, ...) is an ERROR verdict, never an exception."""
+    try:
+        return _check_one_inner(*args, **kwargs)
+    except Exception as e:
+        ph = args[2]
+        return PhantomResult(ph.seed, "ERROR", detail=f"could not analyse the output: {type(e).__name__}: {str(e)[:150]}")
 
 
 def check(code_path, contract: SpatialContract | None, seeds=DEFAULT_SEEDS, tol_mm: float = DEFAULT_TOL_MM,

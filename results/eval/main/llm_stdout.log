@@ -1,0 +1,568 @@
+model: nvidia/nemotron-3-super-120b-a12b
+[budget] +1349p +281c => 274209/1272579 tokens
+[budget] +1315p +275c => 275799/1272579 tokens
+[budget] +1312p +291c => 277402/1272579 tokens
+[budget] +1314p +391c => 279107/1272579 tokens
+arm2 r0 R01_swap_transpose           ACCEPTED_BY_TESTS  repaired=True tokens=1630 14.9s
+arm2 r0 R04_flip_pre                 ACCEPTED_BY_TESTS  repaired=True tokens=1603 15.9s
+arm2 r0 R03_flip_post                ACCEPTED_BY_TESTS  repaired=True tokens=1590 16.0s
+arm2 r0 R02_swap_target_codes        ACCEPTED_BY_TESTS  repaired=True tokens=1705 16.6s
+[budget] +1292p +306c => 280705/1272579 tokens
+[budget] +1298p +292c => 282295/1272579 tokens
+[budget] +1313p +299c => 283907/1272579 tokens
+[budget] +1297p +500c => 285704/1272579 tokens
+arm2 r0 R06_stale_header             ACCEPTED_BY_TESTS  repaired=False tokens=1797 9.9s
+arm2 r0 R05_stale_affine             ACCEPTED_BY_TESTS  repaired=True tokens=1598 15.2s
+arm2 r0 R07_voxel_identity           ACCEPTED_BY_TESTS  repaired=True tokens=1590 14.7s
+arm2 r0 R08_voxel_spacing_only       ACCEPTED_BY_TESTS  repaired=True tokens=1612 14.6s
+[budget] +1312p +271c => 287287/1272579 tokens
+[budget] +1311p +276c => 288874/1272579 tokens
+[budget] +1297p +300c => 290471/1272579 tokens
+[budget] +1301p +304c => 292076/1272579 tokens
+arm2 r0 R09_units_milli              ACCEPTED_BY_TESTS  repaired=True tokens=1583 15.9s
+arm2 r0 R10_units_cm                 ACCEPTED_BY_TESTS  repaired=True tokens=1587 14.5s
+arm2 r0 R12_affine_inverted          ACCEPTED_BY_TESTS  repaired=True tokens=1605 15.5s
+arm2 r0 R11_affine_transposed        ACCEPTED_BY_TESTS  repaired=True tokens=1597 15.9s
+[budget] +1512p +836c => 294424/1272579 tokens
+[budget] +1525p +548c => 296497/1272579 tokens
+arm2 r0 S01_voxel_skips_inverse      ACCEPTED_BY_TESTS  repaired=False tokens=2348 11.1s
+[budget] +1602p +554c => 298653/1272579 tokens
+[budget] +1569p +883c => 301105/1272579 tokens
+arm2 r0 S02_stale_affine             ACCEPTED_BY_TESTS  repaired=False tokens=2452 13.2s
+[budget] +1563p +685c => 303353/1272579 tokens
+arm2 r0 S03_flip_output              ACCEPTED_BY_TESTS  repaired=True tokens=2073 16.3s
+arm2 r0 S04_units_cm_voxel           ACCEPTED_BY_TESTS  repaired=True tokens=2156 16.7s
+[budget] +1525p +671c => 305549/1272579 tokens
+[budget] +1308p +360c => 307217/1272579 tokens
+arm2 r0 S05_swap_transpose           ACCEPTED_BY_TESTS  repaired=True tokens=2248 17.1s
+[budget] +1522p +910c => 309649/1272579 tokens
+[budget] +1314p +443c => 311406/1272579 tokens
+arm2 r0 S06_reshape_order            ACCEPTED_BY_TESTS  repaired=True tokens=2196 19.9s
+arm2 r0 C01_stale_affine             ACCEPTED_BY_TESTS  repaired=True tokens=1668 15.8s
+arm2 r0 S07_affine_transposed        ACCEPTED_BY_TESTS  repaired=True tokens=2432 20.0s
+[budget] +1322p +475c => 313203/1272579 tokens
+[budget] +1325p +499c => 315027/1272579 tokens
+arm2 r0 C02_index_order              ACCEPTED_BY_TESTS  repaired=True tokens=1757 15.6s
+[budget] +1221p +319c => 316567/1272579 tokens
+[budget] +1851p +379c => 318797/1272579 tokens
+[budget] +1249p +371c => 320417/1272579 tokens
+[budget] +1747p +546c => 322710/1272579 tokens
+arm2 r0 C03_voxel_added_to_world     ACCEPTED_BY_TESTS  repaired=False tokens=4027 14.1s
+arm2 r0 C04_flip_cropped             ACCEPTED_BY_TESTS  repaired=False tokens=4117 15.2s
+arm2 r0 L01_one_axis_only            ACCEPTED_BY_TESTS  repaired=True tokens=1540 13.9s
+[budget] +1216p +366c => 324292/1272579 tokens
+arm2 r0 L02_rotation_only            ACCEPTED_BY_TESTS  repaired=True tokens=1620 14.0s
+[budget] +1221p +480c => 325993/1272579 tokens
+arm2 r0 L04_right_multiply           ACCEPTED_BY_TESTS  repaired=False tokens=1701 7.9s
+[budget] +1208p +437c => 327638/1272579 tokens
+[budget] +1249p +330c => 329217/1272579 tokens
+[budget] +1228p +286c => 330731/1272579 tokens
+arm2 r0 L03_no_conversion            ACCEPTED_BY_TESTS  repaired=True tokens=1582 15.5s
+arm2 r0 M01_zoom_only                ACCEPTED_BY_TESTS  repaired=True tokens=1645 15.1s
+arm2 r0 M02_centimetres              ACCEPTED_BY_TESTS  repaired=True tokens=1579 15.3s
+[budget] +1293p +252c => 332276/1272579 tokens
+arm2 r0 M03_not_converted            ACCEPTED_BY_TESTS  repaired=True tokens=1514 13.4s
+[budget] +1286p +495c => 334057/1272579 tokens
+[budget] +1302p +717c => 336076/1272579 tokens
+arm2 r0 K01_R_reference              ACCEPTED_BY_TESTS  repaired=False tokens=1781 11.7s
+arm2 r0 M04_converted_twice          ACCEPTED_BY_TESTS  repaired=True tokens=1545 16.6s
+[budget] +1521p +908c => 338505/1272579 tokens
+[budget] +1310p +105c => 339920/1272579 tokens
+[budget] +1521p +853c => 342294/1272579 tokens
+arm2 r0 K02_R_float32                ACCEPTED_BY_TESTS  repaired=True tokens=2019 18.3s
+arm2 r0 K03_S_reference              ACCEPTED_BY_TESTS  repaired=True tokens=2429 19.5s
+arm2 r0 K05_C_reference              NO_CHANGE_CLAIMED  repaired=True tokens=1415 12.0s
+[budget] +1310p +130c => 343734/1272579 tokens
+[budget] +1221p +187c => 345142/1272579 tokens
+[budget] +2305p +691c => 348138/1272579 tokens
+arm2 r0 K04_S_3mm                    ACCEPTED_BY_TESTS  repaired=False tokens=5370 21.4s
+[budget] +1207p +523c => 349868/1272579 tokens
+arm2 r0 K06_C_margin5                NO_CHANGE_CLAIMED  repaired=True tokens=1440 14.6s
+arm2 r0 K07_L_reference              NO_CHANGE_CLAIMED  repaired=True tokens=1408 14.1s
+[budget] +1220p +384c => 351472/1272579 tokens
+arm2 r0 K08_M_reference              ACCEPTED_BY_TESTS  repaired=True tokens=1730 19.7s
+[budget] +1201p +423c => 353096/1272579 tokens
+[budget] +1753p +302c => 355151/1272579 tokens
+[budget] +1199p +333c => 356683/1272579 tokens
+[budget] +1201p +102c => 357986/1272579 tokens
+arm2 r0 A01_no_contract_clean        NO_CHANGE_CLAIMED  repaired=None tokens=1303 2.9s
+[budget] +1207p +229c => 359422/1272579 tokens
+arm2 r0 A02_no_contract_buggy        ACCEPTED_BY_TESTS  repaired=None tokens=1436 5.3s
+arm2 r0 K10_R_as_closest_canonical   ACCEPTED_BY_TESTS  repaired=True tokens=1624 17.9s
+[budget] +2016p +884c => 362322/1272579 tokens
+[budget] +1453p +598c => 364373/1272579 tokens
+[budget] +1286p +99c => 365758/1272579 tokens
+arm2 r0 A04_units_unknown            NO_CHANGE_CLAIMED  repaired=None tokens=1385 5.2s
+arm2 r0 A03_no_contract_buggy_S      ACCEPTED_BY_TESTS  repaired=None tokens=2051 7.1s
+arm2 r0 K11_S_nibabel_resample       ACCEPTED_BY_TESTS  repaired=True tokens=1532 24.6s
+[budget] +1210p +227c => 367195/1272579 tokens
+[budget] +1312p +402c => 368909/1272579 tokens
+arm2 r0 A06_frame_missing            ACCEPTED_BY_TESTS  repaired=None tokens=1437 5.8s
+arm2 r0 A05_corner_convention        ACCEPTED_BY_TESTS  repaired=None tokens=1714 7.4s
+[budget] +1349p +317c => 370575/1272579 tokens
+[budget] +2435p +993c => 374003/1272579 tokens
+[budget] +1314p +339c => 375656/1272579 tokens
+[budget] +1230p +443c => 377329/1272579 tokens
+arm2 r0 A07_units_ambiguous          ACCEPTED_BY_TESTS  repaired=None tokens=1673 12.4s
+[budget] +1315p +278c => 378922/1272579 tokens
+arm2 r1 R01_swap_transpose           ACCEPTED_BY_TESTS  repaired=True tokens=1666 14.5s
+arm2 r0 K09_noop_copy                FAILED             repaired=True tokens=9987 46.2s
+arm2 r1 R02_swap_target_codes        ACCEPTED_BY_TESTS  repaired=True tokens=1653 15.5s
+[budget] +1292p +308c => 380522/1272579 tokens
+[budget] +1312p +306c => 382140/1272579 tokens
+[budget] +1297p +306c => 383743/1272579 tokens
+arm2 r1 R03_flip_post                ACCEPTED_BY_TESTS  repaired=True tokens=1593 14.8s
+[budget] +1298p +286c => 385327/1272579 tokens
+arm2 r1 R05_stale_affine             ACCEPTED_BY_TESTS  repaired=True tokens=1600 15.9s
+arm2 r1 R04_flip_pre                 ACCEPTED_BY_TESTS  repaired=True tokens=1618 16.2s
+arm2 r1 R06_stale_header             ACCEPTED_BY_TESTS  repaired=True tokens=1603 15.6s
+[budget] +1312p +271c => 386910/1272579 tokens
+[budget] +1313p +301c => 388524/1272579 tokens
+[budget] +1311p +272c => 390107/1272579 tokens
+arm2 r1 R07_voxel_identity           ACCEPTED_BY_TESTS  repaired=True tokens=1584 16.0s
+[budget] +1297p +296c => 391700/1272579 tokens
+arm2 r1 R09_units_milli              ACCEPTED_BY_TESTS  repaired=True tokens=1583 16.3s
+arm2 r1 R08_voxel_spacing_only       ACCEPTED_BY_TESTS  repaired=True tokens=1614 17.6s
+arm2 r1 R10_units_cm                 ACCEPTED_BY_TESTS  repaired=True tokens=1583 16.9s
+[budget] +1301p +315c => 393316/1272579 tokens
+arm2 r1 R11_affine_transposed        ACCEPTED_BY_TESTS  repaired=True tokens=1593 15.0s
+[budget] +1512p +750c => 395578/1272579 tokens
+[budget] +1569p +698c => 397845/1272579 tokens
+arm2 r1 S01_voxel_skips_inverse      ACCEPTED_BY_TESTS  repaired=False tokens=2262 10.4s
+[budget] +1525p +534c => 399904/1272579 tokens
+arm2 r1 R12_affine_inverted          ACCEPTED_BY_TESTS  repaired=True tokens=1616 13.8s
+[budget] +1602p +564c => 402070/1272579 tokens
+arm2 r1 S02_stale_affine             ACCEPTED_BY_TESTS  repaired=True tokens=2267 16.6s
+[budget] +1563p +615c => 404248/1272579 tokens
+arm2 r1 S03_flip_output              ACCEPTED_BY_TESTS  repaired=True tokens=2059 14.8s
+[budget] +2077p +516c => 406841/1272579 tokens
+[budget] +1525p +805c => 409171/1272579 tokens
+arm2 r1 S04_units_cm_voxel           ACCEPTED_BY_TESTS  repaired=True tokens=2166 16.6s
+[budget] +1522p +632c => 411325/1272579 tokens
+[budget] +1308p +455c => 413088/1272579 tokens
+arm2 r1 S05_swap_transpose           ACCEPTED_BY_TESTS  repaired=True tokens=4771 20.8s
+arm2 r1 S06_reshape_order            ACCEPTED_BY_TESTS  repaired=True tokens=2330 19.7s
+[budget] +1314p +419c => 414821/1272579 tokens
+arm2 r1 S07_affine_transposed        ACCEPTED_BY_TESTS  repaired=True tokens=2154 16.3s
+arm2 r1 C01_stale_affine             ACCEPTED_BY_TESTS  repaired=True tokens=1763 15.6s
+[budget] +1325p +357c => 416503/1272579 tokens
+[budget] +1322p +496c => 418321/1272579 tokens
+[budget] +1221p +290c => 419832/1272579 tokens
+arm2 r1 C03_voxel_added_to_world     ACCEPTED_BY_TESTS  repaired=False tokens=1818 9.2s
+arm2 r1 C02_index_order              ACCEPTED_BY_TESTS  repaired=True tokens=1733 14.3s
+[budget] +1249p +275c => 421356/1272579 tokens
+[budget] +1216p +362c => 422934/1272579 tokens
+arm2 r1 C04_flip_cropped             ACCEPTED_BY_TESTS  repaired=True tokens=1682 14.5s
+arm2 r1 L01_one_axis_only            ACCEPTED_BY_TESTS  repaired=True tokens=1511 13.4s
+[budget] +1208p +136c => 424278/1272579 tokens
+arm2 r1 L02_rotation_only            ACCEPTED_BY_TESTS  repaired=True tokens=1524 12.8s
+arm2 r1 M01_zoom_only                NO_CHANGE_CLAIMED  repaired=False tokens=1344 4.8s
+[budget] +1221p +470c => 425969/1272579 tokens
+arm2 r1 L03_no_conversion            ACCEPTED_BY_TESTS  repaired=True tokens=1578 13.9s
+[budget] +1249p +350c => 427568/1272579 tokens
+[budget] +1228p +274c => 429070/1272579 tokens
+[budget] +1293p +241c => 430604/1272579 tokens
+[budget] +1667p +442c => 432713/1272579 tokens
+arm2 r1 L04_right_multiply           ACCEPTED_BY_TESTS  repaired=False tokens=3800 17.2s
+arm2 r1 M02_centimetres              ACCEPTED_BY_TESTS  repaired=True tokens=1599 14.1s
+arm2 r1 M03_not_converted            ACCEPTED_BY_TESTS  repaired=True tokens=1502 13.3s
+arm2 r1 M04_converted_twice          ACCEPTED_BY_TESTS  repaired=True tokens=1534 13.3s
+[budget] +1286p +453c => 434452/1272579 tokens
+arm2 r1 K01_R_reference              ACCEPTED_BY_TESTS  repaired=False tokens=1739 9.9s
+[budget] +1302p +485c => 436239/1272579 tokens
+arm2 r1 K02_R_float32                ABSTAIN            repaired=False tokens=1787 9.1s
+[budget] +1521p +876c => 438636/1272579 tokens
+[budget] +1310p +370c => 440316/1272579 tokens
+[budget] +1310p +102c => 441728/1272579 tokens
+arm2 r1 K04_S_3mm                    ACCEPTED_BY_TESTS  repaired=False tokens=2397 12.8s
+[budget] +1521p +1455c => 444704/1272579 tokens
+arm2 r1 K05_C_reference              NO_CHANGE_CLAIMED  repaired=True tokens=1680 14.0s
+arm2 r1 K06_C_margin5                NO_CHANGE_CLAIMED  repaired=True tokens=1412 11.5s
+[budget] +1221p +506c => 446431/1272579 tokens
+arm2 r1 K03_S_reference              ACCEPTED_BY_TESTS  repaired=True tokens=2976 25.1s
+[budget] +1207p +361c => 447999/1272579 tokens
+[budget] +1220p +479c => 449698/1272579 tokens
+arm2 r1 K07_L_reference              NO_CHANGE_CLAIMED  repaired=True tokens=1727 15.5s
+arm2 r1 K08_M_reference              ACCEPTED_BY_TESTS  repaired=False tokens=1568 9.9s
+[budget] +1201p +414c => 451313/1272579 tokens
+[budget] +1201p +87c => 452601/1272579 tokens
+arm2 r1 A01_no_contract_clean        ABSTAIN            repaired=False tokens=1288 2.8s
+[budget] +1629p +337c => 454567/1272579 tokens
+[budget] +1199p +344c => 456110/1272579 tokens
+[budget] +1207p +237c => 457554/1272579 tokens
+arm2 r1 A02_no_contract_buggy        ACCEPTED_BY_TESTS  repaired=None tokens=1444 5.3s
+arm2 r1 K10_R_as_closest_canonical   ACCEPTED_BY_TESTS  repaired=True tokens=1615 15.5s
+[budget] +1866p +777c => 460197/1272579 tokens
+[budget] +1453p +499c => 462149/1272579 tokens
+arm2 r1 A03_no_contract_buggy_S      ACCEPTED_BY_TESTS  repaired=None tokens=1952 5.7s
+[budget] +1286p +540c => 463975/1272579 tokens
+[budget] +1528p +1124c => 466627/1272579 tokens
+[budget] +2306p +625c => 469558/1272579 tokens
+arm2 r1 A04_units_unknown            ACCEPTED_BY_TESTS  repaired=None tokens=1826 6.9s
+[budget] +1312p +430c => 471300/1272579 tokens
+arm2 r1 A05_corner_convention        ACCEPTED_BY_TESTS  repaired=None tokens=1742 6.3s
+arm2 r1 K11_S_nibabel_resample       ACCEPTED_BY_TESTS  repaired=False tokens=4195 21.3s
+[budget] +1210p +208c => 472718/1272579 tokens
+arm2 r1 K09_noop_copy                FAILED             repaired=False tokens=9239 30.9s
+arm2 r1 A06_frame_missing            ACCEPTED_BY_TESTS  repaired=None tokens=1418 4.6s
+[budget] +1230p +342c => 474290/1272579 tokens
+[budget] +1349p +308c => 475947/1272579 tokens
+arm2 r1 A07_units_ambiguous          ACCEPTED_BY_TESTS  repaired=None tokens=1572 5.6s
+[budget] +1315p +279c => 477541/1272579 tokens
+[budget] +1314p +372c => 479227/1272579 tokens
+[budget] +1312p +319c => 480858/1272579 tokens
+arm2 r2 R01_swap_transpose           ACCEPTED_BY_TESTS  repaired=True tokens=1657 14.4s
+arm2 r2 R03_flip_post                ACCEPTED_BY_TESTS  repaired=True tokens=1594 15.8s
+arm2 r2 R02_swap_target_codes        ACCEPTED_BY_TESTS  repaired=True tokens=1686 16.8s
+arm2 r2 R04_flip_pre                 ACCEPTED_BY_TESTS  repaired=True tokens=1631 15.0s
+[budget] +1292p +312c => 482462/1272579 tokens
+[budget] +1297p +344c => 484103/1272579 tokens
+[budget] +1298p +274c => 485675/1272579 tokens
+[budget] +1313p +299c => 487287/1272579 tokens
+arm2 r2 R05_stale_affine             ACCEPTED_BY_TESTS  repaired=True tokens=1604 18.0s
+arm2 r2 R06_stale_header             ACCEPTED_BY_TESTS  repaired=True tokens=1641 15.5s
+arm2 r2 R07_voxel_identity           ACCEPTED_BY_TESTS  repaired=True tokens=1572 17.5s
+arm2 r2 R08_voxel_spacing_only       ACCEPTED_BY_TESTS  repaired=True tokens=1612 16.0s
+[budget] +1312p +272c => 488871/1272579 tokens
+[budget] +1311p +265c => 490447/1272579 tokens
+[budget] +1297p +300c => 492044/1272579 tokens
+[budget] +1301p +308c => 493653/1272579 tokens
+arm2 r2 R09_units_milli              ACCEPTED_BY_TESTS  repaired=True tokens=1584 15.0s
+arm2 r2 R10_units_cm                 ACCEPTED_BY_TESTS  repaired=True tokens=1576 15.5s
+arm2 r2 R11_affine_transposed        ACCEPTED_BY_TESTS  repaired=True tokens=1597 15.2s
+arm2 r2 R12_affine_inverted          ACCEPTED_BY_TESTS  repaired=True tokens=1609 17.6s
+[budget] +1512p +841c => 496006/1272579 tokens
+[budget] +1602p +570c => 498178/1272579 tokens
+[budget] +1569p +918c => 500665/1272579 tokens
+[budget] +1525p +523c => 502713/1272579 tokens
+arm2 r2 S01_voxel_skips_inverse      ACCEPTED_BY_TESTS  repaired=False tokens=2353 13.2s
+[budget] +1563p +580c => 504856/1272579 tokens
+arm2 r2 S04_units_cm_voxel           ACCEPTED_BY_TESTS  repaired=True tokens=2172 16.7s
+arm2 r2 S03_flip_output              ACCEPTED_BY_TESTS  repaired=True tokens=2048 20.4s
+arm2 r2 S02_stale_affine             ACCEPTED_BY_TESTS  repaired=True tokens=2487 22.3s
+[budget] +1308p +380c => 506544/1272579 tokens
+arm2 r2 S05_swap_transpose           ACCEPTED_BY_TESTS  repaired=True tokens=2143 16.0s
+[budget] +1525p +756c => 508825/1272579 tokens
+[budget] +1522p +816c => 511163/1272579 tokens
+[budget] +1314p +469c => 512946/1272579 tokens
+arm2 r2 C01_stale_affine             ACCEPTED_BY_TESTS  repaired=True tokens=1688 15.6s
+arm2 r2 S06_reshape_order            ACCEPTED_BY_TESTS  repaired=True tokens=2281 18.2s
+arm2 r2 S07_affine_transposed        ACCEPTED_BY_TESTS  repaired=True tokens=2338 19.5s
+[budget] +1322p +438c => 514706/1272579 tokens
+arm2 r2 C02_index_order              ACCEPTED_BY_TESTS  repaired=True tokens=1783 15.3s
+[budget] +1221p +307c => 516234/1272579 tokens
+[budget] +1325p +427c => 517986/1272579 tokens
+[budget] +1249p +419c => 519654/1272579 tokens
+arm2 r2 C03_voxel_added_to_world     ACCEPTED_BY_TESTS  repaired=True tokens=1760 15.5s
+arm2 r2 L01_one_axis_only            ACCEPTED_BY_TESTS  repaired=True tokens=1528 13.7s
+arm2 r2 C04_flip_cropped             ACCEPTED_BY_TESTS  repaired=True tokens=1752 15.8s
+arm2 r2 L02_rotation_only            ACCEPTED_BY_TESTS  repaired=True tokens=1668 13.7s
+[budget] +1216p +415c => 521285/1272579 tokens
+[budget] +1208p +331c => 522824/1272579 tokens
+[budget] +1221p +543c => 524588/1272579 tokens
+[budget] +1249p +359c => 526196/1272579 tokens
+arm2 r2 M01_zoom_only                ACCEPTED_BY_TESTS  repaired=False tokens=1539 6.7s
+[budget] +1228p +295c => 527719/1272579 tokens
+arm2 r2 L03_no_conversion            ACCEPTED_BY_TESTS  repaired=True tokens=1631 13.3s
+[budget] +1547p +951c => 530217/1272579 tokens
+[budget] +1293p +229c => 531739/1272579 tokens
+arm2 r2 M02_centimetres              ACCEPTED_BY_TESTS  repaired=True tokens=1608 13.5s
+arm2 r2 L04_right_multiply           ACCEPTED_BY_TESTS  repaired=False tokens=4262 16.7s
+arm2 r2 M03_not_converted            ACCEPTED_BY_TESTS  repaired=True tokens=1523 13.2s
+[budget] +1302p +101c => 533142/1272579 tokens
+arm2 r2 M04_converted_twice          ACCEPTED_BY_TESTS  repaired=True tokens=1522 12.3s
+[budget] +1286p +417c => 534845/1272579 tokens
+arm2 r2 K01_R_reference              ABSTAIN            repaired=False tokens=1703 10.2s
+[budget] +1521p +637c => 537003/1272579 tokens
+arm2 r2 K03_S_reference              ABSTAIN            repaired=False tokens=2158 7.6s
+arm2 r2 K02_R_float32                NO_CHANGE_CLAIMED  repaired=True tokens=1403 13.0s
+[budget] +1310p +116c => 538429/1272579 tokens
+[budget] +1221p +239c => 539889/1272579 tokens
+[budget] +1310p +164c => 541363/1272579 tokens
+[budget] +1521p +1126c => 544010/1272579 tokens
+arm2 r2 K05_C_reference              NO_CHANGE_CLAIMED  repaired=True tokens=1426 13.0s
+arm2 r2 K07_L_reference              NO_CHANGE_CLAIMED  repaired=True tokens=1460 12.6s
+arm2 r2 K06_C_margin5                NO_CHANGE_CLAIMED  repaired=True tokens=1474 16.4s
+[budget] +2513p +950c => 547473/1272579 tokens
+[budget] +1220p +498c => 549191/1272579 tokens
+[budget] +1201p +138c => 550530/1272579 tokens
+[budget] +1207p +327c => 552064/1272579 tokens
+arm2 r2 K08_M_reference              ACCEPTED_BY_TESTS  repaired=False tokens=1534 17.4s
+[budget] +1681p +392c => 554137/1272579 tokens
+arm2 r2 K04_S_3mm                    ACCEPTED_BY_TESTS  repaired=True tokens=6110 34.2s
+arm2 r2 K10_R_as_closest_canonical   NO_CHANGE_CLAIMED  repaired=True tokens=1339 14.5s
+[budget] +1201p +127c => 555465/1272579 tokens
+arm2 r2 A01_no_contract_clean        ABSTAIN            repaired=False tokens=1328 4.3s
+[budget] +1199p +356c => 557020/1272579 tokens
+[budget] +1207p +246c => 558473/1272579 tokens
+arm2 r2 A02_no_contract_buggy        ACCEPTED_BY_TESTS  repaired=None tokens=1453 8.0s
+[budget] +1453p +582c => 560508/1272579 tokens
+arm2 r2 A03_no_contract_buggy_S      ACCEPTED_BY_TESTS  repaired=None tokens=2035 7.5s
+[budget] +1286p +341c => 562135/1272579 tokens
+arm2 r2 A04_units_unknown            NO_CHANGE_CLAIMED  repaired=None tokens=1627 8.3s
+arm2 r2 K11_S_nibabel_resample       ACCEPTED_BY_TESTS  repaired=True tokens=1555 21.4s
+[budget] +1210p +242c => 563587/1272579 tokens
+[budget] +1312p +384c => 565283/1272579 tokens
+arm2 r2 A06_frame_missing            ACCEPTED_BY_TESTS  repaired=None tokens=1452 7.7s
+arm2 r2 A05_corner_convention        ACCEPTED_BY_TESTS  repaired=None tokens=1696 13.9s
+[budget] +1230p +502c => 567015/1272579 tokens
+arm2 r2 A07_units_ambiguous          ACCEPTED_BY_TESTS  repaired=None tokens=1732 8.1s
+[budget] +1904p +332c => 569251/1272579 tokens
+[budget] +1928p +3087c => 574266/1272579 tokens
+arm2 r2 K09_noop_copy                ABSTAIN            repaired=False tokens=8806 47.0s
+[budget] +1382p +321c => 575969/1272579 tokens
+[budget] +1897p +278c => 578144/1272579 tokens
+[budget] +1895p +422c => 580461/1272579 tokens
+arm3 r0 R01_swap_transpose           REPAIRED           repaired=True tokens=2236 14.3s
+arm3 r0 R02_swap_target_codes        REPAIRED           repaired=True tokens=1703 13.9s
+arm3 r0 R03_flip_post                REPAIRED           repaired=True tokens=2175 17.2s
+arm3 r0 R04_flip_pre                 REPAIRED           repaired=True tokens=2317 13.8s
+[budget] +1887p +368c => 582716/1272579 tokens
+[budget] +1882p +340c => 584938/1272579 tokens
+[budget] +1879p +427c => 587244/1272579 tokens
+arm3 r0 R05_stale_affine             REPAIRED           repaired=True tokens=2222 17.1s
+[budget] +2526p +450c => 590220/1272579 tokens
+[budget] +1909p +331c => 592460/1272579 tokens
+arm3 r0 R07_voxel_identity           REPAIRED           repaired=True tokens=2306 14.0s
+arm3 r0 R06_stale_header             REPAIRED           repaired=True tokens=5231 25.6s
+[budget] +1886p +288c => 594634/1272579 tokens
+arm3 r0 R08_voxel_spacing_only       REPAIRED           repaired=True tokens=2240 20.4s
+[budget] +1888p +310c => 596832/1272579 tokens
+[budget] +1895p +291c => 599018/1272579 tokens
+[budget] +1898p +276c => 601192/1272579 tokens
+arm3 r0 R10_units_cm                 REPAIRED           repaired=True tokens=2174 15.3s
+arm3 r0 R09_units_milli              REPAIRED           repaired=True tokens=2198 18.3s
+arm3 r0 R11_affine_transposed        REPAIRED           repaired=True tokens=2186 11.6s
+arm3 r0 R12_affine_inverted          REPAIRED           repaired=True tokens=2174 13.4s
+[budget] +1998p +685c => 603875/1272579 tokens
+[budget] +2122p +657c => 606654/1272579 tokens
+[budget] +2118p +527c => 609299/1272579 tokens
+[budget] +2178p +567c => 612044/1272579 tokens
+arm3 r0 S01_voxel_skips_inverse      REPAIRED           repaired=True tokens=2683 16.5s
+arm3 r0 S02_stale_affine             REPAIRED           repaired=True tokens=2779 16.6s
+arm3 r0 S03_flip_output              REPAIRED           repaired=True tokens=2645 15.6s
+arm3 r0 S04_units_cm_voxel           REPAIRED           repaired=True tokens=2745 16.4s
+[budget] +2129p +678c => 614851/1272579 tokens
+[budget] +2120p +759c => 617730/1272579 tokens
+[budget] +1915p +533c => 620178/1272579 tokens
+[budget] +2121p +1207c => 623506/1272579 tokens
+arm3 r0 S05_swap_transpose           REPAIRED           repaired=True tokens=2807 15.3s
+arm3 r0 S07_affine_transposed        REPAIRED           repaired=True tokens=2879 16.6s
+arm3 r0 C01_stale_affine             REPAIRED           repaired=True tokens=2448 15.4s
+[budget] +1922p +674c => 626102/1272579 tokens
+[budget] +3579p +1435c => 631116/1272579 tokens
+[budget] +1934p +631c => 633681/1272579 tokens
+[budget] +1926p +475c => 636082/1272579 tokens
+[budget] +2674p +384c => 639140/1272579 tokens
+arm3 r0 C03_voxel_added_to_world     REPAIRED           repaired=True tokens=2565 14.7s
+arm3 r0 C04_flip_cropped             REPAIRED           repaired=True tokens=2401 17.6s
+[budget] +1834p +281c => 641255/1272579 tokens
+arm3 r0 C02_index_order              REPAIRED           repaired=True tokens=5654 23.4s
+[budget] +5051p +1421c => 647727/1272579 tokens
+[budget] +1874p +333c => 649934/1272579 tokens
+[budget] +1829p +398c => 652161/1272579 tokens
+arm3 r0 L01_one_axis_only            REPAIRED           repaired=True tokens=2115 14.0s
+arm3 r0 L02_rotation_only            REPAIRED           repaired=True tokens=2207 12.6s
+arm3 r0 L03_no_conversion            REPAIRED           repaired=True tokens=2227 12.9s
+[budget] +1818p +281c => 654260/1272579 tokens
+[budget] +1791p +269c => 656320/1272579 tokens
+[budget] +1849p +907c => 659076/1272579 tokens
+arm3 r0 M01_zoom_only                REPAIRED           repaired=True tokens=2099 11.8s
+arm3 r0 M02_centimetres              REPAIRED           repaired=True tokens=2060 12.7s
+[budget] +1836p +324c => 661236/1272579 tokens
+[budget] +2444p +1168c => 664848/1272579 tokens
+[budget] +1794p +271c => 666913/1272579 tokens
+[budget] +6545p +3004c => 676462/1272579 tokens
+arm3 r0 S06_reshape_order            FAILED             repaired=False tokens=24363 72.8s
+arm3 r0 M03_not_converted            REPAIRED           repaired=True tokens=2160 12.5s
+arm3 r0 M04_converted_twice          REPAIRED           repaired=True tokens=2065 12.0s
+[budget] +3587p +1243c => 681292/1272579 tokens
+arm3 r0 K01_R_reference              NO_CHANGE_NEEDED   repaired=True tokens=0 10.1s
+arm3 r0 K02_R_float32                NO_CHANGE_NEEDED   repaired=True tokens=0 9.8s
+arm3 r0 K03_S_reference              NO_CHANGE_NEEDED   repaired=True tokens=0 10.2s
+arm3 r0 K04_S_3mm                    NO_CHANGE_NEEDED   repaired=True tokens=0 9.4s
+arm3 r0 K05_C_reference              NO_CHANGE_NEEDED   repaired=True tokens=0 9.2s
+arm3 r0 K06_C_margin5                NO_CHANGE_NEEDED   repaired=True tokens=0 9.4s
+[budget] +4121p +3108c => 688521/1272579 tokens
+arm3 r0 K07_L_reference              NO_CHANGE_NEEDED   repaired=True tokens=0 9.7s
+arm3 r0 K08_M_reference              NO_CHANGE_NEEDED   repaired=True tokens=0 9.7s
+arm3 r0 K09_noop_copy                NO_CHANGE_NEEDED   repaired=True tokens=0 10.3s
+arm3 r0 A01_no_contract_clean        ABSTAIN            repaired=False tokens=0 0.0s
+arm3 r0 A02_no_contract_buggy        ABSTAIN            repaired=False tokens=0 0.0s
+arm3 r0 A03_no_contract_buggy_S      ABSTAIN            repaired=False tokens=0 0.0s
+arm3 r0 A04_units_unknown            ABSTAIN            repaired=False tokens=0 0.0s
+arm3 r0 A05_corner_convention        ABSTAIN            repaired=False tokens=0 0.0s
+arm3 r0 A06_frame_missing            ABSTAIN            repaired=False tokens=0 0.0s
+arm3 r0 A07_units_ambiguous          ABSTAIN            repaired=False tokens=0 0.0s
+arm3 r0 L04_right_multiply           REPAIRED           repaired=True tokens=18427 63.4s
+[budget] +1904p +275c => 690700/1272579 tokens
+arm3 r0 K10_R_as_closest_canonical   NO_CHANGE_NEEDED   repaired=True tokens=0 10.4s
+[budget] +1382p +314c => 692396/1272579 tokens
+[budget] +1897p +289c => 694582/1272579 tokens
+arm3 r1 R01_swap_transpose           REPAIRED           repaired=True tokens=2179 13.3s
+arm3 r0 K11_S_nibabel_resample       NO_CHANGE_NEEDED   repaired=True tokens=0 16.3s
+arm3 r1 R02_swap_target_codes        REPAIRED           repaired=True tokens=1696 12.3s
+[budget] +1895p +463c => 696940/1272579 tokens
+[budget] +1882p +349c => 699171/1272579 tokens
+arm3 r1 R03_flip_post                REPAIRED           repaired=True tokens=2186 11.8s
+[budget] +2182p +287c => 701640/1272579 tokens
+[budget] +1887p +323c => 703850/1272579 tokens
+[budget] +1879p +322c => 706051/1272579 tokens
+arm3 r1 R04_flip_pre                 REPAIRED           repaired=True tokens=2358 12.5s
+arm3 r1 R05_stale_affine             REPAIRED           repaired=True tokens=4700 14.8s
+arm3 r1 R06_stale_header             REPAIRED           repaired=True tokens=2210 12.2s
+[budget] +1909p +295c => 708255/1272579 tokens
+arm3 r1 R07_voxel_identity           REPAIRED           repaired=True tokens=2201 11.7s
+[budget] +1888p +313c => 710456/1272579 tokens
+[budget] +1886p +286c => 712628/1272579 tokens
+[budget] +1895p +302c => 714825/1272579 tokens
+arm3 r1 R08_voxel_spacing_only       REPAIRED           repaired=True tokens=2204 12.2s
+arm3 r1 R09_units_milli              REPAIRED           repaired=True tokens=2201 11.7s
+arm3 r1 R10_units_cm                 REPAIRED           repaired=True tokens=2172 12.3s
+arm3 r1 R11_affine_transposed        REPAIRED           repaired=True tokens=2197 11.8s
+[budget] +1898p +300c => 717023/1272579 tokens
+[budget] +2122p +562c => 719707/1272579 tokens
+[budget] +2118p +547c => 722372/1272579 tokens
+[budget] +1998p +1011c => 725381/1272579 tokens
+arm3 r1 R12_affine_inverted          REPAIRED           repaired=True tokens=2198 12.2s
+arm3 r1 S02_stale_affine             REPAIRED           repaired=True tokens=2684 12.5s
+arm3 r1 S03_flip_output              REPAIRED           repaired=True tokens=2665 13.2s
+[budget] +3434p +1370c => 730185/1272579 tokens
+[budget] +2178p +577c => 732940/1272579 tokens
+[budget] +2129p +578c => 735647/1272579 tokens
+[budget] +2121p +1231c => 738999/1272579 tokens
+[budget] +4709p +1292c => 745000/1272579 tokens
+arm3 r1 S04_units_cm_voxel           REPAIRED           repaired=True tokens=2755 15.3s
+arm3 r1 S05_swap_transpose           REPAIRED           repaired=True tokens=2707 13.1s
+[budget] +1915p +468c => 747383/1272579 tokens
+[budget] +3568p +1178c => 752129/1272579 tokens
+[budget] +2120p +821c => 755070/1272579 tokens
+arm3 r1 C01_stale_affine             REPAIRED           repaired=True tokens=2383 12.6s
+arm3 r1 S07_affine_transposed        REPAIRED           repaired=True tokens=2941 14.1s
+[budget] +1922p +405c => 757397/1272579 tokens
+[budget] +1934p +454c => 759785/1272579 tokens
+[budget] +4571p +1370c => 765726/1272579 tokens
+[budget] +6226p +3655c => 775607/1272579 tokens
+arm3 r1 C02_index_order              REPAIRED           repaired=True tokens=2327 12.4s
+arm3 r1 C03_voxel_added_to_world     REPAIRED           repaired=True tokens=2388 12.2s
+arm3 r1 S06_reshape_order            REPAIRED           repaired=True tokens=14039 37.7s
+arm3 r1 S01_voxel_skips_inverse      FAILED             repaired=False tokens=23695 53.3s
+[budget] +1926p +327c => 777860/1272579 tokens
+[budget] +1834p +311c => 780005/1272579 tokens
+[budget] +1829p +338c => 782172/1272579 tokens
+[budget] +1874p +457c => 784503/1272579 tokens
+[budget] +2905p +566c => 787974/1272579 tokens
+arm3 r1 C04_flip_cropped             REPAIRED           repaired=True tokens=2253 12.6s
+arm3 r1 L01_one_axis_only            REPAIRED           repaired=True tokens=2145 12.8s
+arm3 r1 L02_rotation_only            REPAIRED           repaired=True tokens=2331 13.1s
+[budget] +1849p +454c => 790277/1272579 tokens
+[budget] +1818p +333c => 792428/1272579 tokens
+[budget] +1791p +270c => 794489/1272579 tokens
+arm3 r1 L03_no_conversion            REPAIRED           repaired=True tokens=5638 17.3s
+[budget] +1836p +275c => 796600/1272579 tokens
+arm3 r1 L04_right_multiply           REPAIRED           repaired=True tokens=2303 13.0s
+arm3 r1 M01_zoom_only                REPAIRED           repaired=True tokens=2151 13.8s
+arm3 r1 M02_centimetres              REPAIRED           repaired=True tokens=2061 12.7s
+[budget] +1794p +262c => 798656/1272579 tokens
+arm3 r1 M03_not_converted            REPAIRED           repaired=True tokens=2111 12.7s
+arm3 r1 K01_R_reference              NO_CHANGE_NEEDED   repaired=True tokens=0 10.3s
+arm3 r1 K02_R_float32                NO_CHANGE_NEEDED   repaired=True tokens=0 10.7s
+arm3 r1 M04_converted_twice          REPAIRED           repaired=True tokens=2056 12.8s
+arm3 r1 K03_S_reference              NO_CHANGE_NEEDED   repaired=True tokens=0 10.6s
+arm3 r1 K04_S_3mm                    NO_CHANGE_NEEDED   repaired=True tokens=0 10.6s
+arm3 r1 K05_C_reference              NO_CHANGE_NEEDED   repaired=True tokens=0 10.3s
+arm3 r1 K06_C_margin5                NO_CHANGE_NEEDED   repaired=True tokens=0 10.6s
+arm3 r1 K07_L_reference              NO_CHANGE_NEEDED   repaired=True tokens=0 10.8s
+arm3 r1 K08_M_reference              NO_CHANGE_NEEDED   repaired=True tokens=0 10.3s
+arm3 r1 A01_no_contract_clean        ABSTAIN            repaired=False tokens=0 0.0s
+arm3 r1 A02_no_contract_buggy        ABSTAIN            repaired=False tokens=0 0.0s
+arm3 r1 A03_no_contract_buggy_S      ABSTAIN            repaired=False tokens=0 0.0s
+arm3 r1 A04_units_unknown            ABSTAIN            repaired=False tokens=0 0.0s
+arm3 r1 A05_corner_convention        ABSTAIN            repaired=False tokens=0 0.0s
+arm3 r1 A06_frame_missing            ABSTAIN            repaired=False tokens=0 0.0s
+arm3 r1 A07_units_ambiguous          ABSTAIN            repaired=False tokens=0 0.0s
+arm3 r1 K09_noop_copy                NO_CHANGE_NEEDED   repaired=True tokens=0 10.8s
+arm3 r1 K10_R_as_closest_canonical   NO_CHANGE_NEEDED   repaired=True tokens=0 10.5s
+[budget] +1904p +298c => 800858/1272579 tokens
+[budget] +1382p +321c => 802561/1272579 tokens
+[budget] +1897p +279c => 804737/1272579 tokens
+arm3 r1 K11_S_nibabel_resample       NO_CHANGE_NEEDED   repaired=True tokens=0 17.1s
+arm3 r2 R01_swap_transpose           REPAIRED           repaired=True tokens=2202 12.9s
+arm3 r2 R02_swap_target_codes        REPAIRED           repaired=True tokens=1703 12.7s
+arm3 r2 R03_flip_post                REPAIRED           repaired=True tokens=2176 12.4s
+[budget] +1895p +301c => 806933/1272579 tokens
+[budget] +1882p +331c => 809146/1272579 tokens
+[budget] +1887p +318c => 811351/1272579 tokens
+[budget] +1879p +301c => 813531/1272579 tokens
+arm3 r2 R04_flip_pre                 REPAIRED           repaired=True tokens=2196 12.6s
+arm3 r2 R05_stale_affine             REPAIRED           repaired=True tokens=2213 12.7s
+arm3 r2 R06_stale_header             REPAIRED           repaired=True tokens=2205 12.8s
+arm3 r2 R07_voxel_identity           REPAIRED           repaired=True tokens=2180 12.7s
+[budget] +1909p +295c => 815735/1272579 tokens
+[budget] +1888p +309c => 817932/1272579 tokens
+[budget] +1886p +320c => 820138/1272579 tokens
+[budget] +1895p +291c => 822324/1272579 tokens
+arm3 r2 R08_voxel_spacing_only       REPAIRED           repaired=True tokens=2204 12.8s
+arm3 r2 R09_units_milli              REPAIRED           repaired=True tokens=2197 12.7s
+arm3 r2 R11_affine_transposed        REPAIRED           repaired=True tokens=2186 13.6s
+arm3 r2 R10_units_cm                 REPAIRED           repaired=True tokens=2206 13.8s
+[budget] +1898p +300c => 824522/1272579 tokens
+[budget] +1998p +389c => 826909/1272579 tokens
+[budget] +2122p +678c => 829709/1272579 tokens
+[budget] +2118p +703c => 832530/1272579 tokens
+arm3 r2 R12_affine_inverted          REPAIRED           repaired=True tokens=2198 12.3s
+arm3 r2 S01_voxel_skips_inverse      REPAIRED           repaired=True tokens=2387 13.4s
+arm3 r2 S02_stale_affine             REPAIRED           repaired=True tokens=2800 14.1s
+[budget] +2178p +632c => 835340/1272579 tokens
+arm3 r2 S03_flip_output              REPAIRED           repaired=True tokens=2821 15.0s
+[budget] +2129p +644c => 838113/1272579 tokens
+[budget] +2121p +602c => 840836/1272579 tokens
+[budget] +2120p +1049c => 844005/1272579 tokens
+arm3 r2 S04_units_cm_voxel           REPAIRED           repaired=True tokens=2810 13.5s
+arm3 r2 S05_swap_transpose           REPAIRED           repaired=True tokens=2773 14.2s
+arm3 r2 S06_reshape_order            REPAIRED           repaired=True tokens=2723 13.1s
+[budget] +1915p +478c => 846398/1272579 tokens
+[budget] +1922p +498c => 848818/1272579 tokens
+[budget] +1934p +469c => 851221/1272579 tokens
+arm3 r2 S07_affine_transposed        REPAIRED           repaired=True tokens=3169 16.5s
+[budget] +1926p +339c => 853486/1272579 tokens
+arm3 r2 C01_stale_affine             REPAIRED           repaired=True tokens=2393 13.5s
+[budget] +1834p +266c => 855586/1272579 tokens
+arm3 r2 C03_voxel_added_to_world     REPAIRED           repaired=True tokens=2403 13.4s
+arm3 r2 C02_index_order              REPAIRED           repaired=True tokens=2420 14.9s
+arm3 r2 C04_flip_cropped             REPAIRED           repaired=True tokens=2265 12.4s
+[budget] +1829p +289c => 857704/1272579 tokens
+[budget] +1874p +382c => 859960/1272579 tokens
+[budget] +1849p +539c => 862348/1272579 tokens
+arm3 r2 L01_one_axis_only            REPAIRED           repaired=True tokens=2100 11.8s
+[budget] +1818p +384c => 864550/1272579 tokens
+arm3 r2 L02_rotation_only            REPAIRED           repaired=True tokens=2256 13.0s
+arm3 r2 L03_no_conversion            REPAIRED           repaired=True tokens=2118 13.0s
+[budget] +1836p +285c => 866671/1272579 tokens
+arm3 r2 L04_right_multiply           REPAIRED           repaired=True tokens=2388 13.4s
+[budget] +1791p +276c => 868738/1272579 tokens
+[budget] +1794p +312c => 870844/1272579 tokens
+arm3 r2 M01_zoom_only                REPAIRED           repaired=True tokens=2202 12.9s
+arm3 r2 M03_not_converted            REPAIRED           repaired=True tokens=2121 12.5s
+arm3 r2 M02_centimetres              REPAIRED           repaired=True tokens=2067 13.3s
+arm3 r2 M04_converted_twice          REPAIRED           repaired=True tokens=2106 12.5s
+arm3 r2 K01_R_reference              NO_CHANGE_NEEDED   repaired=True tokens=0 10.7s
+arm3 r2 K02_R_float32                NO_CHANGE_NEEDED   repaired=True tokens=0 10.9s
+arm3 r2 K03_S_reference              NO_CHANGE_NEEDED   repaired=True tokens=0 10.8s
+arm3 r2 K04_S_3mm                    NO_CHANGE_NEEDED   repaired=True tokens=0 10.6s
+arm3 r2 K05_C_reference              NO_CHANGE_NEEDED   repaired=True tokens=0 11.1s
+arm3 r2 K06_C_margin5                NO_CHANGE_NEEDED   repaired=True tokens=0 11.0s
+arm3 r2 K07_L_reference              NO_CHANGE_NEEDED   repaired=True tokens=0 11.1s
+arm3 r2 K08_M_reference              NO_CHANGE_NEEDED   repaired=True tokens=0 11.0s
+arm3 r2 A01_no_contract_clean        ABSTAIN            repaired=False tokens=0 0.0s
+arm3 r2 A02_no_contract_buggy        ABSTAIN            repaired=False tokens=0 0.0s
+arm3 r2 A03_no_contract_buggy_S      ABSTAIN            repaired=False tokens=0 0.0s
+arm3 r2 A04_units_unknown            ABSTAIN            repaired=False tokens=0 0.0s
+arm3 r2 A05_corner_convention        ABSTAIN            repaired=False tokens=0 0.0s
+arm3 r2 A06_frame_missing            ABSTAIN            repaired=False tokens=0 0.0s
+arm3 r2 A07_units_ambiguous          ABSTAIN            repaired=False tokens=0 0.0s
+arm3 r2 K09_noop_copy                NO_CHANGE_NEEDED   repaired=True tokens=0 10.3s
+arm3 r2 K10_R_as_closest_canonical   NO_CHANGE_NEEDED   repaired=True tokens=0 10.0s
+arm3 r2 K11_S_nibabel_resample       NO_CHANGE_NEEDED   repaired=True tokens=0 15.2s
+343 rows in D:\VS\Nebius\SpatialContract\results\eval\main\raw.jsonl
+ledger total: 870844

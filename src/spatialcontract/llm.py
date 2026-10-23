@@ -8,6 +8,7 @@ from __future__ import annotations
 
 import json
 import os
+import threading
 from pathlib import Path
 
 from dotenv import load_dotenv
@@ -22,10 +23,15 @@ class BudgetExceeded(RuntimeError):
 
 
 class TokenBudget:
+    """Cumulative token cap, safe to share between threads. ``check`` reserves the worst case of an in-flight call so
+    parallel workers cannot jointly overshoot the cap; ``record`` releases the reservation and adds the real usage."""
+
     def __init__(self, cap: int | None = None, ledger: Path = LEDGER):
         self.cap = int(cap if cap is not None else os.environ.get("SC_TOKEN_CAP", "200000"))
         self.ledger = ledger
         self.total = self._load()
+        self._inflight = 0
+        self._lock = threading.Lock()
 
     def _load(self) -> int:
         try:
@@ -33,17 +39,28 @@ class TokenBudget:
         except (OSError, ValueError, KeyError):
             return 0
 
-    def check(self, estimated: int) -> None:
-        if self.total + estimated > self.cap:
-            raise BudgetExceeded(
-                f"token cap {self.cap} would be exceeded: used {self.total}, next call up to {estimated}"
-            )
+    def check(self, estimated: int) -> int:
+        with self._lock:
+            if self.total + self._inflight + estimated > self.cap:
+                raise BudgetExceeded(
+                    f"token cap {self.cap} would be exceeded: used {self.total}, in flight {self._inflight}, "
+                    f"next call up to {estimated}"
+                )
+            self._inflight += estimated
+        return estimated
 
-    def record(self, prompt: int, completion: int) -> None:
-        self.total += prompt + completion
-        self.ledger.parent.mkdir(parents=True, exist_ok=True)
-        self.ledger.write_text(json.dumps({"total_tokens": self.total}))
-        print(f"[budget] +{prompt}p +{completion}c => {self.total}/{self.cap} tokens")
+    def release(self, reserved: int) -> None:
+        with self._lock:
+            self._inflight = max(0, self._inflight - reserved)
+
+    def record(self, prompt: int, completion: int, reserved: int = 0) -> None:
+        with self._lock:
+            self._inflight = max(0, self._inflight - reserved)
+            self.total += prompt + completion
+            self.ledger.parent.mkdir(parents=True, exist_ok=True)
+            self.ledger.write_text(json.dumps({"total_tokens": self.total}))
+            total = self.total
+        print(f"[budget] +{prompt}p +{completion}c => {total}/{self.cap} tokens", flush=True)
 
 
 def require_api_enabled() -> None:
@@ -77,10 +94,14 @@ class Client:
         est_prompt = sum(len(str(m.get("content", ""))) for m in messages) // 3 + 50
         if "tools" in kw:
             est_prompt += len(json.dumps(kw["tools"])) // 3
-        self.budget.check(est_prompt + max_tokens)
-        resp = self._c.chat.completions.create(
-            model=self.model, messages=messages, max_tokens=max_tokens, **kw
-        )
+        reserved = self.budget.check(est_prompt + max_tokens)
+        try:
+            resp = self._c.chat.completions.create(
+                model=self.model, messages=messages, max_tokens=max_tokens, **kw
+            )
+        except BaseException:
+            self.budget.release(reserved)
+            raise
         u = resp.usage
-        self.budget.record(u.prompt_tokens if u else est_prompt, u.completion_tokens if u else max_tokens)
+        self.budget.record(u.prompt_tokens if u else est_prompt, u.completion_tokens if u else max_tokens, reserved)
         return resp

@@ -6,7 +6,8 @@
   "kind": "bug",
   "expect": "FAIL",
   "bug_class": "axis_swap",
-  "description": "transposes axes 0/1 after reorienting, affine untouched"
+  "description": "transposes axes 0/1 after reorienting, affine untouched",
+  "spec": {}
  },
  {
   "id": "R02_swap_target_codes",
@@ -15,7 +16,8 @@
   "kind": "bug",
   "expect": "FAIL",
   "bug_class": "axis_swap",
-  "description": "target codes (A,R,S) instead of (R,A,S): world is right, array order violates contract"
+  "description": "target codes (A,R,S) instead of (R,A,S): world is right, array order violates contract",
+  "spec": {}
  },
  {
   "id": "R03_flip_post",
@@ -24,7 +26,8 @@
   "kind": "bug",
   "expect": "FAIL",
   "bug_class": "flipped_axis",
-  "description": "flips axis 0 of the data after reorienting, affine untouched"
+  "description": "flips axis 0 of the data after reorienting, affine untouched",
+  "spec": {}
  },
  {
   "id": "R04_flip_pre",
@@ -33,7 +36,8 @@
   "kind": "bug",
   "expect": "FAIL",
   "bug_class": "flipped_axis",
-  "description": "flips the last axis of the raw data before computing the orientation transform"
+  "description": "flips the last axis of the raw data before computing the orientation transform",
+  "spec": {}
  },
  {
   "id": "R05_stale_affine",
@@ -42,7 +46,8 @@
   "kind": "bug",
   "expect": "FAIL",
   "bug_class": "stale_affine",
-  "description": "saves the input affine with the reoriented data"
+  "description": "saves the input affine with the reoriented data",
+  "spec": {}
  },
  {
   "id": "R06_stale_header",
@@ -51,7 +56,8 @@
   "kind": "bug",
   "expect": "FAIL",
   "bug_class": "stale_affine",
-  "description": "builds the output from the input header, inheriting its old sform"
+  "description": "builds the output from the input header, inheriting its old sform",
+  "spec": {}
  },
  {
   "id": "R07_voxel_identity",
@@ -60,7 +66,8 @@
   "kind": "bug",
   "expect": "FAIL",
   "bug_class": "voxel_vs_world",
-  "description": "writes an identity affine (voxel index treated as world)"
+  "description": "writes an identity affine (voxel index treated as world)",
+  "spec": {}
  },
  {
   "id": "R08_voxel_spacing_only",
@@ -69,7 +76,8 @@
   "kind": "bug",
   "expect": "FAIL",
   "bug_class": "voxel_vs_world",
-  "description": "affine keeps only voxel sizes, dropping rotation/flip and origin"
+  "description": "affine keeps only voxel sizes, dropping rotation/flip and origin",
+  "spec": {}
  },
  {
   "id": "R09_units_milli",
@@ -78,7 +86,8 @@
   "kind": "bug",
   "expect": "FAIL",
   "bug_class": "wrong_units",
-  "description": "affine scaled by 1e-3 (metres) while contract says mm"
+  "description": "affine scaled by 1e-3 (metres) while contract says mm",
+  "spec": {}
  },
  {
   "id": "R10_units_cm",
@@ -87,7 +96,8 @@
   "kind": "bug",
   "expect": "FAIL",
   "bug_class": "wrong_units",
-  "description": "affine scaled by 0.1 (centimetres) while contract says mm"
+  "description": "affine scaled by 0.1 (centimetres) while contract says mm",
+  "spec": {}
  },
  {
   "id": "R11_affine_transposed",
@@ -96,7 +106,8 @@
   "kind": "bug",
   "expect": "FAIL",
   "bug_class": "transposed_affine",
-  "description": "saves new_aff.T"
+  "description": "saves new_aff.T",
+  "spec": {}
  },
  {
   "id": "R12_affine_inverted",
@@ -105,7 +116,8 @@
   "kind": "bug",
   "expect": "FAIL",
   "bug_class": "transposed_affine",
-  "description": "saves the world->voxel inverse instead of voxel->world"
+  "description": "saves the world->voxel inverse instead of voxel->world",
+  "spec": {}
  },
  {
   "id": "S01_voxel_skips_inverse",
@@ -114,7 +126,8 @@
   "kind": "bug",
   "expect": "FAIL",
   "bug_class": "voxel_vs_world",
-  "description": "uses world points as input voxel indices (forgot inv(aff))"
+  "description": "uses world points as input voxel indices (forgot inv(aff))",
+  "spec": {}
  },
  {
   "id": "S02_stale_affine",
@@ -123,7 +136,8 @@
   "kind": "bug",
   "expect": "FAIL",
   "bug_class": "stale_affine",
-  "description": "saves the INPUT affine on the resampled grid"
+  "description": "saves the INPUT affine on the resampled grid",
+  "spec": {}
  },
  {
   "id": "S03_flip_output",
@@ -132,7 +146,8 @@
   "kind": "bug",
   "expect": "FAIL",
   "bug_class": "flipped_axis",
-  "description": "flips the resampled array along axis 0 after sampling"
+  "description": "flips the resampled array along axis 0 after sampling",
+  "spec": {}
  },
  {
   "id": "S04_units_cm_voxel",
@@ -141,7 +156,8 @@
   "kind": "bug",
   "expect": "FAIL",
   "bug_class": "wrong_units",
-  "description": "output affine voxel size 10x too large (mm vs cm confusion)"
+  "description": "output affine voxel size 10x too large (mm vs cm confusion)",
+  "spec": {}
  },
  {
   "id": "S05_swap_transpose",
@@ -150,7 +166,8 @@
   "kind": "bug",
   "expect": "FAIL",
   "bug_class": "axis_swap",
-  "description": "transposes the resampled array, affine untouched"
+  "description": "transposes the resampled array, affine untouched",
+  "spec": {}
  },
  {
   "id": "S06_reshape_order",
@@ -159,7 +176,8 @@
   "kind": "bug",
   "expect": "FAIL",
   "bug_class": "axis_swap",
-  "description": "reshapes with Fortran order, scrambling index order"
+  "description": "reshapes with Fortran order, scrambling index order",
+  "spec": {}
  },
  {
   "id": "S07_affine_transposed",
@@ -168,7 +186,8 @@
   "kind": "bug",
   "expect": "FAIL",
   "bug_class": "transposed_affine",
-  "description": "saves out_aff.T"
+  "description": "saves out_aff.T",
+  "spec": {}
  },
  {
   "id": "C01_stale_affine",
@@ -177,7 +196,8 @@
   "kind": "bug",
   "expect": "FAIL",
   "bug_class": "stale_affine",
-  "description": "crops but keeps the input affine (origin not shifted)"
+  "description": "crops but keeps the input affine (origin not shifted)",
+  "spec": {}
  },
  {
   "id": "C02_index_order",
@@ -186,7 +206,8 @@
   "kind": "bug",
   "expect": "FAIL",
   "bug_class": "axis_swap",
-  "description": "crop offset applied with axes reversed (k,j,i)"
+  "description": "crop offset applied with axes reversed (k,j,i)",
+  "spec": {}
  },
  {
   "id": "C03_voxel_added_to_world",
@@ -195,7 +216,8 @@
   "kind": "bug",
   "expect": "FAIL",
   "bug_class": "voxel_vs_world",
-  "description": "adds the voxel offset directly to the world translation"
+  "description": "adds the voxel offset directly to the world translation",
+  "spec": {}
  },
  {
   "id": "C04_flip_cropped",
@@ -204,7 +226,8 @@
   "kind": "bug",
   "expect": "FAIL",
   "bug_class": "flipped_axis",
-  "description": "flips the cropped array along axis 2, affine untouched"
+  "description": "flips the cropped array along axis 2, affine untouched",
+  "spec": {}
  },
  {
   "id": "L01_one_axis_only",
@@ -213,7 +236,8 @@
   "kind": "bug",
   "expect": "FAIL",
   "bug_class": "flipped_axis",
-  "description": "RAS->LPS flips x only"
+  "description": "RAS->LPS flips x only",
+  "spec": {}
  },
  {
   "id": "L02_rotation_only",
@@ -222,7 +246,8 @@
   "kind": "bug",
   "expect": "FAIL",
   "bug_class": "flipped_axis",
-  "description": "flips the rotation block but leaves the origin in RAS"
+  "description": "flips the rotation block but leaves the origin in RAS",
+  "spec": {}
  },
  {
   "id": "L03_no_conversion",
@@ -231,7 +256,8 @@
   "kind": "bug",
   "expect": "FAIL",
   "bug_class": "stale_affine",
-  "description": "forgets the RAS->LPS conversion and saves the input affine"
+  "description": "forgets the RAS->LPS conversion and saves the input affine",
+  "spec": {}
  },
  {
   "id": "L04_right_multiply",
@@ -240,7 +266,8 @@
   "kind": "bug",
   "expect": "FAIL",
   "bug_class": "voxel_vs_world",
-  "description": "applies the frame change in voxel space (A @ F instead of F @ A)"
+  "description": "applies the frame change in voxel space (A @ F instead of F @ A)",
+  "spec": {}
  },
  {
   "id": "M01_zoom_only",
@@ -249,7 +276,8 @@
   "kind": "bug",
   "expect": "FAIL",
   "bug_class": "wrong_units",
-  "description": "converts the rotation/zoom block to metres but leaves the origin in mm"
+  "description": "converts the rotation/zoom block to metres but leaves the origin in mm",
+  "spec": {}
  },
  {
   "id": "M02_centimetres",
@@ -258,7 +286,8 @@
   "kind": "bug",
   "expect": "FAIL",
   "bug_class": "wrong_units",
-  "description": "scales by 1e-2 (cm) instead of 1e-3"
+  "description": "scales by 1e-2 (cm) instead of 1e-3",
+  "spec": {}
  },
  {
   "id": "M03_not_converted",
@@ -267,7 +296,8 @@
   "kind": "bug",
   "expect": "FAIL",
   "bug_class": "wrong_units",
-  "description": "never converts: affine still in mm while contract says m"
+  "description": "never converts: affine still in mm while contract says m",
+  "spec": {}
  },
  {
   "id": "M04_converted_twice",
@@ -276,7 +306,8 @@
   "kind": "bug",
   "expect": "FAIL",
   "bug_class": "wrong_units",
-  "description": "converted twice (1e-6)"
+  "description": "converted twice (1e-6)",
+  "spec": {}
  },
  {
   "id": "K01_R_reference",
@@ -285,7 +316,8 @@
   "kind": "control",
   "expect": "PASS",
   "bug_class": null,
-  "description": "reference reorient-to-RAS"
+  "description": "reference reorient-to-RAS",
+  "spec": {}
  },
  {
   "id": "K02_R_float32",
@@ -294,7 +326,8 @@
   "kind": "control",
   "expect": "PASS",
   "bug_class": null,
-  "description": "reference plus float32 cast and contiguous copy"
+  "description": "reference plus float32 cast and contiguous copy",
+  "spec": {}
  },
  {
   "id": "K03_S_reference",
@@ -303,7 +336,8 @@
   "kind": "control",
   "expect": "PASS",
   "bug_class": null,
-  "description": "reference 2 mm nearest-neighbour resampler (exercises interpolation tolerance)"
+  "description": "reference 2 mm nearest-neighbour resampler (exercises interpolation tolerance)",
+  "spec": {}
  },
  {
   "id": "K04_S_3mm",
@@ -312,7 +346,10 @@
   "kind": "control",
   "expect": "PASS",
   "bug_class": null,
-  "description": "same resampler at 3 mm"
+  "description": "same resampler at 3 mm",
+  "spec": {
+   "vox": 3.0
+  }
  },
  {
   "id": "K05_C_reference",
@@ -321,7 +358,8 @@
   "kind": "control",
   "expect": "PASS",
   "bug_class": null,
-  "description": "reference foreground crop"
+  "description": "reference foreground crop",
+  "spec": {}
  },
  {
   "id": "K06_C_margin5",
@@ -330,7 +368,10 @@
   "kind": "control",
   "expect": "PASS",
   "bug_class": null,
-  "description": "crop with a 5-voxel margin"
+  "description": "crop with a 5-voxel margin",
+  "spec": {
+   "margin": 5
+  }
  },
  {
   "id": "K07_L_reference",
@@ -339,7 +380,8 @@
   "kind": "control",
   "expect": "PASS",
   "bug_class": null,
-  "description": "reference RAS->LPS"
+  "description": "reference RAS->LPS",
+  "spec": {}
  },
  {
   "id": "K08_M_reference",
@@ -348,7 +390,8 @@
   "kind": "control",
   "expect": "PASS",
   "bug_class": null,
-  "description": "reference mm->m"
+  "description": "reference mm->m",
+  "spec": {}
  },
  {
   "id": "K09_noop_copy",
@@ -357,7 +400,10 @@
   "kind": "control",
   "expect": "PASS",
   "bug_class": null,
-  "description": "does nothing; contract only demands consistent world coordinates"
+  "description": "does nothing; contract only demands consistent world coordinates",
+  "spec": {
+   "canonicalise": false
+  }
  },
  {
   "id": "K10_R_as_closest_canonical",
@@ -366,7 +412,8 @@
   "kind": "control",
   "expect": "PASS",
   "bug_class": null,
-  "description": "library call nib.as_closest_canonical"
+  "description": "library call nib.as_closest_canonical",
+  "spec": {}
  },
  {
   "id": "K11_S_nibabel_resample",
@@ -375,7 +422,8 @@
   "kind": "control",
   "expect": "PASS",
   "bug_class": null,
-  "description": "nibabel.processing.resample_to_output(order=0) at 2 mm"
+  "description": "nibabel.processing.resample_to_output(order=0) at 2 mm",
+  "spec": {}
  },
  {
   "id": "A01_no_contract_clean",
@@ -384,7 +432,8 @@
   "kind": "abstain",
   "expect": "ABSTAIN",
   "bug_class": null,
-  "description": "correct code, no contract declared"
+  "description": "correct code, no contract declared",
+  "spec": {}
  },
  {
   "id": "A02_no_contract_buggy",
@@ -393,7 +442,8 @@
   "kind": "abstain",
   "expect": "ABSTAIN",
   "bug_class": "stale_affine",
-  "description": "stale-affine bug, no contract declared"
+  "description": "stale-affine bug, no contract declared",
+  "spec": {}
  },
  {
   "id": "A03_no_contract_buggy_S",
@@ -402,7 +452,8 @@
   "kind": "abstain",
   "expect": "ABSTAIN",
   "bug_class": "flipped_axis",
-  "description": "flip bug in the resampler, no contract declared"
+  "description": "flip bug in the resampler, no contract declared",
+  "spec": {}
  },
  {
   "id": "A04_units_unknown",
@@ -411,7 +462,8 @@
   "kind": "abstain",
   "expect": "ABSTAIN",
   "bug_class": null,
-  "description": "contract with units 'unknown'"
+  "description": "contract with units 'unknown'",
+  "spec": {}
  },
  {
   "id": "A05_corner_convention",
@@ -420,7 +472,8 @@
   "kind": "abstain",
   "expect": "ABSTAIN",
   "bug_class": "stale_affine",
-  "description": "contract declares voxel-corner affine (unsupported/ambiguous)"
+  "description": "contract declares voxel-corner affine (unsupported/ambiguous)",
+  "spec": {}
  },
  {
   "id": "A06_frame_missing",
@@ -429,7 +482,8 @@
   "kind": "abstain",
   "expect": "ABSTAIN",
   "bug_class": null,
-  "description": "contract omits world_frame"
+  "description": "contract omits world_frame",
+  "spec": {}
  },
  {
   "id": "A07_units_ambiguous",
@@ -438,6 +492,7 @@
   "kind": "abstain",
   "expect": "ABSTAIN",
   "bug_class": "wrong_units",
-  "description": "units declared as 'mm/m'"
+  "description": "units declared as 'mm/m'",
+  "spec": {}
  }
 ]

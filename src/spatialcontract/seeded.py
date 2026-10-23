@@ -106,6 +106,7 @@ class Case:
     reps: list = field(default_factory=list)       # [(old, new)], each old must occur exactly once
     contract: object = "default"                   # "default" | None (omit) | dict
     notes: str = ""
+    spec: dict = field(default_factory=dict)       # parameters of this variant for the repo-style tests
 
     def source(self) -> str:
         default_contract, body = BASES[self.base]
@@ -205,17 +206,17 @@ _CONTROLS = [
         ("    nib.save(nib.Nifti1Image(new, new_aff), out_path)\n",
          "    new = np.ascontiguousarray(new, dtype=np.float32)\n    nib.save(nib.Nifti1Image(new, new_aff), out_path)\n")]),
     Case("K03_S_reference", "S", "control", "PASS", "reference 2 mm nearest-neighbour resampler (exercises interpolation tolerance)"),
-    Case("K04_S_3mm", "S", "control", "PASS", "same resampler at 3 mm", reps=[("vox = 2.0", "vox = 3.0")]),
+    Case("K04_S_3mm", "S", "control", "PASS", "same resampler at 3 mm", reps=[("vox = 2.0", "vox = 3.0")], spec={"vox": 3.0}),
     Case("K05_C_reference", "C", "control", "PASS", "reference foreground crop"),
     Case("K06_C_margin5", "C", "control", "PASS", "crop with a 5-voxel margin", reps=[
-        ("nz.min(axis=0) - 3", "nz.min(axis=0) - 5"), ("nz.max(axis=0) + 4", "nz.max(axis=0) + 6")]),
+        ("nz.min(axis=0) - 3", "nz.min(axis=0) - 5"), ("nz.max(axis=0) + 4", "nz.max(axis=0) + 6")], spec={"margin": 5}),
     Case("K07_L_reference", "L", "control", "PASS", "reference RAS->LPS"),
     Case("K08_M_reference", "M", "control", "PASS", "reference mm->m"),
     Case("K09_noop_copy", "R", "control", "PASS", "does nothing; contract only demands consistent world coordinates", reps=[
         ('    xfm = o.ornt_transform(o.io_orientation(aff), o.axcodes2ornt(("R", "A", "S")))\n'
          '    new = o.apply_orientation(data, xfm)\n'
          '    new_aff = aff @ o.inv_ornt_aff(xfm, data.shape)\n', "    new, new_aff = data, aff\n")],
-         contract=C_RAS_MM),
+         contract=C_RAS_MM, spec={"canonicalise": False}),
     Case("K10_R_as_closest_canonical", "R", "control", "PASS", "library call nib.as_closest_canonical", reps=[
         ('    data = np.asarray(img.dataobj)\n    aff = img.affine\n    xfm = o.ornt_transform(o.io_orientation(aff), o.axcodes2ornt(("R", "A", "S")))\n'
          '    new = o.apply_orientation(data, xfm)\n    new_aff = aff @ o.inv_ornt_aff(xfm, data.shape)\n    nib.save(nib.Nifti1Image(new, new_aff), out_path)\n',
@@ -252,7 +253,7 @@ def build(out_dir: Path = CORPUS) -> list[dict]:
     for c in ALL_CASES:
         (out_dir / f"{c.id}.py").write_text(c.source(), encoding="utf-8", newline="\n")
         manifest.append({"id": c.id, "file": f"{c.id}.py", "base": c.base, "kind": c.kind, "expect": c.expect,
-                         "bug_class": c.bug_class, "description": c.desc})
+                         "bug_class": c.bug_class, "description": c.desc, "spec": c.spec})
     (out_dir / "manifest.json").write_text(json.dumps(manifest, indent=1), encoding="utf-8", newline="\n")
     return manifest
 

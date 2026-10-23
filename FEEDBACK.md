@@ -37,3 +37,17 @@ Models listed as Nemotron on Token Factory (from `/models`, 2026-10-23): `nvidia
 - Worked: 11 of 12 seeded bugs repaired across two runs, almost always in one call (about 300-450 completion tokens, 12-16 s). Every accepted patch also passed the held-out validation. It never tried to edit the SPATIAL_CONTRACT (the guard did not fire on a Super call).
 - Did not work: S06 (Fortran-order reshape): four rewrites of unrelated correct code. It does not localise a one-token bug when the measurements only say "all landmarks off".
 - Would use again: yes for this task. The three-arm comparison (step 7) will say whether the oracle feedback is what makes it work.
+
+
+## Step 7 observations (three-arm evaluation, 2026-10-24; results/eval/main)
+### Nebius Token Factory
+- Scale: about 600k tokens (271 model calls in 4-way parallel plus 10 dry-run calls) took roughly 25 minutes wall-clock with no throttling, no 429s and no transport errors. The documented 300 requests/minute for Super was never approached.
+- Tool calling was reliable at this scale: 271 of 271 calls returned a tool call with JSON arguments that parsed, and 0 ended with `finish_reason=length` at `max_tokens=8000` (Super, default reasoning). With three tools offered (`submit_patch`, `report_no_bug`, `abstain`) it never produced a malformed call (it abstained 6 times in total, only 2 of them on the 21 must-abstain runs, where I would have preferred many more).
+- Token cost per task is low enough to matter little: arm 2 used 1,891 tokens per bug case, arm 3 used 3,213; the full evaluation was under $1 at the listed Super prices. The listing's pricing made that estimate possible up front.
+- A thread-safe budget was needed (parallel callers could overshoot a naive cap); the API gave no help there, but `usage` on every response made the accounting exact.
+
+### nvidia/nemotron-3-super-120b-a12b (repair, baseline and oracle-guided)
+- What for: the same model in two arms: given oracle measurements (arm 3) or only unit-test results (arm 2).
+- Worked: with oracle measurements it repaired 91 of 93 seeded-bug runs (98%), 85 on the first call. With unit-test results only it repaired 80 of 93 (86%); 12 of the 13 misses were patches the unit tests accepted while the bug remained.
+- Did not work: told to abstain when the convention cannot be determined, it still patched 16 of 21 must-abstain runs (it abstained in 2 and said "no bug" in 3). It also modified 18 of 33 already-correct pipelines when the task text said they were reported as wrong (it said "no bug" in 11). It follows the "reported as wrong" framing more than the "do not guess" rule.
+- Would use again: yes. As a component it is cheap and reliable; the evidence in this project is that its repairs are good when it is shown measurements, and that it needs an external check, not a prompt, to stop it from guessing.
