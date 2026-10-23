@@ -25,6 +25,8 @@ from .phantom import Phantom, make_phantom
 
 DEFAULT_SEEDS = (0, 1, 2)
 DEFAULT_TOL_MM = 1.5
+HALF_VOXEL_DIAG = 0.866   # sqrt(3)/2 of the largest output voxel edge
+MAX_TOL_MM = 4.0
 TIMEOUT_S = 90
 
 _RUNNER = (
@@ -53,6 +55,7 @@ class PhantomResult:
     out_axcodes: str | None = None
     out_zooms_mm: list | None = None
     orientation_ok: bool | None = None
+    tol_mm_used: float | None = None
     detail: str = ""
 
 
@@ -91,7 +94,7 @@ class Report:
             lines.append(
                 f"phantom seed={p.seed}: {p.status}; output axcodes={p.out_axcodes} "
                 f"zooms_mm={p.out_zooms_mm}; orientation_ok={p.orientation_ok}; "
-                f"{len(bad)}/{len(p.landmarks)} landmarks off")
+                f"tol_used={p.tol_mm_used} mm; {len(bad)}/{len(p.landmarks)} landmarks off")
             for lm in bad[:3]:
                 err = "LOST" if lm.error_mm is None else f"{lm.error_mm:.2f} mm"
                 lines.append(f"  landmark {lm.label}: expected {_fmt(lm.expected)} got {_fmt(lm.got)} error {err}")
@@ -141,6 +144,11 @@ def _check_one(code_path: Path, contract: SpatialContract, ph: Phantom, tol_mm: 
     res.out_zooms_mm = [round(float(z), 3) for z in np.sqrt((ras_aff[:3, :3] ** 2).sum(axis=0))]
     if contract.array_orientation:
         res.orientation_ok = res.out_axcodes == contract.array_orientation
+    # Nearest-neighbour resampling moves a landmark centroid by up to ~half a voxel diagonal, so the
+    # tolerance grows with the output voxel size; the cap stops a bug that inflates its own zooms from
+    # buying itself a lenient tolerance.
+    tol_mm = min(max(tol_mm, HALF_VOXEL_DIAG * max(res.out_zooms_mm)), MAX_TOL_MM)
+    res.tol_mm_used = round(tol_mm, 3)
 
     for label, true_ras in ph.world_ras_mm.items():
         expected = contract.ras_mm_to_contract(true_ras)

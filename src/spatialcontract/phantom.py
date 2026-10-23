@@ -22,6 +22,7 @@ RADIUS_VOX = 3.0
 MARGIN = 8       # voxels from the FOV edge
 OFF_CENTRE = 6   # voxels away from the central plane on every axis
 MIN_SEP = 12     # voxels between landmarks
+MIN_MARGIN_GAP = 2  # voxels; foreground-bbox margins must differ pairwise across axes
 
 
 @dataclass(frozen=True)
@@ -74,14 +75,23 @@ def make_phantom(seed: int, oblique: bool | None = None) -> Phantom:
 
     lo = np.full(3, MARGIN)
     hi = np.array(SHAPE) - 1 - MARGIN
-    pts: list[np.ndarray] = []
-    while len(pts) < N_LANDMARKS:
-        c = rng.uniform(lo, hi).round()
-        if np.any(np.abs(c - centre_vox) < OFF_CENTRE):
-            continue
-        if any(np.linalg.norm(c - q) < MIN_SEP for q in pts):
-            continue
-        pts.append(c)
+    while True:
+        pts: list[np.ndarray] = []
+        while len(pts) < N_LANDMARKS:
+            c = rng.uniform(lo, hi).round()
+            if np.any(np.abs(c - centre_vox) < OFF_CENTRE):
+                continue
+            if any(np.linalg.norm(c - q) < MIN_SEP for q in pts):
+                continue
+            pts.append(c)
+        # The foreground bounding box must not be invariant under any axis permutation: the margins to the
+        # FOV edge must differ by >= MIN_MARGIN_GAP voxels across axes (found when a crop bug that reversed
+        # axis order slipped through palindromic margins such as [3, 6, 3]).
+        arr = np.array(pts)
+        lo_m = arr.min(axis=0) - RADIUS_VOX
+        hi_m = (np.array(SHAPE) - 1) - (arr.max(axis=0) + RADIUS_VOX)
+        if all(abs(m[a] - m[b]) >= MIN_MARGIN_GAP for m in (lo_m, hi_m) for a, b in ((0, 1), (0, 2), (1, 2))):
+            break
 
     data = np.zeros(SHAPE, dtype=np.int16)
     ii, jj, kk = np.indices(SHAPE)

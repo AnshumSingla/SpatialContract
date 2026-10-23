@@ -1,0 +1,443 @@
+[
+ {
+  "id": "R01_swap_transpose",
+  "file": "R01_swap_transpose.py",
+  "base": "R",
+  "kind": "bug",
+  "expect": "FAIL",
+  "bug_class": "axis_swap",
+  "description": "transposes axes 0/1 after reorienting, affine untouched"
+ },
+ {
+  "id": "R02_swap_target_codes",
+  "file": "R02_swap_target_codes.py",
+  "base": "R",
+  "kind": "bug",
+  "expect": "FAIL",
+  "bug_class": "axis_swap",
+  "description": "target codes (A,R,S) instead of (R,A,S): world is right, array order violates contract"
+ },
+ {
+  "id": "R03_flip_post",
+  "file": "R03_flip_post.py",
+  "base": "R",
+  "kind": "bug",
+  "expect": "FAIL",
+  "bug_class": "flipped_axis",
+  "description": "flips axis 0 of the data after reorienting, affine untouched"
+ },
+ {
+  "id": "R04_flip_pre",
+  "file": "R04_flip_pre.py",
+  "base": "R",
+  "kind": "bug",
+  "expect": "FAIL",
+  "bug_class": "flipped_axis",
+  "description": "flips the last axis of the raw data before computing the orientation transform"
+ },
+ {
+  "id": "R05_stale_affine",
+  "file": "R05_stale_affine.py",
+  "base": "R",
+  "kind": "bug",
+  "expect": "FAIL",
+  "bug_class": "stale_affine",
+  "description": "saves the input affine with the reoriented data"
+ },
+ {
+  "id": "R06_stale_header",
+  "file": "R06_stale_header.py",
+  "base": "R",
+  "kind": "bug",
+  "expect": "FAIL",
+  "bug_class": "stale_affine",
+  "description": "builds the output from the input header, inheriting its old sform"
+ },
+ {
+  "id": "R07_voxel_identity",
+  "file": "R07_voxel_identity.py",
+  "base": "R",
+  "kind": "bug",
+  "expect": "FAIL",
+  "bug_class": "voxel_vs_world",
+  "description": "writes an identity affine (voxel index treated as world)"
+ },
+ {
+  "id": "R08_voxel_spacing_only",
+  "file": "R08_voxel_spacing_only.py",
+  "base": "R",
+  "kind": "bug",
+  "expect": "FAIL",
+  "bug_class": "voxel_vs_world",
+  "description": "affine keeps only voxel sizes, dropping rotation/flip and origin"
+ },
+ {
+  "id": "R09_units_milli",
+  "file": "R09_units_milli.py",
+  "base": "R",
+  "kind": "bug",
+  "expect": "FAIL",
+  "bug_class": "wrong_units",
+  "description": "affine scaled by 1e-3 (metres) while contract says mm"
+ },
+ {
+  "id": "R10_units_cm",
+  "file": "R10_units_cm.py",
+  "base": "R",
+  "kind": "bug",
+  "expect": "FAIL",
+  "bug_class": "wrong_units",
+  "description": "affine scaled by 0.1 (centimetres) while contract says mm"
+ },
+ {
+  "id": "R11_affine_transposed",
+  "file": "R11_affine_transposed.py",
+  "base": "R",
+  "kind": "bug",
+  "expect": "FAIL",
+  "bug_class": "transposed_affine",
+  "description": "saves new_aff.T"
+ },
+ {
+  "id": "R12_affine_inverted",
+  "file": "R12_affine_inverted.py",
+  "base": "R",
+  "kind": "bug",
+  "expect": "FAIL",
+  "bug_class": "transposed_affine",
+  "description": "saves the world->voxel inverse instead of voxel->world"
+ },
+ {
+  "id": "S01_voxel_skips_inverse",
+  "file": "S01_voxel_skips_inverse.py",
+  "base": "S",
+  "kind": "bug",
+  "expect": "FAIL",
+  "bug_class": "voxel_vs_world",
+  "description": "uses world points as input voxel indices (forgot inv(aff))"
+ },
+ {
+  "id": "S02_stale_affine",
+  "file": "S02_stale_affine.py",
+  "base": "S",
+  "kind": "bug",
+  "expect": "FAIL",
+  "bug_class": "stale_affine",
+  "description": "saves the INPUT affine on the resampled grid"
+ },
+ {
+  "id": "S03_flip_output",
+  "file": "S03_flip_output.py",
+  "base": "S",
+  "kind": "bug",
+  "expect": "FAIL",
+  "bug_class": "flipped_axis",
+  "description": "flips the resampled array along axis 0 after sampling"
+ },
+ {
+  "id": "S04_units_cm_voxel",
+  "file": "S04_units_cm_voxel.py",
+  "base": "S",
+  "kind": "bug",
+  "expect": "FAIL",
+  "bug_class": "wrong_units",
+  "description": "output affine voxel size 10x too large (mm vs cm confusion)"
+ },
+ {
+  "id": "S05_swap_transpose",
+  "file": "S05_swap_transpose.py",
+  "base": "S",
+  "kind": "bug",
+  "expect": "FAIL",
+  "bug_class": "axis_swap",
+  "description": "transposes the resampled array, affine untouched"
+ },
+ {
+  "id": "S06_reshape_order",
+  "file": "S06_reshape_order.py",
+  "base": "S",
+  "kind": "bug",
+  "expect": "FAIL",
+  "bug_class": "axis_swap",
+  "description": "reshapes with Fortran order, scrambling index order"
+ },
+ {
+  "id": "S07_affine_transposed",
+  "file": "S07_affine_transposed.py",
+  "base": "S",
+  "kind": "bug",
+  "expect": "FAIL",
+  "bug_class": "transposed_affine",
+  "description": "saves out_aff.T"
+ },
+ {
+  "id": "C01_stale_affine",
+  "file": "C01_stale_affine.py",
+  "base": "C",
+  "kind": "bug",
+  "expect": "FAIL",
+  "bug_class": "stale_affine",
+  "description": "crops but keeps the input affine (origin not shifted)"
+ },
+ {
+  "id": "C02_index_order",
+  "file": "C02_index_order.py",
+  "base": "C",
+  "kind": "bug",
+  "expect": "FAIL",
+  "bug_class": "axis_swap",
+  "description": "crop offset applied with axes reversed (k,j,i)"
+ },
+ {
+  "id": "C03_voxel_added_to_world",
+  "file": "C03_voxel_added_to_world.py",
+  "base": "C",
+  "kind": "bug",
+  "expect": "FAIL",
+  "bug_class": "voxel_vs_world",
+  "description": "adds the voxel offset directly to the world translation"
+ },
+ {
+  "id": "C04_flip_cropped",
+  "file": "C04_flip_cropped.py",
+  "base": "C",
+  "kind": "bug",
+  "expect": "FAIL",
+  "bug_class": "flipped_axis",
+  "description": "flips the cropped array along axis 2, affine untouched"
+ },
+ {
+  "id": "L01_one_axis_only",
+  "file": "L01_one_axis_only.py",
+  "base": "L",
+  "kind": "bug",
+  "expect": "FAIL",
+  "bug_class": "flipped_axis",
+  "description": "RAS->LPS flips x only"
+ },
+ {
+  "id": "L02_rotation_only",
+  "file": "L02_rotation_only.py",
+  "base": "L",
+  "kind": "bug",
+  "expect": "FAIL",
+  "bug_class": "flipped_axis",
+  "description": "flips the rotation block but leaves the origin in RAS"
+ },
+ {
+  "id": "L03_no_conversion",
+  "file": "L03_no_conversion.py",
+  "base": "L",
+  "kind": "bug",
+  "expect": "FAIL",
+  "bug_class": "stale_affine",
+  "description": "forgets the RAS->LPS conversion and saves the input affine"
+ },
+ {
+  "id": "L04_right_multiply",
+  "file": "L04_right_multiply.py",
+  "base": "L",
+  "kind": "bug",
+  "expect": "FAIL",
+  "bug_class": "voxel_vs_world",
+  "description": "applies the frame change in voxel space (A @ F instead of F @ A)"
+ },
+ {
+  "id": "M01_zoom_only",
+  "file": "M01_zoom_only.py",
+  "base": "M",
+  "kind": "bug",
+  "expect": "FAIL",
+  "bug_class": "wrong_units",
+  "description": "converts the rotation/zoom block to metres but leaves the origin in mm"
+ },
+ {
+  "id": "M02_centimetres",
+  "file": "M02_centimetres.py",
+  "base": "M",
+  "kind": "bug",
+  "expect": "FAIL",
+  "bug_class": "wrong_units",
+  "description": "scales by 1e-2 (cm) instead of 1e-3"
+ },
+ {
+  "id": "M03_not_converted",
+  "file": "M03_not_converted.py",
+  "base": "M",
+  "kind": "bug",
+  "expect": "FAIL",
+  "bug_class": "wrong_units",
+  "description": "never converts: affine still in mm while contract says m"
+ },
+ {
+  "id": "M04_converted_twice",
+  "file": "M04_converted_twice.py",
+  "base": "M",
+  "kind": "bug",
+  "expect": "FAIL",
+  "bug_class": "wrong_units",
+  "description": "converted twice (1e-6)"
+ },
+ {
+  "id": "K01_R_reference",
+  "file": "K01_R_reference.py",
+  "base": "R",
+  "kind": "control",
+  "expect": "PASS",
+  "bug_class": null,
+  "description": "reference reorient-to-RAS"
+ },
+ {
+  "id": "K02_R_float32",
+  "file": "K02_R_float32.py",
+  "base": "R",
+  "kind": "control",
+  "expect": "PASS",
+  "bug_class": null,
+  "description": "reference plus float32 cast and contiguous copy"
+ },
+ {
+  "id": "K03_S_reference",
+  "file": "K03_S_reference.py",
+  "base": "S",
+  "kind": "control",
+  "expect": "PASS",
+  "bug_class": null,
+  "description": "reference 2 mm nearest-neighbour resampler (exercises interpolation tolerance)"
+ },
+ {
+  "id": "K04_S_3mm",
+  "file": "K04_S_3mm.py",
+  "base": "S",
+  "kind": "control",
+  "expect": "PASS",
+  "bug_class": null,
+  "description": "same resampler at 3 mm"
+ },
+ {
+  "id": "K05_C_reference",
+  "file": "K05_C_reference.py",
+  "base": "C",
+  "kind": "control",
+  "expect": "PASS",
+  "bug_class": null,
+  "description": "reference foreground crop"
+ },
+ {
+  "id": "K06_C_margin5",
+  "file": "K06_C_margin5.py",
+  "base": "C",
+  "kind": "control",
+  "expect": "PASS",
+  "bug_class": null,
+  "description": "crop with a 5-voxel margin"
+ },
+ {
+  "id": "K07_L_reference",
+  "file": "K07_L_reference.py",
+  "base": "L",
+  "kind": "control",
+  "expect": "PASS",
+  "bug_class": null,
+  "description": "reference RAS->LPS"
+ },
+ {
+  "id": "K08_M_reference",
+  "file": "K08_M_reference.py",
+  "base": "M",
+  "kind": "control",
+  "expect": "PASS",
+  "bug_class": null,
+  "description": "reference mm->m"
+ },
+ {
+  "id": "K09_noop_copy",
+  "file": "K09_noop_copy.py",
+  "base": "R",
+  "kind": "control",
+  "expect": "PASS",
+  "bug_class": null,
+  "description": "does nothing; contract only demands consistent world coordinates"
+ },
+ {
+  "id": "K10_R_as_closest_canonical",
+  "file": "K10_R_as_closest_canonical.py",
+  "base": "R",
+  "kind": "control",
+  "expect": "PASS",
+  "bug_class": null,
+  "description": "library call nib.as_closest_canonical"
+ },
+ {
+  "id": "K11_S_nibabel_resample",
+  "file": "K11_S_nibabel_resample.py",
+  "base": "S",
+  "kind": "control",
+  "expect": "PASS",
+  "bug_class": null,
+  "description": "nibabel.processing.resample_to_output(order=0) at 2 mm"
+ },
+ {
+  "id": "A01_no_contract_clean",
+  "file": "A01_no_contract_clean.py",
+  "base": "R",
+  "kind": "abstain",
+  "expect": "ABSTAIN",
+  "bug_class": null,
+  "description": "correct code, no contract declared"
+ },
+ {
+  "id": "A02_no_contract_buggy",
+  "file": "A02_no_contract_buggy.py",
+  "base": "R",
+  "kind": "abstain",
+  "expect": "ABSTAIN",
+  "bug_class": "stale_affine",
+  "description": "stale-affine bug, no contract declared"
+ },
+ {
+  "id": "A03_no_contract_buggy_S",
+  "file": "A03_no_contract_buggy_S.py",
+  "base": "S",
+  "kind": "abstain",
+  "expect": "ABSTAIN",
+  "bug_class": "flipped_axis",
+  "description": "flip bug in the resampler, no contract declared"
+ },
+ {
+  "id": "A04_units_unknown",
+  "file": "A04_units_unknown.py",
+  "base": "R",
+  "kind": "abstain",
+  "expect": "ABSTAIN",
+  "bug_class": null,
+  "description": "contract with units 'unknown'"
+ },
+ {
+  "id": "A05_corner_convention",
+  "file": "A05_corner_convention.py",
+  "base": "C",
+  "kind": "abstain",
+  "expect": "ABSTAIN",
+  "bug_class": "stale_affine",
+  "description": "contract declares voxel-corner affine (unsupported/ambiguous)"
+ },
+ {
+  "id": "A06_frame_missing",
+  "file": "A06_frame_missing.py",
+  "base": "L",
+  "kind": "abstain",
+  "expect": "ABSTAIN",
+  "bug_class": null,
+  "description": "contract omits world_frame"
+ },
+ {
+  "id": "A07_units_ambiguous",
+  "file": "A07_units_ambiguous.py",
+  "base": "M",
+  "kind": "abstain",
+  "expect": "ABSTAIN",
+  "bug_class": "wrong_units",
+  "description": "units declared as 'mm/m'"
+ }
+]

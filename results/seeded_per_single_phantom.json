@@ -1,0 +1,154 @@
+{
+ "per_seed": {
+  "0": {
+   "bugs_detected": [
+    31,
+    31
+   ],
+   "false_alarms": [
+    0,
+    11
+   ],
+   "abstain_correct": [
+    7,
+    7
+   ],
+   "missed_bugs": [],
+   "false_alarm_ids": []
+  },
+  "1": {
+   "bugs_detected": [
+    31,
+    31
+   ],
+   "false_alarms": [
+    0,
+    11
+   ],
+   "abstain_correct": [
+    7,
+    7
+   ],
+   "missed_bugs": [],
+   "false_alarm_ids": []
+  },
+  "2": {
+   "bugs_detected": [
+    31,
+    31
+   ],
+   "false_alarms": [
+    0,
+    11
+   ],
+   "abstain_correct": [
+    7,
+    7
+   ],
+   "missed_bugs": [],
+   "false_alarm_ids": []
+  },
+  "3": {
+   "bugs_detected": [
+    31,
+    31
+   ],
+   "false_alarms": [
+    0,
+    11
+   ],
+   "abstain_correct": [
+    7,
+    7
+   ],
+   "missed_bugs": [],
+   "false_alarm_ids": []
+  },
+  "4": {
+   "bugs_detected": [
+    31,
+    31
+   ],
+   "false_alarms": [
+    0,
+    11
+   ],
+   "abstain_correct": [
+    7,
+    7
+   ],
+   "missed_bugs": [],
+   "false_alarm_ids": []
+  },
+  "5": {
+   "bugs_detected": [
+    31,
+    31
+   ],
+   "false_alarms": [
+    0,
+    11
+   ],
+   "abstain_correct": [
+    7,
+    7
+   ],
+   "missed_bugs": [],
+   "false_alarm_ids": []
+  },
+  "6": {
+   "bugs_detected": [
+    31,
+    31
+   ],
+   "false_alarms": [
+    0,
+    11
+   ],
+   "abstain_correct": [
+    7,
+    7
+   ],
+   "missed_bugs": [],
+   "false_alarm_ids": []
+  },
+  "7": {
+   "bugs_detected": [
+    31,
+    31
+   ],
+   "false_alarms": [
+    0,
+    11
+   ],
+   "abstain_correct": [
+    7,
+    7
+   ],
+   "missed_bugs": [],
+   "false_alarm_ids": []
+  }
+ },
+ "smallest_detected_error_mm": [
+  [
+   "C02_index_order",
+   3.157
+  ],
+  [
+   "C03_voxel_added_to_world",
+   8.514
+  ],
+  [
+   "C01_stale_affine",
+   9.615
+  ],
+  [
+   "C04_flip_cropped",
+   16.357
+  ],
+  [
+   "R03_flip_post",
+   17.175
+  ]
+ ]
+}
