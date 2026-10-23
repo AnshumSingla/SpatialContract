@@ -1,0 +1,40 @@
+{
+ "model": "nvidia/NVIDIA-Nemotron-3-Nano-30B-A3B",
+ "calls": [
+  {
+   "kind": "chat",
+   "latency_s": 13.43,
+   "finish": "stop",
+   "content": "\nHello.",
+   "has_reasoning_field": true,
+   "usage": {
+    "completion_tokens": 49,
+    "prompt_tokens": 25,
+    "total_tokens": 74,
+    "completion_tokens_details": null,
+    "prompt_tokens_details": null
+   }
+  },
+  {
+   "kind": "tool_call",
+   "latency_s": 1.51,
+   "finish": "tool_calls",
+   "tool_calls": [
+    {
+     "name": "add",
+     "arguments": "{\"a\": 1234, \"b\": 4321}"
+    }
+   ],
+   "tool_call_valid": true,
+   "content": null,
+   "usage": {
+    "completion_tokens": 135,
+    "prompt_tokens": 305,
+    "total_tokens": 440,
+    "completion_tokens_details": null,
+    "prompt_tokens_details": null
+   }
+  }
+ ],
+ "ledger_total_tokens": 514
+}

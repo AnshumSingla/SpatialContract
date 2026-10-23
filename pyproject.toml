@@ -1,0 +1,17 @@
+[project]
+name = "spatialcontract"
+version = "0.0.1"
+description = "Contract-verified repair of spatial/orientation bugs in medical-imaging Python code"
+requires-python = ">=3.10"
+license = { text = "MIT" }
+dependencies = ["numpy", "nibabel", "openai", "python-dotenv"]
+
+[project.optional-dependencies]
+dev = ["pytest"]
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["src"]
