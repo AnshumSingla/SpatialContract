@@ -23,6 +23,8 @@ MARGIN = 8       # voxels from the FOV edge
 OFF_CENTRE = 6   # voxels away from the central plane on every axis
 MIN_SEP = 12     # voxels between landmarks
 MIN_MARGIN_GAP = 2  # voxels; foreground-bbox margins must differ pairwise across axes
+STRONG_OBLIQUE_FROM = 200   # seeds >= this get a 50-70 degree tilt (opt-in bank; the default bank 0..2 is <= 12 degrees)
+STRONG_OBLIQUE_DEG = (50.0, 70.0)
 
 
 @dataclass(frozen=True)
@@ -57,15 +59,26 @@ def _rotation(rng: np.random.Generator, max_deg: float) -> np.ndarray:
     return np.eye(3) + np.sin(th) * K + (1 - np.cos(th)) * (K @ K)
 
 
+def _rotation_angle(rng: np.random.Generator, axis: np.ndarray, deg: float) -> np.ndarray:
+    th = np.deg2rad(deg)
+    K = np.array([[0, -axis[2], axis[1]], [axis[2], 0, -axis[0]], [-axis[1], axis[0], 0]])
+    return np.eye(3) + np.sin(th) * K + (1 - np.cos(th)) * (K @ K)
+
+
 def make_phantom(seed: int, oblique: bool | None = None) -> Phantom:
-    """Deterministic in ``seed``. ``oblique`` defaults to True for odd seeds."""
+    """Deterministic in ``seed``. ``oblique`` defaults to True for odd seeds; seeds >= STRONG_OBLIQUE_FROM
+    are always strongly oblique (added after a real nibabel bug only showed up on such affines)."""
     rng = np.random.default_rng(10_000 + seed)
     perms = [P for P in _signed_perms() if not np.allclose(P, np.eye(3))]
     P = perms[int(rng.integers(len(perms)))]
     zooms = rng.uniform(0.8, 3.0, size=3)
     if oblique is None:
         oblique = bool(seed % 2)
-    R = _rotation(rng, 12.0) if oblique else np.eye(3)
+    if seed >= STRONG_OBLIQUE_FROM:
+        axis = rng.normal(size=3)
+        R = _rotation_angle(rng, axis / np.linalg.norm(axis), rng.uniform(*STRONG_OBLIQUE_DEG))
+    else:
+        R = _rotation(rng, 12.0) if oblique else np.eye(3)
     A3 = R @ P @ np.diag(zooms)
     centre_vox = (np.array(SHAPE) - 1) / 2
     t = rng.uniform(-40, 40, size=3) - A3 @ centre_vox

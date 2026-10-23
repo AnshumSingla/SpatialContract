@@ -51,6 +51,41 @@ Things the corpus exposed, fixed after the fact (so the numbers above are NOT a 
    The tolerance is now `min(max(1.5, 0.866 x output voxel), 4.0)` mm. Consequence: errors below roughly one coarse voxel are invisible
    (smallest detected bug error: 3.2 mm for `C02`; a sub-voxel shift would pass).
 
+## Real-bug corpus (implemented, step 5; oracle only, no LLM involved)
+Seven fixed spatial bugs from public libraries, each reproduced by running the library at the **parent of the fix commit (PRE)** and at the
+**fix commit (POST)** through the same `process(in, out)` script and contract (`corpus/real/*.py`, pinned SHAs in
+`src/spatialcontract/realbugs.py`, raw results in `results/real_bugs_oracle.json`). Reproduced = oracle FAILs PRE and PASSes POST.
+
+| id | library | fix date | what was wrong | class | oracle signal at PRE | fix commit touched a test? |
+|---|---|---|---|---|---|---|
+| torchio_crop | TorchIO 0.17 | 2020-11-05 | `Crop` computed the new affine but never assigned it | stale affine | 12.7 mm | no |
+| nilearn_reorder | nilearn 0.4 | 2018-01-10 | `reorder_img` origin off by one voxel when flipping y/z | flipped axis | 1.0 mm | yes |
+| nibabel_conform | nibabel 3.1 | 2020-04-08 | `conform()` re-oriented with wrong axis labels (visible for `orientation="LIA"`, not for `"RAS"`) | axis swap | orientation contract violated (got `LSP`, wanted `LIA`); landmarks within tolerance | no |
+| monai_spacing_offset | MONAI 1.0 | 2022-10-04 | `Spacing(scale_extent=True)` wrong output offset on oblique affines (#5253) | voxel vs world | landmarks lost on the oblique phantoms (seed 1); seed 0 passes | yes |
+| nibabel_ioorient | nibabel 5.4 | 2025-12-19 | `io_orientation` labelled competing axes in input order | axis swap | orientation contract violated (0 mm world error) | yes |
+| torchio_reorient | TorchIO 2.0a | 2026-04-14 | `Reorient` permuted before flipping, affine built from wrong shape | axis swap | 43.2 mm | yes |
+| torchio_sitk_ras_lps | TorchIO 2.0a | 2026-04-05 | affine written to SimpleITK without RAS->LPS, double flip on save | flipped axis | 123.3 mm | yes |
+
+**7/7 reproduced, so the real corpus is not labelled synthetic-only. The target of >=10 was not met: 7.** dipy, ANTsPy and SimpleITK contribute
+zero cases (candidates I found were streamline/diffusion/plotting code, or ITK-internal fixes with no checkable file-in/file-out behaviour).
+Repo coverage: TorchIO 3, nibabel 2, nilearn 1, MONAI 1.
+
+How much to trust this (read before quoting the 7/7):
+- **First-attempt oracle detection was 4/7, not 7/7.** Three cases first passed or did not trigger, and I changed the harness or the repro afterwards:
+  (1) `nilearn_reorder`: the error is exactly one voxel (1.0 mm), under the old fixed 1.5 mm tolerance. The oracle now uses a 0.05 mm tolerance when the output is
+  lossless (every landmark keeps its voxel count) and the voxel-scaled tolerance only for resampling pipelines. (2) `nibabel_ioorient`: needs a 50-70 degree
+  oblique affine, my default phantoms tilt at most 12 degrees. I added an opt-in strong-oblique bank (seeds 200-207); **only 1 of those 8 phantoms triggers the bug**
+  (output `RIA` instead of `RAS`) and the world-coordinate error is 0 mm, so only the declared `array_orientation` contract catches it. (3) `nibabel_conform`: with
+  `orientation="RAS"` pre- and post-fix behave identically; I changed the target to `LIA` after reading the diff.
+- **Selection bias.** I mined git history for commits that looked spatial, kept the ones I judged expressible as `process(in, out)`, wrote the contracts and scripts
+  myself, and knew the fix when I did. Bugs needing other inputs (NRRD/DICOM readers, augmentation transforms, streamlines) were skipped.
+- PRE/POST are commits (library source imported from git worktrees), not releases. Old libraries run in a legacy virtualenv (numpy 1.23, nibabel 4.0.2, torch 2.2).
+  Environment shims (not in any library under test): `sklearn.externals.joblib` + `Memory(cachedir=)` for nilearn 0.4, and a fake `torchio` dist-info for TorchIO 2.0a worktrees.
+- "Fix commit touched a test" is read from `git show --name-only`. I did **not** run the pre-fix test suites, so "the repo's own tests missed it" is only supported
+  as "the covering test was added together with the fix (5 of 7) or not in that commit (2 of 7)".
+- 7 cases: any rate computed from them has a wide interval (7/7 has a 95% Clopper-Pearson lower bound of about 0.59).
+- Reproduce: `python scripts/setup_real_bugs.py` (needs network), create `_work/env_legacy` and `_work/env_modern` with the pins in the table above, then `python scripts/run_real_bugs.py`.
+
 ## How Nemotron / Token Factory are used
 _TODO (filled after step 6)._
 

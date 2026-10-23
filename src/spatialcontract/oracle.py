@@ -27,6 +27,7 @@ DEFAULT_SEEDS = (0, 1, 2)
 DEFAULT_TOL_MM = 1.5
 HALF_VOXEL_DIAG = 0.866   # sqrt(3)/2 of the largest output voxel edge
 MAX_TOL_MM = 4.0
+LOSSLESS_TOL_MM = 0.05
 TIMEOUT_S = 90
 
 _RUNNER = (
@@ -56,6 +57,7 @@ class PhantomResult:
     out_zooms_mm: list | None = None
     orientation_ok: bool | None = None
     tol_mm_used: float | None = None
+    lossless: bool | None = None
     detail: str = ""
 
 
@@ -94,7 +96,7 @@ class Report:
             lines.append(
                 f"phantom seed={p.seed}: {p.status}; output axcodes={p.out_axcodes} "
                 f"zooms_mm={p.out_zooms_mm}; orientation_ok={p.orientation_ok}; "
-                f"tol_used={p.tol_mm_used} mm; {len(bad)}/{len(p.landmarks)} landmarks off")
+                f"lossless={p.lossless} tol_used={p.tol_mm_used} mm; {len(bad)}/{len(p.landmarks)} landmarks off")
             for lm in bad[:3]:
                 err = "LOST" if lm.error_mm is None else f"{lm.error_mm:.2f} mm"
                 lines.append(f"  landmark {lm.label}: expected {_fmt(lm.expected)} got {_fmt(lm.got)} error {err}")
@@ -109,10 +111,19 @@ def _fmt(v):
     return "none" if v is None else "(" + ", ".join(f"{x:.3f}" for x in v) + ")"
 
 
-def _run_code(code_path: Path, in_path: Path, out_path: Path, cwd: Path) -> tuple[bool, str]:
+def _run_code(code_path: Path, in_path: Path, out_path: Path, cwd: Path,
+              python: str | None = None, pythonpath: list | None = None) -> tuple[bool, str]:
+    """Run ``process`` in a subprocess. ``python``/``pythonpath`` select an interpreter and extra import roots
+    (used by the real-bug corpus to run a library at a specific commit); isolated mode (-I) is used otherwise."""
     env = {k: os.environ[k] for k in _ENV_KEEP if k in os.environ}
+    cmd = [python or sys.executable]
+    if pythonpath:
+        env["PYTHONPATH"] = os.pathsep.join(str(p) for p in pythonpath)
+        cmd += ["-s"]
+    else:
+        cmd += ["-I"]
     try:
-        r = subprocess.run([sys.executable, "-I", "-c", _RUNNER, str(code_path), str(in_path), str(out_path)],
+        r = subprocess.run(cmd + ["-c", _RUNNER, str(code_path), str(in_path), str(out_path)],
                            capture_output=True, text=True, timeout=TIMEOUT_S, cwd=cwd, env=env)
     except subprocess.TimeoutExpired:
         return False, f"timeout after {TIMEOUT_S}s"
@@ -122,11 +133,12 @@ def _run_code(code_path: Path, in_path: Path, out_path: Path, cwd: Path) -> tupl
     return True, ""
 
 
-def _check_one(code_path: Path, contract: SpatialContract, ph: Phantom, tol_mm: float, tmp: Path) -> PhantomResult:
+def _check_one(code_path: Path, contract: SpatialContract, ph: Phantom, tol_mm: float, tmp: Path,
+               python: str | None = None, pythonpath: list | None = None) -> PhantomResult:
     in_path = tmp / f"phantom_{ph.seed}.nii.gz"
     out_path = tmp / f"out_{ph.seed}.nii.gz"
     ph.save(in_path)
-    ok, err = _run_code(code_path, in_path, out_path, tmp)
+    ok, err = _run_code(code_path, in_path, out_path, tmp, python, pythonpath)
     if not ok:
         return PhantomResult(ph.seed, "ERROR", detail=str(err))
     try:
@@ -144,10 +156,17 @@ def _check_one(code_path: Path, contract: SpatialContract, ph: Phantom, tol_mm: 
     res.out_zooms_mm = [round(float(z), 3) for z in np.sqrt((ras_aff[:3, :3] ** 2).sum(axis=0))]
     if contract.array_orientation:
         res.orientation_ok = res.out_axcodes == contract.array_orientation
-    # Nearest-neighbour resampling moves a landmark centroid by up to ~half a voxel diagonal, so the
-    # tolerance grows with the output voxel size; the cap stops a bug that inflates its own zooms from
-    # buying itself a lenient tolerance.
-    tol_mm = min(max(tol_mm, HALF_VOXEL_DIAG * max(res.out_zooms_mm)), MAX_TOL_MM)
+    # Lossless pipelines (reorient, crop, copy) keep every landmark's exact voxel count and must reproduce its
+    # world position essentially exactly; a real nilearn bug (reorder_img off-by-one voxel) slipped under the
+    # old fixed 1.5 mm tolerance. Resampling pipelines change the counts; there nearest-neighbour moves a
+    # centroid by up to ~half a voxel diagonal, so the tolerance grows with the output voxel size. The cap
+    # stops a bug that inflates its own zooms from buying itself a lenient tolerance.
+    in_counts = {lb: int(np.count_nonzero(ph.data == lb)) for lb in ph.world_ras_mm}
+    res.lossless = all(int(np.count_nonzero(np.abs(data - lb) < 0.25)) == n for lb, n in in_counts.items())
+    if res.lossless:
+        tol_mm = min(tol_mm, LOSSLESS_TOL_MM)
+    else:
+        tol_mm = min(max(tol_mm, HALF_VOXEL_DIAG * max(res.out_zooms_mm)), MAX_TOL_MM)
     res.tol_mm_used = round(tol_mm, 3)
 
     for label, true_ras in ph.world_ras_mm.items():
@@ -168,7 +187,8 @@ def _check_one(code_path: Path, contract: SpatialContract, ph: Phantom, tol_mm: 
     return res
 
 
-def check(code_path, contract: SpatialContract | None, seeds=DEFAULT_SEEDS, tol_mm: float = DEFAULT_TOL_MM) -> Report:
+def check(code_path, contract: SpatialContract | None, seeds=DEFAULT_SEEDS, tol_mm: float = DEFAULT_TOL_MM,
+          python: str | None = None, pythonpath: list | None = None) -> Report:
     """Run the oracle on the code at ``code_path`` under ``contract`` (None => read it from the source)."""
     code_path = Path(code_path).resolve()
     if contract is None:
@@ -183,7 +203,7 @@ def check(code_path, contract: SpatialContract | None, seeds=DEFAULT_SEEDS, tol_
     with tempfile.TemporaryDirectory(prefix="sc_oracle_") as d:
         tmp = Path(d)
         for s in seeds:
-            rep.phantoms.append(_check_one(code_path, contract, make_phantom(s), tol_mm, tmp))
+            rep.phantoms.append(_check_one(code_path, contract, make_phantom(s), tol_mm, tmp, python, pythonpath))
     statuses = {p.status for p in rep.phantoms}
     rep.verdict = "ERROR" if "ERROR" in statuses else "FAIL" if "FAIL" in statuses else "PASS"
     return rep
