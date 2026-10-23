@@ -46,6 +46,12 @@ class TokenBudget:
         print(f"[budget] +{prompt}p +{completion}c => {self.total}/{self.cap} tokens")
 
 
+def require_api_enabled() -> None:
+    """Kill switch: no network call to Token Factory unless SC_ALLOW_API=1 is set explicitly."""
+    if os.environ.get("SC_ALLOW_API") != "1":
+        raise RuntimeError("API calls are disabled. Set SC_ALLOW_API=1 to allow Token Factory calls.")
+
+
 def settings() -> dict:
     key = os.environ.get("NEBIUS_API_KEY", "")
     if not key:
@@ -67,6 +73,7 @@ class Client:
         self._c = OpenAI(api_key=s["api_key"], base_url=s["base_url"], timeout=90)
 
     def chat(self, messages: list[dict], max_tokens: int = 256, **kw):
+        require_api_enabled()
         est_prompt = sum(len(str(m.get("content", ""))) for m in messages) // 3 + 50
         if "tools" in kw:
             est_prompt += len(json.dumps(kw["tools"])) // 3

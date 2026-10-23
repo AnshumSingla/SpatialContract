@@ -7,10 +7,11 @@ import urllib.error
 import urllib.request
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
-from spatialcontract.llm import settings  # noqa: E402
+from spatialcontract.llm import require_api_enabled, settings  # noqa: E402
 
 
 def main() -> int:
+    require_api_enabled()
     s = settings()
     url = s["base_url"].rstrip("/") + "/models?verbose=true"
     req = urllib.request.Request(url, headers={"Authorization": f"Bearer {s['api_key']}"})
