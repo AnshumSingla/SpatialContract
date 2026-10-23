@@ -1,4 +1,3 @@
-# seeded case K10_R_as_closest_canonical: library call nib.as_closest_canonical
 import numpy as np
 import nibabel as nib
 from nibabel import orientations as o

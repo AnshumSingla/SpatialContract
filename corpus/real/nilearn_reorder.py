@@ -1,4 +1,3 @@
-# Real bug: nilearn reorder_img off-by-one in the origin for flipped y/z axes (fixed in 613c0d76)
 SPATIAL_CONTRACT = {"world_frame": "RAS", "units": "mm", "affine_convention": "voxel_center_to_world"}
 
 

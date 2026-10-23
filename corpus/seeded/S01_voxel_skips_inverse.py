@@ -1,4 +1,3 @@
-# seeded case S01_voxel_skips_inverse: uses world points as input voxel indices (forgot inv(aff))
 import numpy as np
 import nibabel as nib
 from nibabel import orientations as o

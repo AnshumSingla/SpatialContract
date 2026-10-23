@@ -1,4 +1,3 @@
-# seeded case R04_flip_pre: flips the last axis of the raw data before computing the orientation transform
 import numpy as np
 import nibabel as nib
 from nibabel import orientations as o

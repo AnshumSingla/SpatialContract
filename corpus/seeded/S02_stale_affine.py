@@ -1,4 +1,3 @@
-# seeded case S02_stale_affine: saves the INPUT affine on the resampled grid
 import numpy as np
 import nibabel as nib
 from nibabel import orientations as o

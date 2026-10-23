@@ -1,4 +1,3 @@
-# seeded case M03_not_converted: never converts: affine still in mm while contract says m
 import numpy as np
 import nibabel as nib
 from nibabel import orientations as o

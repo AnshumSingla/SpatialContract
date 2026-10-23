@@ -1,4 +1,3 @@
-# seeded case A06_frame_missing: contract omits world_frame
 import numpy as np
 import nibabel as nib
 from nibabel import orientations as o

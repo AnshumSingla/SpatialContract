@@ -1,4 +1,3 @@
-# seeded case R06_stale_header: builds the output from the input header, inheriting its old sform
 import numpy as np
 import nibabel as nib
 from nibabel import orientations as o

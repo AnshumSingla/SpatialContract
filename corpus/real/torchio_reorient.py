@@ -1,4 +1,3 @@
-# Real bug: TorchIO Reorient applied permutation/flip in the wrong order and used the wrong shape for the affine (fixed in 95b1b74)
 SPATIAL_CONTRACT = {"world_frame": "RAS", "units": "mm", "affine_convention": "voxel_center_to_world",
                     "array_orientation": "RAS"}
 

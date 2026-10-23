@@ -1,4 +1,3 @@
-# seeded case R08_voxel_spacing_only: affine keeps only voxel sizes, dropping rotation/flip and origin
 import numpy as np
 import nibabel as nib
 from nibabel import orientations as o

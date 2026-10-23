@@ -1,4 +1,3 @@
-# seeded case K01_R_reference: reference reorient-to-RAS
 import numpy as np
 import nibabel as nib
 from nibabel import orientations as o

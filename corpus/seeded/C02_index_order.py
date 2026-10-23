@@ -1,4 +1,3 @@
-# seeded case C02_index_order: crop offset applied with axes reversed (k,j,i)
 import numpy as np
 import nibabel as nib
 from nibabel import orientations as o

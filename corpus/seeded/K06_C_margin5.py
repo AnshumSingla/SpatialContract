@@ -1,4 +1,3 @@
-# seeded case K06_C_margin5: crop with a 5-voxel margin
 import numpy as np
 import nibabel as nib
 from nibabel import orientations as o

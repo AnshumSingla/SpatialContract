@@ -1,0 +1,89 @@
+[
+ {
+  "case": "R05_stale_affine",
+  "outcome": "FAILED",
+  "iterations": 4,
+  "llm_calls": 4,
+  "tokens": {
+   "prompt": 7963,
+   "completion": 13830
+  },
+  "visible_passed": false,
+  "heldout": null,
+  "reasons": [
+   "iteration cap reached without a passing patch"
+  ],
+  "log_path": "D:\\VS\\Nebius\\SpatialContract\\results\\runs\\probe-nano-default\\R05_stale_affine.jsonl",
+  "seconds": 84.3,
+  "model": "nvidia/NVIDIA-Nemotron-3-Nano-30B-A3B",
+  "thinking": "default"
+ },
+ {
+  "case": "C02_index_order",
+  "outcome": "REPAIRED",
+  "iterations": 2,
+  "llm_calls": 2,
+  "tokens": {
+   "prompt": 3704,
+   "completion": 14260
+  },
+  "visible_passed": true,
+  "heldout": {
+   "passed": true,
+   "summary": {
+    "hidden_bank": "PASS",
+    "per_run": "PASS",
+    "paired": "PASS",
+    "differential": "PASS"
+   },
+   "differential": {
+    "verdict": "PASS",
+    "p90_equiv_mm": 0.0,
+    "tol_mm": 0.05,
+    "valid_fraction": 1.0,
+    "lossless": true
+   },
+   "per_run_seed": 55652,
+   "failing_detail": {}
+  },
+  "reasons": [],
+  "log_path": "D:\\VS\\Nebius\\SpatialContract\\results\\runs\\probe-nano-default\\C02_index_order.jsonl",
+  "seconds": 98.3,
+  "model": "nvidia/NVIDIA-Nemotron-3-Nano-30B-A3B",
+  "thinking": "default"
+ },
+ {
+  "case": "M01_zoom_only",
+  "outcome": "REPAIRED",
+  "iterations": 1,
+  "llm_calls": 1,
+  "tokens": {
+   "prompt": 1735,
+   "completion": 5138
+  },
+  "visible_passed": true,
+  "heldout": {
+   "passed": true,
+   "summary": {
+    "hidden_bank": "PASS",
+    "per_run": "PASS",
+    "paired": "PASS",
+    "differential": "PASS"
+   },
+   "differential": {
+    "verdict": "PASS",
+    "p90_equiv_mm": 0.0,
+    "tol_mm": 0.05,
+    "valid_fraction": 1.0,
+    "lossless": true
+   },
+   "per_run_seed": 23713,
+   "failing_detail": {}
+  },
+  "reasons": [],
+  "log_path": "D:\\VS\\Nebius\\SpatialContract\\results\\runs\\probe-nano-default\\M01_zoom_only.jsonl",
+  "seconds": 39.7,
+  "model": "nvidia/NVIDIA-Nemotron-3-Nano-30B-A3B",
+  "thinking": "default"
+ }
+]

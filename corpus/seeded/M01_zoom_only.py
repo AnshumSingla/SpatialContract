@@ -1,4 +1,3 @@
-# seeded case M01_zoom_only: converts the rotation/zoom block to metres but leaves the origin in mm
 import numpy as np
 import nibabel as nib
 from nibabel import orientations as o

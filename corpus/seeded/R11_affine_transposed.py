@@ -1,4 +1,3 @@
-# seeded case R11_affine_transposed: saves new_aff.T
 import numpy as np
 import nibabel as nib
 from nibabel import orientations as o

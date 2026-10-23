@@ -1,4 +1,3 @@
-# Real bug: TorchIO Crop did not update the image affine (fixed in 7e1decf, issue #351)
 SPATIAL_CONTRACT = {"world_frame": "RAS", "units": "mm", "affine_convention": "voxel_center_to_world"}
 
 

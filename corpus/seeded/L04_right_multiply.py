@@ -1,4 +1,3 @@
-# seeded case L04_right_multiply: applies the frame change in voxel space (A @ F instead of F @ A)
 import numpy as np
 import nibabel as nib
 from nibabel import orientations as o

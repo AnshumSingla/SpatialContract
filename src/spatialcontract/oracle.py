@@ -53,6 +53,8 @@ class PhantomResult:
     seed: int
     status: str                    # PASS | FAIL | ERROR
     landmarks: list = field(default_factory=list)
+    in_axcodes: str | None = None
+    in_zooms_mm: list | None = None
     out_axcodes: str | None = None
     out_zooms_mm: list | None = None
     orientation_ok: bool | None = None
@@ -94,7 +96,7 @@ class Report:
                 continue
             bad = [lm for lm in p.landmarks if not lm.ok]
             lines.append(
-                f"phantom seed={p.seed}: {p.status}; output axcodes={p.out_axcodes} "
+                f"phantom seed={p.seed}: {p.status}; input axcodes={p.in_axcodes} zooms_mm={p.in_zooms_mm} -> output axcodes={p.out_axcodes} "
                 f"zooms_mm={p.out_zooms_mm}; orientation_ok={p.orientation_ok}; "
                 f"lossless={p.lossless} tol_used={p.tol_mm_used} mm; {len(bad)}/{len(p.landmarks)} landmarks off")
             for lm in bad[:3]:
@@ -151,6 +153,8 @@ def _check_one(code_path: Path, contract: SpatialContract, ph: Phantom, tol_mm: 
         return PhantomResult(ph.seed, "ERROR", detail=f"output has {data.ndim} dims, expected 3")
 
     res = PhantomResult(ph.seed, "PASS")
+    res.in_axcodes = "".join(nib.aff2axcodes(ph.affine))
+    res.in_zooms_mm = [round(float(z), 3) for z in np.sqrt((ph.affine[:3, :3] ** 2).sum(axis=0))]
     ras_aff = contract.contract_to_ras_affine_mm(aff)
     res.out_axcodes = "".join(nib.aff2axcodes(ras_aff))
     res.out_zooms_mm = [round(float(z), 3) for z in np.sqrt((ras_aff[:3, :3] ** 2).sum(axis=0))]
@@ -188,7 +192,7 @@ def _check_one(code_path: Path, contract: SpatialContract, ph: Phantom, tol_mm: 
 
 
 def check(code_path, contract: SpatialContract | None, seeds=DEFAULT_SEEDS, tol_mm: float = DEFAULT_TOL_MM,
-          python: str | None = None, pythonpath: list | None = None) -> Report:
+          python: str | None = None, pythonpath: list | None = None, phantoms: list | None = None) -> Report:
     """Run the oracle on the code at ``code_path`` under ``contract`` (None => read it from the source)."""
     code_path = Path(code_path).resolve()
     if contract is None:
@@ -202,8 +206,13 @@ def check(code_path, contract: SpatialContract | None, seeds=DEFAULT_SEEDS, tol_
     rep = Report("PASS", contract.to_dict(), tol_mm=tol_mm)
     with tempfile.TemporaryDirectory(prefix="sc_oracle_") as d:
         tmp = Path(d)
-        for s in seeds:
-            rep.phantoms.append(_check_one(code_path, contract, make_phantom(s), tol_mm, tmp, python, pythonpath))
+        for ph in (phantoms if phantoms is not None else [make_phantom(s) for s in seeds]):
+            res = _check_one(code_path, contract, ph, tol_mm, tmp, python, pythonpath)
+            if res.status == "ERROR":      # one retry: a transient Windows file-lock/subprocess blip once turned a control into an ERROR
+                again = _check_one(code_path, contract, ph, tol_mm, tmp, python, pythonpath)
+                again.detail = f"{again.detail} (after 1 retry; first attempt: {res.detail})" if again.status == "ERROR" else again.detail
+                res = again
+            rep.phantoms.append(res)
     statuses = {p.status for p in rep.phantoms}
     rep.verdict = "ERROR" if "ERROR" in statuses else "FAIL" if "FAIL" in statuses else "PASS"
     return rep

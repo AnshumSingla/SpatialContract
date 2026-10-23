@@ -1,4 +1,3 @@
-# seeded case M04_converted_twice: converted twice (1e-6)
 import numpy as np
 import nibabel as nib
 from nibabel import orientations as o

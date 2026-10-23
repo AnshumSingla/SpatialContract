@@ -1,4 +1,3 @@
-# seeded case C01_stale_affine: crops but keeps the input affine (origin not shifted)
 import numpy as np
 import nibabel as nib
 from nibabel import orientations as o

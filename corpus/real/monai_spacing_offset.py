@@ -1,4 +1,3 @@
-# Real bug: MONAI Spacing(scale_extent=True) computed a wrong output offset for oblique affines (fixed in d76adc73, #5253)
 SPATIAL_CONTRACT = {"world_frame": "RAS", "units": "mm", "affine_convention": "voxel_center_to_world"}
 
 

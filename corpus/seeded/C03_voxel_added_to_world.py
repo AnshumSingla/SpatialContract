@@ -1,4 +1,3 @@
-# seeded case C03_voxel_added_to_world: adds the voxel offset directly to the world translation
 import numpy as np
 import nibabel as nib
 from nibabel import orientations as o

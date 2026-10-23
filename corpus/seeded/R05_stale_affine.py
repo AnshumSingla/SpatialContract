@@ -1,4 +1,3 @@
-# seeded case R05_stale_affine: saves the input affine with the reoriented data
 import numpy as np
 import nibabel as nib
 from nibabel import orientations as o

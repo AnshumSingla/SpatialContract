@@ -1,4 +1,3 @@
-# seeded case A07_units_ambiguous: units declared as 'mm/m'
 import numpy as np
 import nibabel as nib
 from nibabel import orientations as o

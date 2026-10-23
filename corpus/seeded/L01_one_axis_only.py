@@ -1,4 +1,3 @@
-# seeded case L01_one_axis_only: RAS->LPS flips x only
 import numpy as np
 import nibabel as nib
 from nibabel import orientations as o

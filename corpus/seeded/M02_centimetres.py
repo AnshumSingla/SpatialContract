@@ -1,4 +1,3 @@
-# seeded case M02_centimetres: scales by 1e-2 (cm) instead of 1e-3
 import numpy as np
 import nibabel as nib
 from nibabel import orientations as o

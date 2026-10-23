@@ -1,4 +1,3 @@
-# seeded case K11_S_nibabel_resample: nibabel.processing.resample_to_output(order=0) at 2 mm
 import numpy as np
 import nibabel as nib
 from nibabel import orientations as o

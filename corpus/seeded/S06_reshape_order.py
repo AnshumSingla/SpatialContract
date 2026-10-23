@@ -1,4 +1,3 @@
-# seeded case S06_reshape_order: reshapes with Fortran order, scrambling index order
 import numpy as np
 import nibabel as nib
 from nibabel import orientations as o

@@ -115,7 +115,7 @@ class Case:
             body = body.replace(old, new)
         c = default_contract if self.contract == "default" else self.contract
         block = "" if c is None else "\nSPATIAL_CONTRACT = " + json.dumps(c, indent=4) + "\n"
-        return f"# seeded case {self.id}: {self.desc}\n" + _IMPORTS + block + body
+        return _IMPORTS + block + body   # no header comment: the id or description would leak the bug to the model
 
 
 def _bug(id_, base, cls, desc, *reps):

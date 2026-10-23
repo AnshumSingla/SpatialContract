@@ -1,4 +1,3 @@
-# seeded case K09_noop_copy: does nothing; contract only demands consistent world coordinates
 import numpy as np
 import nibabel as nib
 from nibabel import orientations as o

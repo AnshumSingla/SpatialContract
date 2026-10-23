@@ -1,4 +1,3 @@
-# seeded case A04_units_unknown: contract with units 'unknown'
 import numpy as np
 import nibabel as nib
 from nibabel import orientations as o

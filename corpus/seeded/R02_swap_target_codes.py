@@ -1,4 +1,3 @@
-# seeded case R02_swap_target_codes: target codes (A,R,S) instead of (R,A,S): world is right, array order violates contract
 import numpy as np
 import nibabel as nib
 from nibabel import orientations as o

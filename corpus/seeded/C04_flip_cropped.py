@@ -1,4 +1,3 @@
-# seeded case C04_flip_cropped: flips the cropped array along axis 2, affine untouched
 import numpy as np
 import nibabel as nib
 from nibabel import orientations as o

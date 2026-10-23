@@ -1,4 +1,3 @@
-# seeded case K05_C_reference: reference foreground crop
 import numpy as np
 import nibabel as nib
 from nibabel import orientations as o

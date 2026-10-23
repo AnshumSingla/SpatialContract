@@ -1,4 +1,3 @@
-# seeded case K04_S_3mm: same resampler at 3 mm
 import numpy as np
 import nibabel as nib
 from nibabel import orientations as o

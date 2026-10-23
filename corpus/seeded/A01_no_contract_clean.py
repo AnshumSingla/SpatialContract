@@ -1,4 +1,3 @@
-# seeded case A01_no_contract_clean: correct code, no contract declared
 import numpy as np
 import nibabel as nib
 from nibabel import orientations as o

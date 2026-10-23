@@ -1,4 +1,3 @@
-# seeded case L03_no_conversion: forgets the RAS->LPS conversion and saves the input affine
 import numpy as np
 import nibabel as nib
 from nibabel import orientations as o

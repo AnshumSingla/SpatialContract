@@ -1,0 +1,74 @@
+[
+ {
+  "case": "R05_stale_affine",
+  "outcome": "FAILED",
+  "iterations": 4,
+  "llm_calls": 4,
+  "tokens": {
+   "prompt": 7812,
+   "completion": 3718
+  },
+  "visible_passed": false,
+  "heldout": null,
+  "reasons": [
+   "iteration cap reached without a passing patch"
+  ],
+  "log_path": "D:\\VS\\Nebius\\SpatialContract\\results\\runs\\probe-low\\R05_stale_affine.jsonl",
+  "seconds": 30.5,
+  "model": "nvidia/NVIDIA-Nemotron-3-Nano-30B-A3B",
+  "thinking": "low"
+ },
+ {
+  "case": "C02_index_order",
+  "outcome": "FAILED",
+  "iterations": 4,
+  "llm_calls": 4,
+  "tokens": {
+   "prompt": 7512,
+   "completion": 32000
+  },
+  "visible_passed": false,
+  "heldout": null,
+  "reasons": [
+   "iteration cap reached without a passing patch"
+  ],
+  "log_path": "D:\\VS\\Nebius\\SpatialContract\\results\\runs\\probe-low\\C02_index_order.jsonl",
+  "seconds": 244.9,
+  "model": "nvidia/NVIDIA-Nemotron-3-Nano-30B-A3B",
+  "thinking": "low"
+ },
+ {
+  "case": "M01_zoom_only",
+  "outcome": "REPAIRED",
+  "iterations": 4,
+  "llm_calls": 4,
+  "tokens": {
+   "prompt": 7096,
+   "completion": 27888
+  },
+  "visible_passed": true,
+  "heldout": {
+   "passed": true,
+   "summary": {
+    "hidden_bank": "PASS",
+    "per_run": "PASS",
+    "paired": "PASS",
+    "differential": "PASS"
+   },
+   "differential": {
+    "verdict": "PASS",
+    "p90_equiv_mm": 0.0,
+    "tol_mm": 0.05,
+    "valid_fraction": 1.0,
+    "lossless": true
+   },
+   "per_run_seed": 43077,
+   "failing_detail": {}
+  },
+  "reasons": [],
+  "log_path": "D:\\VS\\Nebius\\SpatialContract\\results\\runs\\probe-low\\M01_zoom_only.jsonl",
+  "seconds": 184.4,
+  "model": "nvidia/NVIDIA-Nemotron-3-Nano-30B-A3B",
+  "thinking": "low"
+ }
+]

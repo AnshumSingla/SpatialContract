@@ -1,4 +1,3 @@
-# seeded case L02_rotation_only: flips the rotation block but leaves the origin in RAS
 import numpy as np
 import nibabel as nib
 from nibabel import orientations as o

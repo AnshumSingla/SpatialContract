@@ -1,4 +1,3 @@
-# seeded case A02_no_contract_buggy: stale-affine bug, no contract declared
 import numpy as np
 import nibabel as nib
 from nibabel import orientations as o

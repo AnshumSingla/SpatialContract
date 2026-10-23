@@ -1,4 +1,3 @@
-# seeded case K03_S_reference: reference 2 mm nearest-neighbour resampler (exercises interpolation tolerance)
 import numpy as np
 import nibabel as nib
 from nibabel import orientations as o

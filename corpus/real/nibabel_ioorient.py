@@ -1,4 +1,3 @@
-# Real bug: nibabel io_orientation labelled axes inconsistently when axes compete (fixed in a9caf8f9 + 927be913)
 SPATIAL_CONTRACT = {"world_frame": "RAS", "units": "mm", "affine_convention": "voxel_center_to_world",
                     "array_orientation": "RAS"}
 

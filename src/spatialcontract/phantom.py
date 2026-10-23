@@ -23,7 +23,7 @@ MARGIN = 8       # voxels from the FOV edge
 OFF_CENTRE = 6   # voxels away from the central plane on every axis
 MIN_SEP = 12     # voxels between landmarks
 MIN_MARGIN_GAP = 2  # voxels; foreground-bbox margins must differ pairwise across axes
-STRONG_OBLIQUE_FROM = 200   # seeds >= this get a 50-70 degree tilt (opt-in bank; the default bank 0..2 is <= 12 degrees)
+STRONG_OBLIQUE_FROM, STRONG_OBLIQUE_TO = 200, 300   # seeds in [200, 300) get a 50-70 degree tilt (opt-in bank; default bank 0..2 is <= 12 degrees)
 STRONG_OBLIQUE_DEG = (50.0, 70.0)
 
 
@@ -66,7 +66,7 @@ def _rotation_angle(rng: np.random.Generator, axis: np.ndarray, deg: float) -> n
 
 
 def make_phantom(seed: int, oblique: bool | None = None) -> Phantom:
-    """Deterministic in ``seed``. ``oblique`` defaults to True for odd seeds; seeds >= STRONG_OBLIQUE_FROM
+    """Deterministic in ``seed``. ``oblique`` defaults to True for odd seeds; seeds in [STRONG_OBLIQUE_FROM, STRONG_OBLIQUE_TO)
     are always strongly oblique (added after a real nibabel bug only showed up on such affines)."""
     rng = np.random.default_rng(10_000 + seed)
     perms = [P for P in _signed_perms() if not np.allclose(P, np.eye(3))]
@@ -74,7 +74,7 @@ def make_phantom(seed: int, oblique: bool | None = None) -> Phantom:
     zooms = rng.uniform(0.8, 3.0, size=3)
     if oblique is None:
         oblique = bool(seed % 2)
-    if seed >= STRONG_OBLIQUE_FROM:
+    if STRONG_OBLIQUE_FROM <= seed < STRONG_OBLIQUE_TO:
         axis = rng.normal(size=3)
         R = _rotation_angle(rng, axis / np.linalg.norm(axis), rng.uniform(*STRONG_OBLIQUE_DEG))
     else:
@@ -115,3 +115,27 @@ def make_phantom(seed: int, oblique: bool | None = None) -> Phantom:
         vox[label] = c
         world[label] = (affine @ np.append(c, 1.0))[:3]
     return Phantom(seed, data, affine, vox, world)
+
+
+def make_paired(ph: Phantom, k: int = 0) -> Phantom:
+    """The same physical phantom stored in a different valid orientation (a signed axis permutation of the voxel
+    grid, affine updated to match). Ground-truth world positions are identical, so a correct pipeline must give
+    the same answer for ``ph`` and its pair; a patch that special-cases one input orientation will not."""
+    import nibabel as nib
+
+    rng = np.random.default_rng(777 + 31 * ph.seed + k)
+    codes = [c for c in itertools.permutations("RLAPSI", 3) if {x for x in c} and
+             len({frozenset((a, _OPP[a])) for a in c}) == 3]
+    current = "".join(nib.aff2axcodes(ph.affine))
+    codes = ["".join(c) for c in codes if "".join(c) != current]
+    target = codes[int(rng.integers(len(codes)))]
+    ornt = nib.orientations.ornt_transform(nib.orientations.io_orientation(ph.affine),
+                                           nib.orientations.axcodes2ornt(tuple(target)))
+    data = nib.orientations.apply_orientation(ph.data, ornt)
+    affine = ph.affine @ nib.orientations.inv_ornt_aff(ornt, ph.data.shape)
+    inv = np.linalg.inv(affine)
+    vox = {lb: (inv @ np.append(w, 1.0))[:3] for lb, w in ph.world_ras_mm.items()}
+    return Phantom(ph.seed, np.ascontiguousarray(data), affine, vox, dict(ph.world_ras_mm))
+
+
+_OPP = {"R": "L", "L": "R", "A": "P", "P": "A", "S": "I", "I": "S"}

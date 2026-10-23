@@ -1,4 +1,3 @@
-# seeded case K07_L_reference: reference RAS->LPS
 import numpy as np
 import nibabel as nib
 from nibabel import orientations as o

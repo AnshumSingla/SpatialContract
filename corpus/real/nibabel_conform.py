@@ -1,4 +1,3 @@
-# Real bug: nibabel.processing.conform reoriented the output to the wrong axis labels (fixed in 07fa2543)
 SPATIAL_CONTRACT = {"world_frame": "RAS", "units": "mm", "affine_convention": "voxel_center_to_world",
                     "array_orientation": "LIA"}
 

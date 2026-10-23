@@ -1,4 +1,3 @@
-# seeded case R07_voxel_identity: writes an identity affine (voxel index treated as world)
 import numpy as np
 import nibabel as nib
 from nibabel import orientations as o

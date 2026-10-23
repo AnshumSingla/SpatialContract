@@ -1,4 +1,3 @@
-# seeded case R01_swap_transpose: transposes axes 0/1 after reorienting, affine untouched
 import numpy as np
 import nibabel as nib
 from nibabel import orientations as o

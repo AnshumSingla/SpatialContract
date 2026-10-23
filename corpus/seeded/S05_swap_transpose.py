@@ -1,4 +1,3 @@
-# seeded case S05_swap_transpose: transposes the resampled array, affine untouched
 import numpy as np
 import nibabel as nib
 from nibabel import orientations as o

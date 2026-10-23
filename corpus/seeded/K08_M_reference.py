@@ -1,4 +1,3 @@
-# seeded case K08_M_reference: reference mm->m
 import numpy as np
 import nibabel as nib
 from nibabel import orientations as o

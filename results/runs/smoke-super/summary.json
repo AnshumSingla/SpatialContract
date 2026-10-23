@@ -1,0 +1,348 @@
+[
+ {
+  "case": "R01_swap_transpose",
+  "outcome": "REPAIRED",
+  "iterations": 1,
+  "llm_calls": 1,
+  "tokens": {
+   "prompt": 1904,
+   "completion": 284
+  },
+  "visible_passed": true,
+  "heldout": {
+   "passed": true,
+   "summary": {
+    "hidden_bank": "PASS",
+    "per_run": "PASS",
+    "paired": "PASS",
+    "differential": "PASS"
+   },
+   "differential": {
+    "verdict": "PASS",
+    "p90_equiv_mm": 0.0,
+    "tol_mm": 0.05,
+    "valid_fraction": 1.0,
+    "lossless": true
+   },
+   "per_run_seed": 117916,
+   "failing_detail": {}
+  },
+  "reasons": [],
+  "log_path": "D:\\VS\\Nebius\\SpatialContract\\results\\runs\\smoke-super\\R01_swap_transpose.jsonl",
+  "seconds": 12.6,
+  "model": "nvidia/nemotron-3-super-120b-a12b",
+  "thinking": "default"
+ },
+ {
+  "case": "R04_flip_pre",
+  "outcome": "REPAIRED",
+  "iterations": 1,
+  "llm_calls": 1,
+  "tokens": {
+   "prompt": 1895,
+   "completion": 357
+  },
+  "visible_passed": true,
+  "heldout": {
+   "passed": true,
+   "summary": {
+    "hidden_bank": "PASS",
+    "per_run": "PASS",
+    "paired": "PASS",
+    "differential": "PASS"
+   },
+   "differential": {
+    "verdict": "PASS",
+    "p90_equiv_mm": 0.0,
+    "tol_mm": 0.05,
+    "valid_fraction": 1.0,
+    "lossless": true
+   },
+   "per_run_seed": 117916,
+   "failing_detail": {}
+  },
+  "reasons": [],
+  "log_path": "D:\\VS\\Nebius\\SpatialContract\\results\\runs\\smoke-super\\R04_flip_pre.jsonl",
+  "seconds": 12.5,
+  "model": "nvidia/nemotron-3-super-120b-a12b",
+  "thinking": "default"
+ },
+ {
+  "case": "R12_affine_inverted",
+  "outcome": "REPAIRED",
+  "iterations": 1,
+  "llm_calls": 1,
+  "tokens": {
+   "prompt": 1898,
+   "completion": 300
+  },
+  "visible_passed": true,
+  "heldout": {
+   "passed": true,
+   "summary": {
+    "hidden_bank": "PASS",
+    "per_run": "PASS",
+    "paired": "PASS",
+    "differential": "PASS"
+   },
+   "differential": {
+    "verdict": "PASS",
+    "p90_equiv_mm": 0.0,
+    "tol_mm": 0.05,
+    "valid_fraction": 1.0,
+    "lossless": true
+   },
+   "per_run_seed": 117916,
+   "failing_detail": {}
+  },
+  "reasons": [],
+  "log_path": "D:\\VS\\Nebius\\SpatialContract\\results\\runs\\smoke-super\\R12_affine_inverted.jsonl",
+  "seconds": 12.2,
+  "model": "nvidia/nemotron-3-super-120b-a12b",
+  "thinking": "default"
+ },
+ {
+  "case": "S06_reshape_order",
+  "outcome": "FAILED",
+  "iterations": 4,
+  "llm_calls": 4,
+  "tokens": {
+   "prompt": 17283,
+   "completion": 7569
+  },
+  "visible_passed": false,
+  "heldout": null,
+  "reasons": [
+   "iteration cap reached without a passing patch"
+  ],
+  "log_path": "D:\\VS\\Nebius\\SpatialContract\\results\\runs\\smoke-super\\S06_reshape_order.jsonl",
+  "seconds": 48.5,
+  "model": "nvidia/nemotron-3-super-120b-a12b",
+  "thinking": "default"
+ },
+ {
+  "case": "L02_rotation_only",
+  "outcome": "REPAIRED",
+  "iterations": 1,
+  "llm_calls": 1,
+  "tokens": {
+   "prompt": 1874,
+   "completion": 324
+  },
+  "visible_passed": true,
+  "heldout": {
+   "passed": true,
+   "summary": {
+    "hidden_bank": "PASS",
+    "per_run": "PASS",
+    "paired": "PASS",
+    "differential": "PASS"
+   },
+   "differential": {
+    "verdict": "PASS",
+    "p90_equiv_mm": 0.0,
+    "tol_mm": 0.05,
+    "valid_fraction": 1.0,
+    "lossless": true
+   },
+   "per_run_seed": 28855,
+   "failing_detail": {}
+  },
+  "reasons": [],
+  "log_path": "D:\\VS\\Nebius\\SpatialContract\\results\\runs\\smoke-super\\L02_rotation_only.jsonl",
+  "seconds": 15.8,
+  "model": "nvidia/nemotron-3-super-120b-a12b",
+  "thinking": "default"
+ },
+ {
+  "case": "L04_right_multiply",
+  "outcome": "REPAIRED",
+  "iterations": 1,
+  "llm_calls": 1,
+  "tokens": {
+   "prompt": 1849,
+   "completion": 450
+  },
+  "visible_passed": true,
+  "heldout": {
+   "passed": true,
+   "summary": {
+    "hidden_bank": "PASS",
+    "per_run": "PASS",
+    "paired": "PASS",
+    "differential": "PASS"
+   },
+   "differential": {
+    "verdict": "PASS",
+    "p90_equiv_mm": 0.0,
+    "tol_mm": 0.05,
+    "valid_fraction": 1.0,
+    "lossless": true
+   },
+   "per_run_seed": 83591,
+   "failing_detail": {}
+  },
+  "reasons": [],
+  "log_path": "D:\\VS\\Nebius\\SpatialContract\\results\\runs\\smoke-super\\L04_right_multiply.jsonl",
+  "seconds": 15.5,
+  "model": "nvidia/nemotron-3-super-120b-a12b",
+  "thinking": "default"
+ },
+ {
+  "case": "M03_not_converted",
+  "outcome": "REPAIRED",
+  "iterations": 1,
+  "llm_calls": 1,
+  "tokens": {
+   "prompt": 1836,
+   "completion": 274
+  },
+  "visible_passed": true,
+  "heldout": {
+   "passed": true,
+   "summary": {
+    "hidden_bank": "PASS",
+    "per_run": "PASS",
+    "paired": "PASS",
+    "differential": "PASS"
+   },
+   "differential": {
+    "verdict": "PASS",
+    "p90_equiv_mm": 0.0,
+    "tol_mm": 0.05,
+    "valid_fraction": 1.0,
+    "lossless": true
+   },
+   "per_run_seed": 24965,
+   "failing_detail": {}
+  },
+  "reasons": [],
+  "log_path": "D:\\VS\\Nebius\\SpatialContract\\results\\runs\\smoke-super\\M03_not_converted.jsonl",
+  "seconds": 12.8,
+  "model": "nvidia/nemotron-3-super-120b-a12b",
+  "thinking": "default"
+ },
+ {
+  "case": "C03_voxel_added_to_world",
+  "outcome": "REPAIRED",
+  "iterations": 1,
+  "llm_calls": 1,
+  "tokens": {
+   "prompt": 1934,
+   "completion": 449
+  },
+  "visible_passed": true,
+  "heldout": {
+   "passed": true,
+   "summary": {
+    "hidden_bank": "PASS",
+    "per_run": "PASS",
+    "paired": "PASS",
+    "differential": "PASS"
+   },
+   "differential": {
+    "verdict": "PASS",
+    "p90_equiv_mm": 0.0,
+    "tol_mm": 0.05,
+    "valid_fraction": 1.0,
+    "lossless": true
+   },
+   "per_run_seed": 43287,
+   "failing_detail": {}
+  },
+  "reasons": [],
+  "log_path": "D:\\VS\\Nebius\\SpatialContract\\results\\runs\\smoke-super\\C03_voxel_added_to_world.jsonl",
+  "seconds": 13.1,
+  "model": "nvidia/nemotron-3-super-120b-a12b",
+  "thinking": "default"
+ },
+ {
+  "case": "R02_swap_target_codes",
+  "outcome": "REPAIRED",
+  "iterations": 1,
+  "llm_calls": 1,
+  "tokens": {
+   "prompt": 1382,
+   "completion": 314
+  },
+  "visible_passed": true,
+  "heldout": {
+   "passed": true,
+   "summary": {
+    "hidden_bank": "PASS",
+    "per_run": "PASS",
+    "paired": "PASS",
+    "differential": "PASS"
+   },
+   "differential": {
+    "verdict": "PASS",
+    "p90_equiv_mm": 0.0,
+    "tol_mm": 0.05,
+    "valid_fraction": 1.0,
+    "lossless": true
+   },
+   "per_run_seed": 117916,
+   "failing_detail": {}
+  },
+  "reasons": [],
+  "log_path": "D:\\VS\\Nebius\\SpatialContract\\results\\runs\\smoke-super\\R02_swap_target_codes.jsonl",
+  "seconds": 11.9,
+  "model": "nvidia/nemotron-3-super-120b-a12b",
+  "thinking": "default"
+ },
+ {
+  "case": "K03_S_reference",
+  "outcome": "NO_CHANGE_NEEDED",
+  "iterations": 0,
+  "llm_calls": 0,
+  "tokens": {
+   "prompt": 0,
+   "completion": 0
+  },
+  "visible_passed": true,
+  "heldout": null,
+  "reasons": [],
+  "log_path": "D:\\VS\\Nebius\\SpatialContract\\results\\runs\\smoke-super\\K03_S_reference.jsonl",
+  "seconds": 1.4,
+  "model": "nvidia/nemotron-3-super-120b-a12b",
+  "thinking": "default"
+ },
+ {
+  "case": "A05_corner_convention",
+  "outcome": "ABSTAIN",
+  "iterations": 0,
+  "llm_calls": 0,
+  "tokens": {
+   "prompt": 0,
+   "completion": 0
+  },
+  "visible_passed": false,
+  "heldout": null,
+  "reasons": [
+   "affine_convention 'voxel_corner_to_world' unsupported/ambiguous (supported: ('voxel_center_to_world',))"
+  ],
+  "log_path": "D:\\VS\\Nebius\\SpatialContract\\results\\runs\\smoke-super\\A05_corner_convention.jsonl",
+  "seconds": 0.0,
+  "model": "nvidia/nemotron-3-super-120b-a12b",
+  "thinking": "default"
+ },
+ {
+  "case": "A02_no_contract_buggy",
+  "outcome": "ABSTAIN",
+  "iterations": 0,
+  "llm_calls": 0,
+  "tokens": {
+   "prompt": 0,
+   "completion": 0
+  },
+  "visible_passed": false,
+  "heldout": null,
+  "reasons": [
+   "no SPATIAL_CONTRACT declared"
+  ],
+  "log_path": "D:\\VS\\Nebius\\SpatialContract\\results\\runs\\smoke-super\\A02_no_contract_buggy.jsonl",
+  "seconds": 0.0,
+  "model": "nvidia/nemotron-3-super-120b-a12b",
+  "thinking": "default"
+ }
+]

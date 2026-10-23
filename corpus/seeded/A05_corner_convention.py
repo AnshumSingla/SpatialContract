@@ -1,4 +1,3 @@
-# seeded case A05_corner_convention: contract declares voxel-corner affine (unsupported/ambiguous)
 import numpy as np
 import nibabel as nib
 from nibabel import orientations as o

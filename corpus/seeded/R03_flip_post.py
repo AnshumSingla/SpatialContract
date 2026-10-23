@@ -1,4 +1,3 @@
-# seeded case R03_flip_post: flips axis 0 of the data after reorienting, affine untouched
 import numpy as np
 import nibabel as nib
 from nibabel import orientations as o

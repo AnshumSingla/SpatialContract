@@ -1,4 +1,3 @@
-# Real bug: TorchIO wrote affines to SimpleITK without RAS->LPS conversion, double-flipping on save (fixed in 09138e0)
 SPATIAL_CONTRACT = {"world_frame": "RAS", "units": "mm", "affine_convention": "voxel_center_to_world"}
 
 

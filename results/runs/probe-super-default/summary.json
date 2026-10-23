@@ -1,0 +1,104 @@
+[
+ {
+  "case": "R05_stale_affine",
+  "outcome": "REPAIRED",
+  "iterations": 1,
+  "llm_calls": 1,
+  "tokens": {
+   "prompt": 1882,
+   "completion": 334
+  },
+  "visible_passed": true,
+  "heldout": {
+   "passed": true,
+   "summary": {
+    "hidden_bank": "PASS",
+    "per_run": "PASS",
+    "paired": "PASS",
+    "differential": "PASS"
+   },
+   "differential": {
+    "verdict": "PASS",
+    "p90_equiv_mm": 0.0,
+    "tol_mm": 0.05,
+    "valid_fraction": 1.0,
+    "lossless": true
+   },
+   "per_run_seed": 117916,
+   "failing_detail": {}
+  },
+  "reasons": [],
+  "log_path": "D:\\VS\\Nebius\\SpatialContract\\results\\runs\\probe-super-default\\R05_stale_affine.jsonl",
+  "seconds": 13.1,
+  "model": "nvidia/nemotron-3-super-120b-a12b",
+  "thinking": "default"
+ },
+ {
+  "case": "C02_index_order",
+  "outcome": "REPAIRED",
+  "iterations": 2,
+  "llm_calls": 2,
+  "tokens": {
+   "prompt": 4980,
+   "completion": 1455
+  },
+  "visible_passed": true,
+  "heldout": {
+   "passed": true,
+   "summary": {
+    "hidden_bank": "PASS",
+    "per_run": "PASS",
+    "paired": "PASS",
+    "differential": "PASS"
+   },
+   "differential": {
+    "verdict": "PASS",
+    "p90_equiv_mm": 0.0,
+    "tol_mm": 0.05,
+    "valid_fraction": 1.0,
+    "lossless": true
+   },
+   "per_run_seed": 31474,
+   "failing_detail": {}
+  },
+  "reasons": [],
+  "log_path": "D:\\VS\\Nebius\\SpatialContract\\results\\runs\\probe-super-default\\C02_index_order.jsonl",
+  "seconds": 23.1,
+  "model": "nvidia/nemotron-3-super-120b-a12b",
+  "thinking": "default"
+ },
+ {
+  "case": "M01_zoom_only",
+  "outcome": "REPAIRED",
+  "iterations": 1,
+  "llm_calls": 1,
+  "tokens": {
+   "prompt": 1818,
+   "completion": 302
+  },
+  "visible_passed": true,
+  "heldout": {
+   "passed": true,
+   "summary": {
+    "hidden_bank": "PASS",
+    "per_run": "PASS",
+    "paired": "PASS",
+    "differential": "PASS"
+   },
+   "differential": {
+    "verdict": "PASS",
+    "p90_equiv_mm": 0.0,
+    "tol_mm": 0.05,
+    "valid_fraction": 1.0,
+    "lossless": true
+   },
+   "per_run_seed": 94829,
+   "failing_detail": {}
+  },
+  "reasons": [],
+  "log_path": "D:\\VS\\Nebius\\SpatialContract\\results\\runs\\probe-super-default\\M01_zoom_only.jsonl",
+  "seconds": 11.8,
+  "model": "nvidia/nemotron-3-super-120b-a12b",
+  "thinking": "default"
+ }
+]

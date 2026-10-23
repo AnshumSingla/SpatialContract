@@ -1,4 +1,3 @@
-# seeded case S03_flip_output: flips the resampled array along axis 0 after sampling
 import numpy as np
 import nibabel as nib
 from nibabel import orientations as o

@@ -1,0 +1,35 @@
+[
+ {
+  "case": "R05_stale_affine",
+  "outcome": "REPAIRED",
+  "iterations": 2,
+  "llm_calls": 2,
+  "tokens": {
+   "prompt": 3670,
+   "completion": 8684
+  },
+  "visible_passed": true,
+  "heldout": {
+   "passed": true,
+   "summary": {
+    "hidden_bank": "PASS",
+    "per_run": "PASS",
+    "paired": "PASS",
+    "differential": "PASS"
+   },
+   "differential": {
+    "verdict": "PASS",
+    "p90_equiv_mm": 0.0,
+    "tol_mm": 0.05,
+    "valid_fraction": 1.0,
+    "lossless": true
+   },
+   "per_run_seed": 38824,
+   "failing_detail": {}
+  },
+  "reasons": [],
+  "log_path": "D:\\VS\\Nebius\\SpatialContract\\results\\runs\\first-r05\\R05_stale_affine.jsonl",
+  "seconds": 67.2,
+  "model": "nvidia/NVIDIA-Nemotron-3-Nano-30B-A3B"
+ }
+]

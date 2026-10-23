@@ -1,4 +1,3 @@
-# seeded case R12_affine_inverted: saves the world->voxel inverse instead of voxel->world
 import numpy as np
 import nibabel as nib
 from nibabel import orientations as o

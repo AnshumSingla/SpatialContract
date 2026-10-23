@@ -1,4 +1,3 @@
-# seeded case R10_units_cm: affine scaled by 0.1 (centimetres) while contract says mm
 import numpy as np
 import nibabel as nib
 from nibabel import orientations as o

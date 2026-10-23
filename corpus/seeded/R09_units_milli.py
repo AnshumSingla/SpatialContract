@@ -1,4 +1,3 @@
-# seeded case R09_units_milli: affine scaled by 1e-3 (metres) while contract says mm
 import numpy as np
 import nibabel as nib
 from nibabel import orientations as o

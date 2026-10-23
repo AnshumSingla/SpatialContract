@@ -1,4 +1,3 @@
-# seeded case S04_units_cm_voxel: output affine voxel size 10x too large (mm vs cm confusion)
 import numpy as np
 import nibabel as nib
 from nibabel import orientations as o

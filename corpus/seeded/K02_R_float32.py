@@ -1,4 +1,3 @@
-# seeded case K02_R_float32: reference plus float32 cast and contiguous copy
 import numpy as np
 import nibabel as nib
 from nibabel import orientations as o

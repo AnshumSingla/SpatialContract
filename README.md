@@ -86,6 +86,45 @@ How much to trust this (read before quoting the 7/7):
 - 7 cases: any rate computed from them has a wide interval (7/7 has a 95% Clopper-Pearson lower bound of about 0.59).
 - Reproduce: `python scripts/setup_real_bugs.py` (needs network), create `_work/env_legacy` and `_work/env_modern` with the pins in the table above, then `python scripts/run_real_bugs.py`.
 
+## Repair agent (implemented, step 6; preliminary runs only, NOT the evaluation)
+`src/spatialcontract/agent.py`, CLI `scripts/repair.py` (needs `SC_ALLOW_API=1`; every call is capped by a persistent token ledger):
+1. **Gate.** No `SPATIAL_CONTRACT`, or an unusable one (unknown/ambiguous field) -> `ABSTAIN` with the reasons, before any model call.
+2. **Oracle** on the visible phantoms (seeds 0-2). Already passing -> `NO_CHANGE_NEEDED` (no model call, no edit).
+3. **Nemotron** gets the script, the fixed contract and the measurements, and must answer with a `submit_patch` tool call carrying the whole file.
+4. **Patch guard** rejects, without running: syntax errors, imports outside numpy/nibabel/scipy/SimpleITK, `open/exec/eval/...`, a changed `process`
+   signature, and **any change to `SPATIAL_CONTRACT`** (the agent cannot make a failure disappear by editing the contract). A rejection goes back to the model.
+5. **Re-run** the oracle in a subprocess (scrubbed environment, no API key), feed the new measurements back, up to `--max-iters` (default 4).
+6. A patch that passes the visible oracle is checked on **held-out validation** the model never sees (`heldout.py`): 7 hidden phantoms (5 ordinary, 2 strongly oblique), one phantom
+   whose seed is derived from the run seed *and the patched source* (generated after the patch), the visible phantoms re-stored in a different valid orientation
+   (paired transform), and a non-phantom linear-ramp volume resampled onto the input grid with SimpleITK and compared voxelwise. Any failure => `OVERFIT`, else `REPAIRED`.
+   Sanity check of this validator (no LLM): all 11 correct controls pass it and all 31 seeded bugs fail it. A hand-written overfit patch (fixes only the visible orientations) is caught (`tests/test_agent.py`).
+7. Every step is written to `results/runs/<run-id>/<case>.jsonl` (initial oracle, model response, patch, rejection reason, oracle after patch, held-out result) with each patched file kept.
+
+Mechanics are tested offline with a scripted fake model (`tests/test_agent.py`, 10 tests: abstain, no-change, repair, contract-edit rejection, forbidden import, overfit, iteration cap, budget stop, code-block fallback).
+
+Preliminary real-model runs (small, single runs; the three-arm evaluation is step 7):
+
+| model / setting | cases | repaired | notes |
+|---|---|---|---|
+| Nano-30B, thinking off | R05, C02, M01 | 1/3 (+1 budget stop) | hallucinated `nibabel.orientations.ornt_from_axcodes`; one 23k-character runaway "patch" |
+| Nano-30B, `reasoning_effort=low` | same | 1/3 | 7 of 12 calls ended with `finish_reason=length` |
+| Nano-30B, default thinking | same | 2/3 | 46.6k tokens for 3 cases |
+| **Super-120B**, default thinking | same | **3/3** | 10.8k tokens for 3 cases |
+| Super-120B, default | 9 other seeded bugs (R01 R02 R04 R12 S06 L02 L04 M03 C03) | 8/9 | all 8 also passed held-out validation |
+
+Super is therefore the default model (`NEBIUS_MODEL`); Nano was tried first as the cheapest. Super also used fewer tokens per solved case than Nano because it reasons much less.
+All 16 Super calls returned a tool call; none hit the length limit. Token Factory spend for everything above is below roughly 255k tokens (an upper bound under $0.25 at Super prices).
+
+**Published failure case (S06, Fortran-order reshape).** The bug is `order="F"` in the final reshape. In four iterations the model rewrote the (correct) bounding-box and sampling code each time and never touched the reshape.
+The oracle output was identical every round (6/6 landmarks off), so the model received no new signal. A failure like this is what the oracle-feedback arm will have to be judged on.
+
+Caveats that matter for how to read the above:
+- The abstention in this agent is a **deterministic gate** on the contract, so "abstention precision" on the corpus is 100% by construction; it measures the gate, not the model's judgement. What step 7 can measure is how often the baseline LLM (no gate) patches code that has no contract, i.e. guesses a convention.
+- The seeded bugs are the oracle's own classes (circular); 12 cases is far too few for any rate.
+- **Real-library bugs are not yet repairable by this agent**: the defect lives inside the library (e.g. TorchIO's `Crop`), not in the small driver script. Wiring that up needs file-navigation tools and a patchable worktree; it is open work, not a claim.
+- One control in `test_seeded` failed once and then passed on seven repeats of the full evaluation; I could not reproduce or explain it. The oracle now retries an `ERROR` verdict once.
+- During the first real run the model could read a header comment in the corpus file that described the bug. I removed such comments from `corpus/seeded` and `corpus/real` and discarded that run; all numbers above come from files without them.
+
 ## How Nemotron / Token Factory are used
 _TODO (filled after step 6)._
 
