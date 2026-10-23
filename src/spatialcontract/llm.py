@@ -42,7 +42,7 @@ class TokenBudget:
     def record(self, prompt: int, completion: int) -> None:
         self.total += prompt + completion
         self.ledger.parent.mkdir(parents=True, exist_ok=True)
-        self.ledger.write_text(json.dumps({"total_tokens": self.total, "cap": self.cap}))
+        self.ledger.write_text(json.dumps({"total_tokens": self.total}))
         print(f"[budget] +{prompt}p +{completion}c => {self.total}/{self.cap} tokens")
 
 

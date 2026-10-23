@@ -18,6 +18,20 @@ python scripts/smoke_test.py       # budget-capped completion + tool-call test
 pytest
 ```
 
+## Oracle (implemented, step 3)
+- `contract.py`: `SPATIAL_CONTRACT = {...}` literal declared in the pipeline (read with `ast.literal_eval`,
+  never executed): `world_frame` (RAS/LPS), `units` (mm/m/um), `affine_convention`, optional `array_orientation`.
+  Missing / unknown / unsupported values make the oracle return `ABSTAIN` without running the code.
+- `phantom.py`: seeded label volume, 6 distinct balls, off-centre on every axis, random non-RAS signed-permutation
+  orientation, anisotropic voxels, optional obliquity, random origin. Ground truth is exact world position.
+- `oracle.py`: runs `process(in_path, out_path)` in a subprocess with a scrubbed environment (no API key),
+  locates each label in the output, maps it through the OUTPUT affine and reports error in mm per landmark.
+  Verdicts: PASS / FAIL / ERROR (crash) / ABSTAIN.
+- Tested: correct reorientation passes (0.00 mm); axis swap, flipped axis, stale affine, voxel-vs-world,
+  wrong units and transposed affine each fail on every individual phantom (worst errors 60 to 98 mm).
+  Caveat: the reference pipeline is a lossless reorientation, so interpolation tolerance (`tol_mm=1.5`) is not yet
+  exercised by a resampling pipeline.
+
 ## How Nemotron / Token Factory are used
 _TODO (filled after step 6)._
 
