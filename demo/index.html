@@ -1,0 +1,298 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SpatialContract</title>
+<style>
+:root{
+  --bg:#f7f8fa; --panel:#ffffff; --ink:#15181e; --muted:#5b6472; --line:#dde1e8;
+  --ok:#0b7a4b; --okbg:#e3f4ec; --bad:#b3261e; --badbg:#fbe9e7; --warn:#8a5a00; --warnbg:#fff3d6;
+  --exp:#1f5fbf; --got:#d9480f; --code:#f1f3f6; --add:#e2f5e9; --del:#fdeaea; --accent:#1f5fbf;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#0f1218; --panel:#171b23; --ink:#e8ebf0; --muted:#98a2b3; --line:#2a303b;
+    --ok:#4cc38a; --okbg:#12301f; --bad:#ff7b72; --badbg:#3a1714; --warn:#f0b429; --warnbg:#3a2d0a;
+    --exp:#6ea8ff; --got:#ff8a4c; --code:#1d222c; --add:#12301f; --del:#3a1714; --accent:#6ea8ff;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0f1218; --panel:#171b23; --ink:#e8ebf0; --muted:#98a2b3; --line:#2a303b;
+  --ok:#4cc38a; --okbg:#12301f; --bad:#ff7b72; --badbg:#3a1714; --warn:#f0b429; --warnbg:#3a2d0a;
+  --exp:#6ea8ff; --got:#ff8a4c; --code:#1d222c; --add:#12301f; --del:#3a1714; --accent:#6ea8ff;
+}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.5 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+.wrap{max-width:1180px;margin:0 auto;padding:20px 16px 48px}
+h1{font-size:24px;margin:0 0 2px;letter-spacing:-.01em}
+.tag{color:var(--muted);margin:0 0 14px;max-width:70ch}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0 16px}
+.chip{border:1px solid var(--line);background:var(--panel);color:var(--ink);border-radius:999px;padding:6px 12px;cursor:pointer;font:inherit;font-size:13px;display:flex;gap:8px;align-items:center}
+.chip[aria-pressed="true"]{border-color:var(--accent);box-shadow:0 0 0 2px color-mix(in srgb,var(--accent) 25%,transparent)}
+.badge{font-size:11px;padding:1px 7px;border-radius:999px;font-weight:600}
+.b-ok{background:var(--okbg);color:var(--ok)} .b-bad{background:var(--badbg);color:var(--bad)} .b-warn{background:var(--warnbg);color:var(--warn)} .b-mute{background:var(--code);color:var(--muted)}
+.strip{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:14px}
+.pill{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:10px 14px;min-height:76px}
+.pill .k{font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted)}
+.pill .v{font-size:18px;font-weight:650;margin-top:2px}
+.pill .s{font-size:12.5px;color:var(--muted)}
+.pill.ok{border-color:var(--ok)} .pill.bad{border-color:var(--bad)}
+.pill.ok .v{color:var(--ok)} .pill.bad .v{color:var(--bad)}
+.grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.15fr);gap:14px;align-items:start}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:14px}
+.card h2{font-size:13px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin:0 0 8px;font-weight:600}
+pre{margin:0;background:var(--code);border-radius:8px;padding:10px 12px;overflow:auto;font:12.5px/1.45 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;max-height:340px}
+pre span{display:block;min-height:1.2em} pre .a{background:var(--add)} pre .d{background:var(--del)} pre .h{color:var(--muted)}
+.panels{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.panels svg{width:100%;height:auto;background:var(--code);border-radius:8px}
+.legend{display:flex;gap:14px;flex-wrap:wrap;font-size:12.5px;color:var(--muted);margin:8px 0}
+.dot{display:inline-block;width:11px;height:11px;border-radius:50%;vertical-align:-1px;margin-right:5px}
+table{border-collapse:collapse;width:100%;font-size:12.5px;font-variant-numeric:tabular-nums}
+th,td{text-align:right;padding:3px 6px;border-bottom:1px solid var(--line)} th:first-child,td:first-child{text-align:left}
+th{color:var(--muted);font-weight:600}
+td.bad{color:var(--bad);font-weight:600} td.ok{color:var(--ok)}
+.steps{display:flex;flex-direction:column;gap:8px;margin-top:6px}
+.step{border:1px solid var(--line);border-radius:10px;padding:10px 12px;cursor:pointer;background:var(--panel)}
+.step.sel{border-color:var(--accent)} .step.future{opacity:.38}
+.step .hd{display:flex;gap:8px;align-items:center;flex-wrap:wrap;font-weight:600}
+.step .rat{color:var(--muted);font-size:13px;margin:4px 0 6px}
+.ctl{display:flex;gap:8px;align-items:center;margin:2px 0 10px;flex-wrap:wrap}
+button.btn{border:1px solid var(--line);background:var(--panel);color:var(--ink);padding:6px 12px;border-radius:8px;cursor:pointer;font:inherit;font-size:13px}
+button.btn.primary{background:var(--accent);border-color:var(--accent);color:#fff}
+button.btn:disabled{opacity:.5;cursor:default}
+.checks{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:6px}
+.check{border:1px solid var(--line);border-radius:8px;padding:8px;font-size:12.5px}
+.check b{display:block;font-size:13px}
+.note{font-size:12.5px;color:var(--muted)}
+.foot{margin-top:18px;font-size:12.5px;color:var(--muted);max-width:90ch}
+.banner{border-radius:8px;padding:8px 12px;margin:8px 0;font-size:13px}
+textarea{width:100%;min-height:220px;font:12.5px/1.45 ui-monospace,Consolas,monospace;background:var(--code);color:var(--ink);border:1px solid var(--line);border-radius:8px;padding:10px}
+@media (max-width:900px){.grid{grid-template-columns:1fr}.strip{grid-template-columns:1fr}.checks{grid-template-columns:1fr 1fr}.panels{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>SpatialContract</h1>
+  <p class="tag">An agent that repairs orientation and affine bugs in medical-imaging code. The judge is a physical-coordinate oracle with known landmarks, not the model's opinion.</p>
+  <div id="mode" class="note"></div>
+  <div class="chips" id="chips" role="group" aria-label="Recorded runs"></div>
+  <div id="app"></div>
+  <p class="foot" id="foot"></p>
+</div>
+<script id="payload" type="application/json">/*__DATA__*/null</script>
+<script>
+const LIVE = /*__LIVE__*/false;
+const RECORDED = (() => { try { return JSON.parse(document.getElementById('payload').textContent); } catch (e) { return null; } })();   // null in live mode
+const $ = s => document.querySelector(s);
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+let recs = [], cur = null, sel = -1, timer = null, liveJob = null, liveBase = null;
+
+const OUT = {REPAIRED:['Repaired','b-ok'], FAILED:['Not repaired','b-bad'], ABSTAIN:['Abstained','b-warn'], NO_CHANGE_NEEDED:['No change needed','b-ok'], OVERFIT:['Overfit','b-bad']};
+const frameLabels = f => f === 'LPS' ? {x:'x (L →)', y:'y (P ↑)', z:'z (S ↑)'} : {x:'x (R →)', y:'y (A ↑)', z:'z (S ↑)'};
+
+function diffHtml(lines){
+  return '<pre>' + lines.map(l => {
+    const c = l.startsWith('+') ? 'a' : l.startsWith('-') ? 'd' : l.startsWith('@@') ? 'h' : '';
+    return `<span class="${c}">${esc(l) || ' '}</span>`;
+  }).join('') + '</pre>';
+}
+
+/* ---- landmark panels: expected (ring) vs where the code put it (dot) -------------------------------------------- */
+function panel(rep, ax, ay, lab){
+  const ph = rep.phantoms.find(p => p.landmarks && p.landmarks.some(l => l.got)) || rep.phantoms[0];
+  if(!ph) return '';
+  const pts = [];
+  ph.landmarks.forEach(l => { if(l.expected) pts.push([l.expected[ax], l.expected[ay]]); if(l.got) pts.push([l.got[ax], l.got[ay]]); });
+  if(!pts.length) return '';
+  let [x0,x1,y0,y1] = [Math.min(...pts.map(p=>p[0])), Math.max(...pts.map(p=>p[0])), Math.min(...pts.map(p=>p[1])), Math.max(...pts.map(p=>p[1]))];
+  const span = Math.max(x1-x0, y1-y0, 20) * 1.18, cx = (x0+x1)/2, cy = (y0+y1)/2, S = 260, m = 26;
+  const X = v => m + (v - (cx - span/2)) / span * (S - 2*m), Y = v => S - m - (v - (cy - span/2)) / span * (S - 2*m);
+  let g = `<text x="${S/2}" y="${S-6}" text-anchor="middle" font-size="11" fill="var(--muted)">${esc(lab[0])}</text>`
+        + `<text x="8" y="${S/2}" font-size="11" fill="var(--muted)" transform="rotate(-90 8 ${S/2})" text-anchor="middle">${esc(lab[1])}</text>`;
+  ph.landmarks.forEach(l => {
+    if(!l.expected) return;
+    const ex = X(l.expected[ax]), ey = Y(l.expected[ay]);
+    if(l.got){
+      const gx = X(l.got[ax]), gy = Y(l.got[ay]);
+      if(!l.ok) g += `<line x1="${gx}" y1="${gy}" x2="${ex}" y2="${ey}" stroke="var(--got)" stroke-width="1.2" stroke-dasharray="3 3" opacity=".75"/>`;
+      g += `<circle cx="${gx}" cy="${gy}" r="5" fill="${l.ok ? 'var(--ok)' : 'var(--got)'}"/>`;
+    }
+    g += `<circle cx="${ex}" cy="${ey}" r="8.5" fill="none" stroke="${l.ok ? 'var(--ok)' : 'var(--exp)'}" stroke-width="2"/>`
+       + `<text x="${ex}" y="${ey-12}" text-anchor="middle" font-size="11" font-weight="600" fill="var(--ink)">${l.label}</text>`;
+  });
+  return `<svg viewBox="0 0 ${S} ${S}" role="img" aria-label="${esc(lab[2])}">${g}</svg>`;
+}
+
+function pictureHtml(rep, note){
+  if(!rep) return '<div class="banner b-mute">No measurements: the agent stopped before running the pipeline.</div>';
+  const lab = frameLabels(rep.frame);
+  const ph = rep.phantoms.find(p => p.landmarks && p.landmarks.some(l => l.got)) || rep.phantoms[0];
+  if(!ph || rep.verdict === 'ERROR' && !ph.landmarks.length){
+    return `<div class="banner b-bad">The patched script crashed in the sandbox: ${esc((ph && ph.detail) || (rep.feedback||'').split('\n')[1] || 'error')}</div>`;
+  }
+  const bad = ph.landmarks.filter(l => !l.ok).length;
+  let h = (note ? `<div class="note">${esc(note)}</div>` : '')
+    + `<div class="panels">${panel(rep,0,1,[lab.x,lab.y,'axial view']) }${panel(rep,0,2,[lab.x,lab.z,'coronal view'])}${panel(rep,1,2,[lab.y,lab.z,'sagittal view'])}</div>`
+    + `<div class="legend"><span><span class="dot" style="border:2px solid var(--exp);background:transparent"></span>where the contract says it must be</span>`
+    + `<span><span class="dot" style="background:var(--got)"></span>where the code put it</span><span><span class="dot" style="background:var(--ok)"></span>on target</span></div>`
+    + `<div class="note">Phantom seed ${ph.seed}: input orientation <b>${esc(ph.in_axcodes)}</b> → output <b>${esc(ph.out_axcodes)}</b>`
+    + (rep.array_orientation ? ` (contract wants <b>${esc(rep.array_orientation)}</b>${ph.orientation_ok === false ? ' ✗' : ' ✓'})` : '') + `. Tolerance ${esc(ph.tol_mm)} mm.</div>`
+    + '<table><tr><th>landmark</th><th>should be (mm)</th><th>code put it (mm)</th><th>error</th></tr>'
+    + ph.landmarks.map(l => `<tr><td>${l.label}</td><td>${l.expected ? l.expected.map(v=>v.toFixed(1)).join(', ') : ''}</td><td>${l.got ? l.got.map(v=>v.toFixed(1)).join(', ') : 'lost'}</td>`
+      + `<td class="${l.ok ? 'ok' : 'bad'}">${l.error_mm == null ? 'LOST' : l.error_mm.toFixed(1) + ' mm'}</td></tr>`).join('') + '</table>';
+  return h;
+}
+
+/* ---- the three status pills ---------------------------------------------------------------------------------------- */
+function pill(k, v, s, cls){ return `<div class="pill ${cls||''}"><div class="k">${esc(k)}</div><div class="v">${v}</div><div class="s">${s||''}</div></div>`; }
+function reportAt(rec, i){
+  if(i < 0) return rec.initial;
+  for(let j = Math.min(i, rec.steps.length-1); j >= 0; j--){ const o = rec.steps[j].oracle; if(o && o.phantoms.some(p => p.landmarks.length)) return o; }
+  return rec.initial;
+}
+function stripHtml(rec, i){
+  const rt = rec.repo_tests;
+  const p1 = rt ? pill('1 · Repo unit tests', rt.passed ? '✔ all pass' : '✘ failing', rt.passed ? 'the bug ships green' : 'tests notice it', rt.passed ? 'ok' : 'bad')
+                : pill('1 · Repo unit tests', 'n/a', 'no test suite for this case');
+  const rep0 = rec.initial;
+  let p2;
+  if(!rep0) p2 = pill('2 · Spatial-contract oracle', 'abstains', esc((rec.abstain_reasons || []).join('; ') || 'contract unusable'), '');
+  else if(rep0.verdict === 'PASS') p2 = pill('2 · Spatial-contract oracle', '✔ on target', 'every landmark within tolerance', 'ok');
+  else { const bad = rep0.phantoms.reduce((n,p)=>n+p.landmarks.filter(l=>!l.ok).length,0), tot = rep0.phantoms.reduce((n,p)=>n+p.landmarks.length,0);
+    p2 = pill('2 · Spatial-contract oracle', `✘ ${bad}/${tot} landmarks off`, rep0.any_lost ? 'some landmarks lost entirely' : `worst error ${rep0.worst_error_mm} mm`, 'bad'); }
+  let p3;
+  const n = rec.steps.length;
+  if(rec.outcome === 'ABSTAIN') p3 = pill('3 · Agent (Nemotron)', 'abstained', 'no model call, no guessed convention', '');
+  else if(rec.outcome === 'NO_CHANGE_NEEDED') p3 = pill('3 · Agent (Nemotron)', 'left it alone', 'oracle already passes: no model call', 'ok');
+  else if(i < 0) p3 = pill('3 · Agent (Nemotron)', 'ready', LIVE ? 'press "Repair with Nemotron" below' : 'press Play to watch the repair', '');
+  else if(i < n-1) p3 = pill('3 · Agent (Nemotron)', `iteration ${rec.steps[i].iteration}`, esc(rec.steps[i].verdict || ''), '');
+  else p3 = pill('3 · Agent (Nemotron)', rec.outcome === 'REPAIRED' ? '✔ repaired' : '✘ not repaired', `${n} iteration${n===1?'':'s'} · ${rec.tokens_total} tokens`, rec.outcome === 'REPAIRED' ? 'ok' : 'bad');
+  return `<div class="strip">${p1}${p2}${p3}</div>`;
+}
+
+/* ---- main render -------------------------------------------------------------------------------------------------------- */
+function render(){
+  const rec = cur; if(!rec){ $('#app').innerHTML = ''; return; }
+  const n = rec.steps.length, atEnd = sel >= n-1, finished = rec.status === 'done';
+  const rep = reportAt(rec, sel);
+  const [ol, oc] = OUT[rec.outcome] || ['Running…','b-mute'];
+  let left = `<div class="card"><h2>Script under test</h2><div class="note" style="margin-bottom:6px">${rec.kind === 'bug' ? '<b>Injected bug</b> (annotation for you; the model never sees it): ' : '<b>About this case:</b> '}${esc(rec.description || '')}</div>`
+    + (LIVE && liveBase ? `<textarea id="src" spellcheck="false">${esc(rec.source)}</textarea>` : `<pre>${esc(rec.source)}</pre>`)
+    + `</div>`;
+  if(sel >= 0 && rec.steps[sel] && rec.steps[sel].diff){ left += `<div class="card" style="margin-top:12px"><h2>Patch at iteration ${rec.steps[sel].iteration}</h2>${diffHtml(rec.steps[sel].diff)}</div>`; }
+  if(rec.repo_tests){
+    const rt = rec.repo_tests;
+    left += `<div class="card" style="margin-top:12px"><h2>Same model, only the repo's unit tests as feedback</h2><pre>${esc(rt.text)}</pre>`
+      + (rt.baseline_accepted ? `<div class="note" style="margin-top:6px">The patch was accepted after one call because the tests passed. Re-measured with the oracle: `
+        + `<b style="color:${rt.baseline_oracle && rt.baseline_oracle.verdict==='PASS' ? 'var(--ok)':'var(--bad)'}">${esc(rt.baseline_oracle ? rt.baseline_oracle.verdict : '?')}`
+        + (rt.baseline_oracle && rt.baseline_oracle.worst_error_mm != null ? `, worst landmark ${rt.baseline_oracle.worst_error_mm} mm` : '') + `</b>.</div>` : '')
+      + `</div>`;
+  }
+  let crash = '';
+  if(sel >= 0 && rec.steps[sel] && rec.steps[sel].verdict === 'ERROR'){
+    const o = rec.steps[sel].oracle, d = o && o.phantoms[0] && o.phantoms[0].detail;
+    crash = `<div class="banner b-bad">Iteration ${rec.steps[sel].iteration}: the patched script crashed in the sandbox (${esc(d || 'error')}). Showing the previous measurements.</div>`;
+  }
+  let right = `<div class="card"><h2>What the oracle measured ${sel < 0 ? '(original script)' : `(after iteration ${rec.steps[Math.min(sel,n-1)] ? rec.steps[Math.min(sel,n-1)].iteration : ''})`}</h2>${crash}`
+    + (rec.initial || rep ? pictureHtml(rep) : `<div class="banner b-warn"><b>Abstain.</b> ${esc((rec.abstain_reasons||[]).join('; '))}. A repair would require guessing the intended convention, so the agent does not run.</div>`)
+    + `</div>`;
+  right += `<div class="card" style="margin-top:12px"><h2>Agent run</h2><div class="ctl">`
+    + (n ? `<button class="btn primary" id="play">${timer ? '❚❚ Pause' : '▶ Play'}</button><button class="btn" id="prev" aria-label="previous step">◀</button><button class="btn" id="next" aria-label="next step">▶</button>` : '')
+    + `<span class="badge ${oc}">${ol}</span><span class="note">${esc(rec.model || '')}${rec.tokens_total ? ' · ' + rec.tokens_total + ' tokens' : ''}</span></div><div class="steps">`
+    + (n ? rec.steps.map((s,i) => {
+        const v = s.rejected ? 'rejected by guard' : s.verdict || (s.no_patch ? 'no patch' : '');
+        const vc = v === 'PASS' ? 'b-ok' : (v === 'FAIL' || v === 'ERROR' || s.rejected) ? 'b-bad' : 'b-mute';
+        const w = s.oracle && s.oracle.worst_error_mm != null ? ` · worst ${s.oracle.worst_error_mm} mm` : (s.oracle && s.oracle.any_lost ? ' · landmarks lost' : '');
+        return `<div class="step ${i===sel?'sel':''} ${i>sel?'future':''}" data-i="${i}"><div class="hd">Iteration ${s.iteration}<span class="badge ${vc}">${esc(v)}</span><span class="note">${s.tokens} tokens${w}</span></div>`
+          + `<div class="rat">${esc(s.rationale || '')}</div></div>`;
+      }).join('') : `<div class="note">${rec.outcome === 'ABSTAIN' ? 'The contract gate stopped the run before any model call.' : rec.outcome === 'NO_CHANGE_NEEDED' ? 'The oracle passed on the original, so the model was never called and nothing was edited.' : 'No iterations yet.'}</div>`)
+    + `</div>`;
+  if(n && atEnd && finished){
+    const h = rec.heldout;
+    right += `<h2 style="margin-top:14px">Checks the model never saw</h2>`;
+    if(h){
+      const names = {hidden_bank:['Hidden phantoms','7 unseen orientations, 2 strongly oblique'], per_run:['Fresh phantom','seed derived from the patched source'], paired:['Paired orientation','same content, stored differently'], differential:['Non-phantom image','intensity ramp, resampled with SimpleITK']};
+      right += `<div class="checks">` + Object.entries(h.summary).map(([k,v]) => `<div class="check"><b>${v==='PASS'?'✔':'✘'} ${names[k][0]}</b>${names[k][1]}</div>`).join('') + `</div>`;
+    } else right += `<div class="note">No patch passed the visible oracle, so held-out validation never ran. This run is reported as a failure.</div>`;
+  }
+  right += `</div>`;
+  $('#app').innerHTML = stripHtml(rec, sel) + `<div class="grid"><div>${left}</div><div>${right}</div></div>`
+    + (LIVE ? liveControls() : '');
+  bind();
+}
+
+function liveControls(){
+  return `<div class="card" style="margin-top:12px"><h2>Live mode</h2><div class="ctl"><button class="btn" id="check">Check with the oracle</button>`
+    + `<button class="btn primary" id="repair" ${liveBase.api ? '' : 'disabled'}>Repair with Nemotron</button>`
+    + `<span class="note">${liveBase.api ? 'Token budget for this server: ' + liveBase.budget + ' tokens.' : 'API calls are disabled (start the server with SC_ALLOW_API=1 and --live to enable the repair button).'}</span></div>`
+    + `<div id="liveMsg" class="note"></div></div>`;
+}
+
+function bind(){
+  document.querySelectorAll('.step').forEach(el => el.onclick = () => { stop(); sel = +el.dataset.i; render(); });
+  const play = $('#play'); if(play) play.onclick = () => timer ? stop() : start();
+  const prev = $('#prev'), next = $('#next');
+  if(prev) prev.onclick = () => { stop(); sel = Math.max(-1, sel-1); render(); };
+  if(next) next.onclick = () => { stop(); sel = Math.min(cur.steps.length-1, sel+1); render(); };
+  if(LIVE){ const c = $('#check'), r = $('#repair'); if(c) c.onclick = liveCheck; if(r) r.onclick = liveRepair; }
+}
+function start(){ if(!cur.steps.length) return; if(sel >= cur.steps.length-1) sel = -1; render(); timer = setInterval(() => { if(sel >= cur.steps.length-1){ stop(); return; } sel++; render(); }, 2200); const p = $('#play'); if(p) p.textContent = '❚❚ Pause'; }
+function stop(){ if(timer){ clearInterval(timer); timer = null; } const p = $('#play'); if(p) p.textContent = '▶ Play'; }
+
+function pick(i, autoplay){
+  stop(); cur = recs[i]; sel = -1;
+  document.querySelectorAll('.chip').forEach((c,j) => c.setAttribute('aria-pressed', j === i));
+  render();
+  if(LIVE) setTimeout(liveCheck, 0);
+  if(autoplay && cur.steps.length) setTimeout(() => { if(cur === recs[i] && sel === -1 && !timer) start(); }, 3500);
+}
+
+function chips(){
+  $('#chips').innerHTML = recs.map((r,i) => {
+    const [l,c] = OUT[r.outcome] || ['…','b-mute'];
+    return `<button class="chip" data-i="${i}" aria-pressed="false">${esc(r.title)} <span class="badge ${c}">${l}</span></button>`;
+  }).join('');
+  document.querySelectorAll('.chip').forEach(el => el.onclick = () => pick(+el.dataset.i, true));
+}
+
+/* ---- live mode -------------------------------------------------------------------------------------------------------- */
+async function api(path, body){
+  const r = await fetch(path, body ? {method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(body)} : undefined);
+  return r.json();
+}
+async function liveCheck(){
+  const src = ($('#src') || {}).value; $('#liveMsg').textContent = 'Running the oracle (about 5 s)…';
+  const res = await api('/api/check', {source: src});
+  if(res.error){ $('#liveMsg').textContent = res.error; return; }
+  cur = Object.assign({}, cur, {source: src, initial: res.report, steps: [], outcome: res.report ? null : 'ABSTAIN', status: 'done', abstain_reasons: res.reasons, repo_tests: res.repo_tests || null});
+  sel = -1; render(); $('#liveMsg').textContent = 'Oracle verdict: ' + (res.report ? res.report.verdict : 'ABSTAIN');
+}
+async function liveRepair(){
+  const src = ($('#src') || {}).value; $('#liveMsg').textContent = 'Starting…';
+  const res = await api('/api/repair', {source: src});
+  if(res.error){ $('#liveMsg').textContent = res.error; return; }
+  const poll = async () => {
+    const j = await api('/api/job/' + res.job);
+    cur = Object.assign({}, cur, j.record, {repo_tests: cur.repo_tests}); sel = Math.max(sel, j.record.steps.length - 1); render();
+    $('#liveMsg').textContent = j.running ? 'Nemotron is working… ' + j.record.steps.length + ' iteration(s) so far' : 'Done: ' + (j.record.outcome || '');
+    if(j.running) setTimeout(poll, 1500);
+  };
+  poll();
+}
+
+(async function init(){
+  if(LIVE){
+    liveBase = await api('/api/info');
+    recs = (await api('/api/cases')).cases;
+    $('#mode').innerHTML = '<span class="badge b-ok">live</span> local server. Pick a script, edit it if you like, then check or repair.';
+  } else {
+    recs = RECORDED.recordings;
+    $('#mode').innerHTML = '<span class="badge b-warn">replay</span> Every run below is a real run, recorded from the project\'s own evaluation logs with <b>' + esc(RECORDED.model) + '</b> through Nebius Token Factory. Landmark positions are re-measured by the deterministic oracle. Nothing here calls an API.';
+  }
+  chips(); if(recs.length) pick(0, true);
+  $('#foot').innerHTML = 'Honest numbers: on 31 seeded bugs, the same model repaired 98% with oracle feedback vs 86% with only unit tests (paired difference +12 points, 95% CI +3 to +22; 3 repetitions, one model). Those bugs are the oracle\'s own classes, so this is circular; seven real library bugs are <i>detected</i> (7/7 reproduced at the pre-fix commit) but not yet repaired. The failed run above is shown on purpose. See the README for limitations.';
+})();
+</script>
+</body>
+</html>

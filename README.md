@@ -1,6 +1,6 @@
 # SpatialContract
 
-> STATUS: oracle, corpora, repair agent and a first three-arm evaluation on the seeded corpus are implemented and measured (see Results sections). Real-library bugs are detected but not yet repaired; demo, video script and Devpost text are still to do.
+> STATUS: oracle, corpora, repair agent and a first three-arm evaluation on the seeded corpus are implemented and measured (see Results sections). Real-library bugs are detected but not yet repaired; video script and Devpost text are still to do; the demo is built (see Demo).
 
 An agent that repairs spatial / orientation / affine bugs in medical-imaging Python code
 (nibabel, SimpleITK, MONAI, TorchIO style), verified by a **deterministic physical-coordinate
@@ -17,6 +17,18 @@ python scripts/list_models.py      # zero-token: lists Nemotron model ids
 python scripts/smoke_test.py       # budget-capped completion + tool-call test
 pytest
 ```
+
+## Demo (step 8)
+The first screen is the whole pitch: for a script whose **unit tests all pass**, the oracle shows **18/18 landmark measurements off, worst 227 mm**, drawn as expected-vs-actual positions in three anatomical views. Press Play and the agent's real run steps through four iterations (two of which crash in the sandbox) to a patch that puts every landmark within 0.05 mm, followed by four checks the model never saw.
+```bash
+python scripts/demo.py replay L04_right_multiply     # terminal walkthrough of a recorded real run, no API, no tokens
+python scripts/demo.py serve                         # local web UI: recorded runs + "check any script with the oracle" (no tokens)
+SC_ALLOW_API=1 python scripts/demo.py serve --live --budget 60000   # adds a working "Repair with Nemotron" button (capped tokens)
+```
+- **Static replay page for a demo URL:** `docs/index.html` is one self-contained file (175 KB, no network, no external scripts) with nine recorded runs embedded. Serve `docs/` with GitHub Pages or any static host; `python demo/build_static.py` rebuilds it.
+- **What the nine runs are:** real agent runs taken from the evaluation logs (`results/eval/main/logs`), not staged. Landmark positions are re-measured by the deterministic oracle on each saved patch; rationale text, token counts and held-out results come from the run logs. They include a **failed run** (S06, shown on purpose), two abstentions and a no-change case. The recorded runs were chosen by me to be instructive (the hero case is one where the repo tests pass); the evaluation table above, not the demo, is the evidence for how often this works.
+- **Live mode:** checks any pasted script (it must declare a `SPATIAL_CONTRACT`) and, with `--live`, runs the same agent against Nebius Token Factory; one end-to-end live repair was exercised through the HTTP API (R05: repaired in one iteration, 2,210 tokens, all held-out checks passed). The server binds to `127.0.0.1` only and executes submitted Python in a subprocess with a scrubbed environment and an import allow-list; **that is not a security boundary, do not expose it.**
+- Tests: `tests/test_demo.py` checks that every recording matches its evaluation row, that `docs/index.html` is up to date and has no external URLs, the live check/guard logic, and the CLI walkthrough.
 
 ## Oracle (implemented, step 3)
 - `contract.py`: `SPATIAL_CONTRACT = {...}` literal declared in the pipeline (read with `ast.literal_eval`,
