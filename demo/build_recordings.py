@@ -30,6 +30,13 @@ PICKS = [
 ]
 
 
+LIB_PICKS = [
+    ("nilearn_reorder", 0, "Real library bug: nilearn reorder_img"),
+    ("torchio_sitk_ras_lps", 1, "Real library bug: TorchIO RAS/LPS (a different fix than upstream)"),
+    ("torchio_crop", 0, "Real library bug: TorchIO Crop (a failed run)"),
+]
+
+
 def main() -> None:
     raw = [json.loads(l) for l in (EVAL / "raw.jsonl").read_text(encoding="utf-8").splitlines()]
     records = []
@@ -52,6 +59,21 @@ def main() -> None:
         records.append(rec)
         print(f"{cid:26s} r{rep} outcome={rec['outcome']:18s} steps={len(rec['steps'])} tokens={rec['tokens_total']}"
               f" repo_tests_pass={rec.get('repo_tests', {}).get('passed')}", flush=True)
+    # real-library repair runs (results/real_repair/real3): the agent edits a private copy of the library itself
+    sys.path.insert(0, str(ROOT / "scripts"))
+    import analyze_real_repair as ar
+    from spatialcontract import realbugs
+    cases = {c.id: c for c in realbugs.CASES}
+    run = ROOT / "results" / "real_repair" / "real3"
+    for cid, rep, title in LIB_PICKS:
+        rec = demo_data.build_library_record(cases[cid], run, rep, title=title)
+        agent_lines = ar.changed_lines(rec["diff"])
+        up = ar.upstream_changed_lines(cases[cid])
+        rec["same_as_upstream"] = "yes" if agent_lines and agent_lines == up else ("partly" if agent_lines & up else "no")
+        records.append(rec)
+        fin = rec.get("final") or {}
+        print(f"{cid:24s} r{rep} LIBRARY outcome={rec['outcome']:9s} events={len(rec['events'])} initial={rec['initial']['verdict']} final={fin.get('verdict')} "
+              f"same_as_upstream={rec['same_as_upstream']}", flush=True)
     out = ROOT / "demo" / "recordings.json"
     out.write_text(json.dumps({"model": MODEL, "recordings": records}, indent=1), encoding="utf-8")
     print("wrote", out, f"{out.stat().st_size // 1024} KB")

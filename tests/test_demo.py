@@ -16,9 +16,26 @@ RAW = [json.loads(l) for l in (ROOT / "results" / "eval" / "main" / "raw.jsonl")
 src = lambda cid: (ROOT / "corpus" / "seeded" / f"{cid}.py").read_text(encoding="utf-8")   # noqa: E731
 
 
+LIB = [json.loads(l) for l in (ROOT / "results" / "real_repair" / "real3" / "raw.jsonl").read_text(encoding="utf-8").splitlines()]
+
+
+def test_library_recordings_match_the_real_repair_rows():
+    libs = [r for r in REC["recordings"] if r.get("kind") == "library"]
+    assert len(libs) >= 3
+    for r in libs:
+        rep = int(re.search(r"_r(\d)\.jsonl", r["source_run"]).group(1))
+        row = next(x for x in LIB if x["case"] == r["id"] and x["rep"] == rep)
+        assert r["outcome"] == row["outcome"] and r["n_steps"] == row["steps"] and r["touched"] == row["touched"]
+        assert r["initial"]["verdict"] == "FAIL"                       # the pre-fix library is measurably wrong
+        if r["outcome"] == "REPAIRED":
+            assert r["final"]["verdict"] == "PASS" and r["heldout"]["passed"]    # re-measured by applying the saved diff to a fresh copy
+        assert (ROOT / r["source_run"]).exists()
+    assert {r["outcome"] for r in libs} == {"REPAIRED", "FAILED"}      # a failed run is shown on purpose
+
+
 def test_every_recording_is_a_real_run_that_matches_the_evaluation_rows():
     assert len(REC["recordings"]) >= 8
-    for r in REC["recordings"]:
+    for r in [x for x in REC["recordings"] if x.get("kind") != "library"]:
         assert r["source"] == src(r["id"])
         m = re.search(r"arm3_r(\d)", r["source_run"])
         row = next(x for x in RAW if x["arm"] == "arm3" and x["rep"] == int(m.group(1)) and x["id"] == r["id"])

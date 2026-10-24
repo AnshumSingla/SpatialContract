@@ -1,0 +1,9 @@
+--- a/monai/transforms/spatial/array.py
++++ b/monai/transforms/spatial/array.py
+@@ -597,5 +597,5 @@
+         data_array = convert_to_tensor(data_array, track_meta=get_track_meta())
+         if isinstance(data_array, MetaTensor):
+-            data_array.affine = torch.as_tensor(affine_)
++            data_array.affine = torch.as_tensor(new_affine)
+ 
+         # we don't want to track the nested transform otherwise two will be appended

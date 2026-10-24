@@ -1,0 +1,16 @@
+torchio_crop             PRE passed=False {'hidden_bank': 'FAIL', 'per_run': 'FAIL', 'paired': 'FAIL', 'differential': 'FAIL'}
+                         POST passed=True {'hidden_bank': 'PASS', 'per_run': 'PASS', 'paired': 'PASS', 'differential': 'PASS'}
+nilearn_reorder          PRE passed=False {'hidden_bank': 'FAIL', 'per_run': 'PASS', 'paired': 'FAIL', 'differential': 'PASS'}
+                         POST passed=False {'hidden_bank': 'FAIL', 'per_run': 'PASS', 'paired': 'PASS', 'differential': 'PASS'}
+   POST failing part: hidden_bank VERDICT: FAIL  (tolerance 1.5 mm; contract {'world_frame': 'RAS', 'units': 'mm', 'affine_convention': 'voxel_center_to_world', 'array_orientation': None}) | phantom seed=1000: PASS; input axcodes=ILP zooms_mm=[2.871, 0.987, 1.285] -> output axcodes=RAS zooms_mm=[0.987, 1.285, 2.871]; orientation_ok=None; lossless=True tol_used=0.05 mm; 0/6 landmarks off | phantom seed=1001: FAIL; input axcodes=ASL
+nibabel_conform          PRE passed=False {'hidden_bank': 'FAIL', 'per_run': 'FAIL', 'paired': 'FAIL', 'differential': 'PASS'}
+                         POST passed=True {'hidden_bank': 'PASS', 'per_run': 'PASS', 'paired': 'PASS', 'differential': 'PASS'}
+monai_spacing_offset     PRE passed=False {'hidden_bank': 'FAIL', 'per_run': 'PASS', 'paired': 'FAIL', 'differential': 'PASS'}
+                         POST passed=True {'hidden_bank': 'PASS', 'per_run': 'PASS', 'paired': 'PASS', 'differential': 'PASS'}
+nibabel_ioorient         PRE passed=True {'hidden_bank': 'PASS', 'per_run': 'PASS', 'paired': 'PASS', 'differential': 'PASS'}
+                         POST passed=True {'hidden_bank': 'PASS', 'per_run': 'PASS', 'paired': 'PASS', 'differential': 'PASS'}
+torchio_reorient         PRE passed=False {'hidden_bank': 'FAIL', 'per_run': 'FAIL', 'paired': 'FAIL', 'differential': 'FAIL'}
+                         POST passed=True {'hidden_bank': 'PASS', 'per_run': 'PASS', 'paired': 'PASS', 'differential': 'PASS'}
+torchio_sitk_ras_lps     PRE passed=False {'hidden_bank': 'FAIL', 'per_run': 'FAIL', 'paired': 'FAIL', 'differential': 'FAIL'}
+                         POST passed=True {'hidden_bank': 'PASS', 'per_run': 'PASS', 'paired': 'PASS', 'differential': 'PASS'}
+cases where the gold fix does not validate cleanly (or PRE validates): 2

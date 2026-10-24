@@ -1,0 +1,19 @@
+--- a/torchio/data/image.py
++++ b/torchio/data/image.py
+@@ -582,7 +582,14 @@
+             sitk_image = sitk.GetImageFromArray(array, isVector=True)
+         sitk_image.SetSpacing(self.affine.spacing)
+-        sitk_image.SetOrigin(self.affine.origin)
++        origin = self.affine.origin
++        lps_origin = np.array([-origin[0], -origin[1], origin[2]])
++        sitk_image.SetOrigin(lps_origin)
++        direction = self.affine.direction.numpy()
++        flip = np.array([[-1, 0, 0],
++                         [0, -1, 0],
++                         [0, 0, 1]], dtype=direction.dtype)
++        lps_direction = np.dot(flip, direction)
+         sitk_image.SetDirection(
+-            rearrange(self.affine.direction, "i j -> (i j)").tolist()
++            rearrange(lps_direction, "i j -> (i j)").tolist()
+         )
+         sitk.WriteImage(sitk_image, str(path), **kwargs)

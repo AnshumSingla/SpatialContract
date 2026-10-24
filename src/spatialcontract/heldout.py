@@ -90,12 +90,12 @@ def ramp_differential(code_path, contract: SpatialContract, python=None, pythonp
             "valid_fraction": round(frac, 3), "lossless": lossless}
 
 
-def validate(code_path, contract: SpatialContract, run_seed: int = 0, python=None, pythonpath=None) -> dict:
+def validate(code_path, contract: SpatialContract, run_seed: int = 0, python=None, pythonpath=None, hidden_seeds=None) -> dict:
     code_path = Path(code_path)
     kw = dict(python=python, pythonpath=pythonpath)
     src = code_path.read_text(encoding="utf-8")
     parts: dict = {}
-    parts["hidden_bank"] = oracle.check(code_path, contract, phantoms=[make_phantom(s) for s in HIDDEN_SEEDS], **kw)
+    parts["hidden_bank"] = oracle.check(code_path, contract, phantoms=[make_phantom(s) for s in (hidden_seeds or HIDDEN_SEEDS)], **kw)
     parts["per_run"] = oracle.check(code_path, contract, phantoms=[make_phantom(per_run_seed(run_seed, src))], **kw)
     parts["paired"] = oracle.check(code_path, contract,
                                    phantoms=[make_paired(make_phantom(s), k) for s in PAIRED_BASE_SEEDS for k in (0, 1)], **kw)

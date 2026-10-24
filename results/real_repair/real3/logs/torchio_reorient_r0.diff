@@ -1,0 +1,21 @@
+--- a/torchio/transforms/reorient.py
++++ b/torchio/transforms/reorient.py
+@@ -77,13 +77,13 @@
+     flip_flags = ornt[:, 1]
+ 
+-    # Step 1: flip input axes where direction is -1
+-    if flip_dims := [int(input_axes[i]) - 3 for i in range(3) if flip_flags[i] == -1]:
+-        data = torch.flip(data, flip_dims)
+-
+-    # Step 2: permute spatial axes (-3, -2, -1)
++    # Step 1: permute spatial axes (-3, -2, -1)
+     n_leading = data.ndim - 3
+     leading = list(range(n_leading))
+     spatial_perm = [int(a) + n_leading for a in input_axes]
+     data = data.permute(leading + spatial_perm)
++
++    # Step 2: flip axes where direction is -1
++    if flip_dims := [n_leading + i for i in range(3) if flip_flags[i] == -1]:
++        data = torch.flip(data, flip_dims)
+ 
+     return data.contiguous()

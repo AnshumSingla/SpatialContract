@@ -31,24 +31,24 @@ Three arms on 31 seeded bugs, 11 correct controls and 7 must-abstain cases, scor
 | same model + unit tests only | 86% | 18 of 33 (broke 8) | 16 of 21 |
 | same model + oracle feedback | **98%** | 0 of 33 (gate) | 0 of 21 (gate) |
 
-The paired difference between oracle feedback and unit tests is +12 points (95% CI +3 to +22). Most of the gap sits on the 12 bugs the unit tests do not flag (94% vs 72%; on the 19 they do flag, 100% vs 95%). The oracle also reproduces 7 of 7 real fixed bugs from TorchIO, nibabel, nilearn and MONAI at their pre-fix commits.
+The paired difference between oracle feedback and unit tests is +12 points (95% CI +3 to +22). Most of the gap sits on the 12 bugs the unit tests do not flag (94% vs 72%; on the 19 they do flag, 100% vs 95%). The oracle also reproduces 7 of 7 real fixed bugs from TorchIO, nibabel, nilearn and MONAI at their pre-fix commits. We then let the agent loose on those library bugs: it searches, reads and edits a private copy of the library (no hint about which file), re-runs the oracle, and is judged by the same held-out checks. Result: **3 of 14 runs repaired, 2 of the 7 bugs**, 6 of 14 runs edited the same file as the upstream fix, 11 failures that all ended on a 300k-token cap. One repaired patch (TorchIO's SimpleITK frame bug) is a valid fix that differs from upstream; both repaired nilearn patches equal the public upstream fix, so memorisation is possible.
 
 ## Limitations (stated up front)
 - The seeded bugs are the oracle's own classes, so those results are circular; the oracle was adjusted several times after it missed a bug.
 - The unit-test baseline is ours; a stronger suite would shrink the gap. 31 cases and three repetitions is small.
-- The agent does **not** repair bugs inside libraries yet; for the 7 real bugs only detection is measured, and only 4 of 7 were caught on the first attempt.
+- Library repair is partial (3 of 14 runs). The tool set was changed four times after failures on those same 7 bugs, the first full run was invalid because of a bug in our search tool, there is no unit-test baseline for the real bugs, and only 4 of 7 bugs were caught by the oracle on the first attempt.
 - The abstention and no-false-alarm numbers for the oracle-gated arm are by construction (a deterministic gate decides before the model is called).
 - No overfit was observed, so the held-out checks have not been shown to catch real LLM overfitting.
 - A failed run (a Fortran-order reshape bug) is in the demo on purpose.
 
 ## Challenges
-Making the oracle trustworthy took more work than the agent: it missed a crop bug because the phantom's bounding-box margins were palindromic, false-alarmed on a coarse resampler, missed a one-voxel nilearn bug under its tolerance, and crashed on a degenerate affine. Each was fixed and is documented in `docs/ENGINEERING_NOTES.md`. We also found, mid-run, that the model could read a comment in the corpus file describing the bug; we removed the comments and discarded that run.
+Making the evaluation trustworthy took more work than the agent. For the library runs, our own search tool silently returned "no matches" for natural glob patterns, which made the first full run meaningless; we found it by reading the logs and discarded the run. The oracle too: it missed a crop bug because the phantom's bounding-box margins were palindromic, false-alarmed on a coarse resampler, missed a one-voxel nilearn bug under its tolerance, and crashed on a degenerate affine. Each was fixed and is documented in `docs/ENGINEERING_NOTES.md`. We also found, mid-run, that the model could read a comment in the corpus file describing the bug; we removed the comments and discarded that run.
 
 ## What we learned
 The model repairs well when shown measurements and guesses when not: even told to abstain when the convention is unknown, it patched 16 of 21 such cases. Stopping that needed an external check, not a better prompt.
 
 ## What's next
-File-navigation tools and a patchable worktree so the agent can repair the 7 real library bugs; more real bugs from dipy, ANTsPy and SimpleITK; a stronger, independently written unit-test baseline.
+Higher step and token budgets and better localisation for the five library bugs the agent could not fix; a unit-test baseline for the real bugs; more real bugs from dipy, ANTsPy and SimpleITK; a stronger, independently written unit-test baseline for the seeded ones.
 
 ## Try it
 `pip install -e ".[dev]"`, then `python scripts/demo.py replay L04_right_multiply` (no API, no tokens) or open `docs/index.html`. To run the real model: copy `.env.example` to `.env`, add a Token Factory key, and run `SC_ALLOW_API=1 python scripts/repair.py corpus/seeded/R05_stale_affine.py --budget 30000`.

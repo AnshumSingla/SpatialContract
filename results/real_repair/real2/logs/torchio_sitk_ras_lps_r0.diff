@@ -1,0 +1,19 @@
+--- a/torchio/data/image.py
++++ b/torchio/data/image.py
+@@ -581,8 +581,13 @@
+             array = rearrange(data, "c i j k -> k j i c")
+             sitk_image = sitk.GetImageFromArray(array, isVector=True)
+-        sitk_image.SetSpacing(self.affine.spacing)
+-        sitk_image.SetOrigin(self.affine.origin)
++        spacing = self.affine.spacing
++        origin = self.affine.origin
++        direction = self.affine.direction
++        # permute columns of direction to match new axis order (i,j,k) -> (k,j,i)
++        direction_permuted = direction[:, [2, 1, 0]]
++        sitk_image.SetSpacing(spacing)
++        sitk_image.SetOrigin(origin)
+         sitk_image.SetDirection(
+-            rearrange(self.affine.direction, "i j -> (i j)").tolist()
++            rearrange(direction_permuted, "i j -> (i j)").tolist()
+         )
+         sitk.WriteImage(sitk_image, str(path), **kwargs)

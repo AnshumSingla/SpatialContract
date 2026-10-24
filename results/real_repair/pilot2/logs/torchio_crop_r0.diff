@@ -1,0 +1,23 @@
+--- a/torchio/transforms/preprocessing/spatial/crop.py
++++ b/torchio/transforms/preprocessing/spatial/crop.py
+@@ -28,12 +28,14 @@
+         low = self.bounds_parameters[::2]
+         high = self.bounds_parameters[1::2]
+-        index_ini = low
+-        index_fin = np.array(sample.spatial_shape) - high
++        low_x, low_y, low_z = low
++        high_x, high_y, high_z = high
++        index_ini = np.array([low_x, low_y, low_z])
++        index_fin = np.array(sample.spatial_shape) - np.array([high_x, high_y, high_z])
+         for image in self.get_images(sample):
+             new_origin = nib.affines.apply_affine(image.affine, index_ini)
+             new_affine = image.affine.copy()
+             new_affine[:3, 3] = new_origin
+-            i0, j0, k0 = index_ini
+-            i1, j1, k1 = index_fin
+-            image[DATA] = image[DATA][:, i0:i1, j0:j1, k0:k1].clone()
+-        return sample
++            y0, y1 = low_y, high_y
++            x0, x1 = low_x, high_x
++            z0, z1 = low_z, high_z
++            image[DATA] = image[DATA][:, y0:y1, x0:x1, z0:z1].clone()

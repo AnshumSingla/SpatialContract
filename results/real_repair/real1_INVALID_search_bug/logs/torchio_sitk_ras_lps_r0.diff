@@ -1,0 +1,20 @@
+--- a/torchio/data/image.py
++++ b/torchio/data/image.py
+@@ -582,8 +582,13 @@
+             sitk_image = sitk.GetImageFromArray(array, isVector=True)
+         sitk_image.SetSpacing(self.affine.spacing)
+-        sitk_image.SetOrigin(self.affine.origin)
+-        sitk_image.SetDirection(
+-            rearrange(self.affine.direction, "i j -> (i j)").tolist()
+-        )
++        origin = self.affine.origin
++        direction = self.affine.direction
++        # Convert from LPS to RAS world coordinates (flip X and Y)
++        origin = np.array([-origin[0], -origin[1], origin[2]])
++        direction = direction.copy()
++        direction[:, 0] = -direction[:, 0]
++        direction[:, 1] = -direction[:, 1]
++        sitk_image.SetOrigin(origin)
++        sitk_image.SetDirection(direction.ravel().tolist())
+         sitk.WriteImage(sitk_image, str(path), **kwargs)
+ 

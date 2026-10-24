@@ -1,6 +1,6 @@
 # Feedback on Nebius Token Factory and the NVIDIA Nemotron models
 
-Written from what I actually ran (2026-10-23 and 2026-10-24). About 873,000 tokens went through Token Factory in total: a 514-token smoke test, a few hundred tokens of probes, about 255k tokens of repair experiments on two models, and about 600k tokens for the three-arm evaluation (271 model calls). Latencies are single samples, not benchmarks.
+Written from what I actually ran (2026-10-23 and 2026-10-24). About 7.3 million tokens went through Token Factory in total: a 514-token smoke test, a few hundred tokens of probes, about 255k tokens of repair experiments on two models, about 600k tokens for the three-arm evaluation (271 model calls), and about 6.4M tokens for the library-repair runs (pilots, one invalid run, and the final 14 runs). Latencies are single samples, not benchmarks.
 
 **Used:** Token Factory (OpenAI-compatible chat completions with tool calling, and the model listing); `nvidia/nemotron-3-super-120b-a12b` (the repair model); `nvidia/NVIDIA-Nemotron-3-Nano-30B-A3B` (tried first, then dropped).
 **Listed but not used:** `nvidia/Nemotron-3_5-Lightning`, `nvidia/Nemotron-3-Ultra-550b-a55b`, `nvidia/Nemotron-3.5-Super-VL`. I have no opinion on them.
@@ -17,6 +17,8 @@ Written from what I actually ran (2026-10-23 and 2026-10-24). About 873,000 toke
 - `usage` on every response, which made a hard, thread-safe cumulative token cap with a persistent ledger easy to build.
 - Parameters pass through `extra_body`: `{"chat_template_kwargs": {"enable_thinking": false}}` cut a hello from 57 to 3 completion tokens, and `{"reasoning_effort": "low"}` gave 17.
 - Cost: the whole evaluation cost well under $1 at the listed prices.
+
+**Long agentic loops.** The library-repair runs (7 bugs x 2 repetitions plus pilots, about 6.4M tokens, up to 40 steps and 300k tokens per run, 4 parallel) behaved like the short ones: 442 of 442 model calls in the final run returned a tool call, none ended on `finish_reason=length`, none had malformed arguments (one call named a tool that does not exist). Two things made long loops expensive and are worth knowing: prompt tokens are billed again at every step (a 35-step run costs about 300k tokens even though each step adds a few hundred), and although the model listing shows an `input_cache_read` price for Super ($0.06 against $0.30 per million), `usage.prompt_tokens_details` came back null, so I could not tell whether my repeated prefixes were cached or what they cost. I pruned old tool outputs myself and estimated cost at the full input price. Reporting cached tokens in `usage` would matter a lot for agent loops.
 
 **What did not, and what I would change.**
 - I found the reasoning controls above by trial. The model listing only says `supported_features: ["tools","reasoning"]`; the listing or the docs should state which switches each model accepts. This cost me several probe calls.

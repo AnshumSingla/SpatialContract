@@ -172,8 +172,49 @@ function stripHtml(rec, i){
 }
 
 /* ---- main render -------------------------------------------------------------------------------------------------------- */
+let libView = 'before';
+function renderLibrary(rec){
+  const init = rec.initial, fin = rec.final;
+  const bad = r => r ? r.phantoms.reduce((n,p)=>n+p.landmarks.filter(l=>!l.ok).length,0) : 0;
+  const tot = r => r ? r.phantoms.reduce((n,p)=>n+p.landmarks.length,0) : 0;
+  const finOk = fin && fin.verdict === 'PASS';
+  const pills = `<div class="strip">`
+    + pill('1 · Library unit tests', 'not run', 'no unit-test baseline for the real bugs')
+    + pill('2 · Spatial-contract oracle', init.verdict === 'PASS' ? '✔ on target' : `✘ ${bad(init)}/${tot(init)} landmarks off`, init.any_lost ? 'some landmarks lost' : `worst error ${init.worst_error_mm} mm (library at the pre-fix commit)`, init.verdict === 'PASS' ? 'ok' : 'bad')
+    + pill('3 · Agent (Nemotron)', rec.outcome === 'REPAIRED' ? '✔ repaired' : '✘ not repaired', `${rec.n_steps} steps · ${rec.oracle_runs} oracle runs · ${rec.tokens_total.toLocaleString()} tokens`, rec.outcome === 'REPAIRED' ? 'ok' : 'bad') + `</div>`;
+  const shown = libView === 'after' ? fin : init;
+  let pic;
+  if(libView === 'after' && fin && fin.verdict === 'ERROR'){
+    pic = `<div class="banner b-bad">After the agent's edit the driver crashes in the sandbox: ${esc(fin.phantoms[0] && fin.phantoms[0].detail || 'error')}</div>`;
+  } else if(libView === 'after' && !fin){
+    pic = `<div class="note">The agent made no edit, so the library is unchanged.</div>`;
+  } else pic = pictureHtml(shown);
+  const same = {yes: 'identical to the upstream fix', partly: 'overlapping with the upstream fix but not identical to it', no: 'different from the upstream fix'}[rec.same_as_upstream] || '';
+  const left = `<div class="card"><h2>Driver script (read-only; the bug is in the library)</h2><div class="note" style="margin-bottom:6px"><b>Real bug</b> (annotation for you; the agent is not told): ${esc(rec.description)}</div><pre>${esc(rec.source)}</pre></div>`
+    + `<div class="card" style="margin-top:12px"><h2>What the agent changed in the library</h2>`
+    + (rec.diff.trim() ? diffHtml(rec.diff.split('\n')) + `<div class="note" style="margin-top:6px">Edited: ${rec.touched.map(esc).join(', ') || 'nothing'}. The upstream fix edits ${rec.upstream_files.map(esc).join(', ')}: ${rec.localized ? 'same file' : 'a different file'}. This patch is ${esc(same)}.`
+      + (rec.same_as_upstream === 'yes' ? ' That fix is public, so the model may have seen it: do not read this as proof of reasoning.' : '') + `</div>` : '<div class="note">No edit was made.</div>')
+    + `</div>`;
+  const ev = rec.events.map(e => {
+    const cls = e.name === 'run_oracle' ? (e.verdict === 'PASS' ? 'b-ok' : 'b-bad') : e.name.startsWith('replace') ? 'b-warn' : 'b-mute';
+    return `<div style="display:flex;gap:8px;align-items:baseline;padding:2px 0;font-size:12.5px"><span class="note" style="min-width:2.2em">${e.step}</span><span class="badge ${cls}" style="min-width:7.5em;text-align:center">${esc(e.name)}</span><span>${esc(e.what)}</span><span class="note" style="margin-left:auto;max-width:48%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(e.result)}</span></div>`;
+  }).join('');
+  const tc = Object.entries(rec.tool_counts).map(([k,v]) => `${k} ${v}`).join(', ');
+  let checks = '';
+  if(rec.heldout){
+    const names = {hidden_bank:['Hidden phantoms','unseen orientations'], per_run:['Fresh phantom','seed from the patched code'], paired:['Paired orientation','same content, stored differently'], differential:['Non-phantom image','intensity ramp, SimpleITK']};
+    checks = `<h2 style="margin-top:14px">Checks the agent never saw</h2><div class="checks">` + Object.entries(rec.heldout.summary).map(([k,v]) => `<div class="check"><b>${v==='PASS'?'✔':'✘'} ${names[k][0]}</b>${names[k][1]}</div>`).join('') + `</div>`;
+  } else if(rec.outcome !== 'REPAIRED') checks = `<div class="note" style="margin-top:8px">The visible oracle never passed, so held-out validation did not run. Reported as a failure.</div>`;
+  const right = `<div class="card"><h2>What the oracle measured</h2><div class="ctl"><button class="btn ${libView==='before'?'primary':''}" id="vbefore">Before: library at the pre-fix commit</button><button class="btn ${libView==='after'?'primary':''}" id="vafter">After: with the agent's edit</button></div>${pic}</div>`
+    + `<div class="card" style="margin-top:12px"><h2>Agent run: ${rec.n_steps} steps (${esc(tc)})</h2><div style="max-height:300px;overflow:auto">${ev}</div>${checks}</div>`;
+  $('#app').innerHTML = pills + `<div class="grid"><div>${left}</div><div>${right}</div></div>`;
+  $('#vbefore').onclick = () => { libView = 'before'; renderLibrary(cur); };
+  $('#vafter').onclick = () => { libView = 'after'; renderLibrary(cur); };
+}
+
 function render(){
   const rec = cur; if(!rec){ $('#app').innerHTML = ''; return; }
+  if(rec.kind === 'library'){ renderLibrary(rec); return; }
   const n = rec.steps.length, atEnd = sel >= n-1, finished = rec.status === 'done';
   const rep = reportAt(rec, sel);
   const [ol, oc] = OUT[rec.outcome] || ['Running…','b-mute'];
@@ -241,7 +282,7 @@ function start(){ if(!cur.steps.length) return; if(sel >= cur.steps.length-1) se
 function stop(){ if(timer){ clearInterval(timer); timer = null; } const p = $('#play'); if(p) p.textContent = '▶ Play'; }
 
 function pick(i, autoplay){
-  stop(); cur = recs[i]; sel = -1;
+  stop(); cur = recs[i]; sel = -1; libView = 'before';
   document.querySelectorAll('.chip').forEach((c,j) => c.setAttribute('aria-pressed', j === i));
   render();
   if(LIVE) setTimeout(liveCheck, 0);

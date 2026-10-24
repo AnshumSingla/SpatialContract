@@ -1,0 +1,8 @@
+--- a/nibabel/processing.py
++++ b/nibabel/processing.py
+@@ -387,4 +387,4 @@
+ 
+     # Reorient to desired orientation.
+-    ornt = axcodes2ornt(orientation, labels=list(zip('RPI', 'LAS')))
++    ornt = axcodes2ornt(orientation)
+     return out_img.as_reoriented(ornt)

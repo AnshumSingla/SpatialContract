@@ -8690,6 +8690,2220 @@
    "model": "nvidia/nemotron-3-super-120b-a12b",
    "source_run": "results/eval/main/logs/arm3_r0/K03_S_reference.jsonl",
    "llm_calls": 0
+  },
+  {
+   "kind": "library",
+   "id": "nilearn_reorder",
+   "title": "Real library bug: nilearn reorder_img",
+   "description": "reorder_img off-by-one: origin shifted by one voxel when flipping the y/z axes",
+   "source": "SPATIAL_CONTRACT = {\"world_frame\": \"RAS\", \"units\": \"mm\", \"affine_convention\": \"voxel_center_to_world\"}\n\n\ndef process(in_path, out_path):\n    import nibabel as nib\n    from nilearn.image import reorder_img\n\n    nib.save(reorder_img(nib.load(in_path), resample=\"nearest\"), out_path)\n",
+   "contract": {
+    "world_frame": "RAS",
+    "units": "mm",
+    "affine_convention": "voxel_center_to_world",
+    "array_orientation": null
+   },
+   "outcome": "REPAIRED",
+   "tokens_total": 40128,
+   "llm_calls": 10,
+   "n_steps": 10,
+   "oracle_runs": 2,
+   "localized": true,
+   "touched": [
+    "nilearn/image/resampling.py"
+   ],
+   "upstream_files": [
+    "nilearn/image/resampling.py"
+   ],
+   "diff": "--- a/nilearn/image/resampling.py\n+++ b/nilearn/image/resampling.py\n@@ -688,5 +688,5 @@\n         slice1 = slice(None, None, None)\n     if pixdim[1] < 0:\n-        b[1] = b[1] + 1 + pixdim[1]*(data.shape[1] - 1)\n+        b[1] = b[1] + pixdim[1]*(data.shape[1] - 1)\n         pixdim[1] = -pixdim[1]\n         slice2 = slice(None, None, -1)\n@@ -694,5 +694,5 @@\n         slice2 = slice(None, None, None)\n     if pixdim[2] < 0:\n-        b[2] = b[2] + 1 + pixdim[2]*(data.shape[2] - 1)\n+        b[2] = b[2] + pixdim[2]*(data.shape[2] - 1)\n         pixdim[2] = -pixdim[2]\n         slice3 = slice(None, None, -1)\n",
+   "heldout": {
+    "passed": true,
+    "summary": {
+     "hidden_bank": "PASS",
+     "per_run": "PASS",
+     "paired": "PASS",
+     "differential": "PASS"
+    }
+   },
+   "status": "done",
+   "source_run": "results/real_repair/real3/logs/nilearn_reorder_r0.jsonl",
+   "model": "nvidia/nemotron-3-super-120b-a12b",
+   "steps": [],
+   "tool_counts": {
+    "list_dir": 1,
+    "search": 1,
+    "read_file": 4,
+    "replace_in_file": 2,
+    "run_oracle": 2
+   },
+   "initial": {
+    "verdict": "FAIL",
+    "reasons": [],
+    "frame": "RAS",
+    "array_orientation": null,
+    "phantoms": [
+     {
+      "seed": 0,
+      "status": "PASS",
+      "in_axcodes": "RSA",
+      "out_axcodes": "RAS",
+      "orientation_ok": null,
+      "tol_mm": 0.05,
+      "detail": "",
+      "landmarks": [
+       {
+        "label": 1,
+        "expected": [
+         -6.49,
+         8.24,
+         -24.99
+        ],
+        "got": [
+         -6.49,
+         8.24,
+         -24.99
+        ],
+        "error_mm": 0.0,
+        "ok": true
+       },
+       {
+        "label": 2,
+        "expected": [
+         -48.06,
+         10.79,
+         -27.05
+        ],
+        "got": [
+         -48.06,
+         10.79,
+         -27.05
+        ],
+        "error_mm": 0.0,
+        "ok": true
+       },
+       {
+        "label": 3,
+        "expected": [
+         0.44,
+         32.47,
+         -20.86
+        ],
+        "got": [
+         0.44,
+         32.47,
+         -20.86
+        ],
+        "error_mm": 0.0,
+        "ok": true
+       },
+       {
+        "label": 4,
+        "expected": [
+         -42.86,
+         35.02,
+         -31.18
+        ],
+        "got": [
+         -42.86,
+         35.02,
+         -31.18
+        ],
+        "error_mm": 0.0,
+        "ok": true
+       },
+       {
+        "label": 5,
+        "expected": [
+         -15.15,
+         35.02,
+         20.41
+        ],
+        "got": [
+         -15.15,
+         35.02,
+         20.41
+        ],
+        "error_mm": 0.0,
+        "ok": true
+       },
+       {
+        "label": 6,
+        "expected": [
+         -37.67,
+         35.02,
+         14.22
+        ],
+        "got": [
+         -37.67,
+         35.02,
+         14.22
+        ],
+        "error_mm": 0.0,
+        "ok": true
+       }
+      ]
+     },
+     {
+      "seed": 1,
+      "status": "PASS",
+      "in_axcodes": "PLS",
+      "out_axcodes": "RAS",
+      "orientation_ok": null,
+      "tol_mm": 1.892,
+      "detail": "",
+      "landmarks": [
+       {
+        "label": 1,
+        "expected": [
+         -10.66,
+         50.24,
+         47.4
+        ],
+        "got": [
+         -10.44,
+         50.36,
+         47.35
+        ],
+        "error_mm": 0.25,
+        "ok": true
+       },
+       {
+        "label": 2,
+        "expected": [
+         30.97,
+         44.26,
+         18.31
+        ],
+        "got": [
+         31.32,
+         44.49,
+         18.28
+        ],
+        "error_mm": 0.42,
+        "ok": true
+       },
+       {
+        "label": 3,
+        "expected": [
+         31.47,
+         10.02,
+         49.17
+        ],
+        "got": [
+         31.4,
+         9.73,
+         49.12
+        ],
+        "error_mm": 0.3,
+        "ok": true
+       },
+       {
+        "label": 4,
+        "expected": [
+         25.28,
+         56.25,
+         44.12
+        ],
+        "got": [
+         25.2,
+         56.07,
+         44.11
+        ],
+        "error_mm": 0.2,
+        "ok": true
+       },
+       {
+        "label": 5,
+        "expected": [
+         -1.08,
+         50.88,
+         18.99
+        ],
+        "got": [
+         -1.08,
+         50.99,
+         18.95
+        ],
+        "error_mm": 0.12,
+        "ok": true
+       },
+       {
+        "label": 6,
+        "expected": [
+         23.64,
+         1.76,
+         26.73
+        ],
+        "got": [
+         23.68,
+         1.67,
+         26.68
+        ],
+        "error_mm": 0.11,
+        "ok": true
+       }
+      ]
+     },
+     {
+      "seed": 2,
+      "status": "FAIL",
+      "in_axcodes": "IAR",
+      "out_axcodes": "RAS",
+      "orientation_ok": null,
+      "tol_mm": 0.05,
+      "detail": "",
+      "landmarks": [
+       {
+        "label": 1,
+        "expected": [
+         17.03,
+         17.91,
+         -28.57
+        ],
+        "got": [
+         17.03,
+         17.91,
+         -27.57
+        ],
+        "error_mm": 1.0,
+        "ok": false
+       },
+       {
+        "label": 2,
+        "expected": [
+         3.94,
+         11.88,
+         -27.22
+        ],
+        "got": [
+         3.94,
+         11.88,
+         -26.22
+        ],
+        "error_mm": 1.0,
+        "ok": false
+       },
+       {
+        "label": 3,
+        "expected": [
+         6.39,
+         48.04,
+         -4.27
+        ],
+        "got": [
+         6.39,
+         48.04,
+         -3.27
+        ],
+        "error_mm": 1.0,
+        "ok": false
+       },
+       {
+        "label": 4,
+        "expected": [
+         19.48,
+         9.87,
+         2.48
+        ],
+        "got": [
+         19.48,
+         9.87,
+         3.48
+        ],
+        "error_mm": 1.0,
+        "ok": false
+       },
+       {
+        "label": 5,
+        "expected": [
+         20.3,
+         -8.21,
+         -27.22
+        ],
+        "got": [
+         20.3,
+         -8.21,
+         -26.22
+        ],
+        "error_mm": 1.0,
+        "ok": false
+       },
+       {
+        "label": 6,
+        "expected": [
+         3.94,
+         -0.17,
+         -4.27
+        ],
+        "got": [
+         3.94,
+         -0.17,
+         -3.27
+        ],
+        "error_mm": 1.0,
+        "ok": false
+       }
+      ]
+     }
+    ],
+    "worst_error_mm": 1.0,
+    "any_lost": false,
+    "feedback": "VERDICT: FAIL  (tolerance 1.5 mm; contract {'world_frame': 'RAS', 'units': 'mm', 'affine_convention': 'voxel_center_to_world', 'array_orientation': None})\nphantom seed=0: PASS; input axcodes=RSA zooms_mm=[1.732, 2.063, 1.275] -> output axcodes=RAS zooms_mm=[1.732, 1.275, 2.063]; orientation_ok=None; lossless=True tol_used=0.05 mm; 0/6 landmarks off\nphantom seed=1: PASS; input axcodes=PLS zooms_mm=[2.185, 1.545, 1.6] -> output axcodes=RAS zooms_mm=[1.545, 2.185, 1.6]; orientation_ok=None; lossless=False tol_used=1.892 mm; 0/6 landmarks off\nphantom seed=2: FAIL; input axcodes=IAR zooms_mm=[1.35, 2.009, 0.818] -> output axcodes=RAS zooms_mm=[0.818, 2.009, 1.35]; orientation_ok=None; lossless=True tol_used=0.05 mm; 6/6 landmarks off\n  landmark 1: expected (17.026, 17.907, -28.575) got (17.026, 17.907, -27.575) error 1.00 mm\n  landmark 2: expected (3.940, 11.880, -27.225) got (3.940, 11.880, -26.225) error 1.00 mm\n  landmark 3: expected (6.394, 48.038, -4.274) got (6.394, 48.037, -3.274) error 1.00 mm"
+   },
+   "upstream_diff_lines": null,
+   "events": [
+    {
+     "step": 1,
+     "name": "list_dir",
+     "what": "nilearn/image",
+     "result": "nilearn/image/__init__.py  (19 lines) | nilearn/image/image.py  (968 lines) | nilearn/image/resampling.py  (704 lines)"
+    },
+    {
+     "step": 2,
+     "name": "search",
+     "what": "def reorder_img",
+     "result": "nilearn/image/resampling.py:625: def reorder_img(img, resample=None):"
+    },
+    {
+     "step": 3,
+     "name": "read_file",
+     "what": "nilearn/image/resampling.py [620-680]",
+     "result": "nilearn/image/resampling.py lines 620-680 of 704 |   620|                        target_affine=target.affine, |   621|                        ta"
+    },
+    {
+     "step": 4,
+     "name": "read_file",
+     "what": "nilearn/image/resampling.py [680-720]",
+     "result": "nilearn/image/resampling.py lines 680-704 of 704 |   680| |   681|    # Now make sure the affine is positive |   682|    pixdim = np.diag(A).copy("
+    },
+    {
+     "step": 5,
+     "name": "read_file",
+     "what": "nilearn/image/resampling.py [688-692]",
+     "result": "nilearn/image/resampling.py lines 688-692 of 704 |   688|        slice1 = slice(None, None, None) |   689|    if pixdim[1] < 0: |   690|        b["
+    },
+    {
+     "step": 6,
+     "name": "replace_in_file",
+     "what": "nilearn/image/resampling.py",
+     "result": "edited nilearn/image/resampling.py"
+    },
+    {
+     "step": 7,
+     "name": "run_oracle",
+     "what": "",
+     "result": "FAIL",
+     "verdict": "FAIL"
+    },
+    {
+     "step": 7,
+     "name": "run_oracle",
+     "what": "",
+     "result": "VERDICT: FAIL  (tolerance 1.5 mm; contract {'world_frame': 'RAS', 'units': 'mm', 'affine_convention': 'voxel_center_to_world', 'array_orient"
+    },
+    {
+     "step": 8,
+     "name": "read_file",
+     "what": "nilearn/image/resampling.py [695-700]",
+     "result": "nilearn/image/resampling.py lines 695-700 of 704 |   695|    if pixdim[2] < 0: |   696|        b[2] = b[2] + 1 + pixdim[2]*(data.shape[2] - 1) |  "
+    },
+    {
+     "step": 9,
+     "name": "replace_in_file",
+     "what": "nilearn/image/resampling.py",
+     "result": "edited nilearn/image/resampling.py"
+    },
+    {
+     "step": 10,
+     "name": "run_oracle",
+     "what": "",
+     "result": "PASS",
+     "verdict": "PASS"
+    },
+    {
+     "step": 10,
+     "name": "run_oracle",
+     "what": "",
+     "result": "VERDICT: PASS  (tolerance 1.5 mm; contract {'world_frame': 'RAS', 'units': 'mm', 'affine_convention': 'voxel_center_to_world', 'array_orient"
+    }
+   ],
+   "final": {
+    "verdict": "PASS",
+    "reasons": [],
+    "frame": "RAS",
+    "array_orientation": null,
+    "phantoms": [
+     {
+      "seed": 0,
+      "status": "PASS",
+      "in_axcodes": "RSA",
+      "out_axcodes": "RAS",
+      "orientation_ok": null,
+      "tol_mm": 0.05,
+      "detail": "",
+      "landmarks": [
+       {
+        "label": 1,
+        "expected": [
+         -6.49,
+         8.24,
+         -24.99
+        ],
+        "got": [
+         -6.49,
+         8.24,
+         -24.99
+        ],
+        "error_mm": 0.0,
+        "ok": true
+       },
+       {
+        "label": 2,
+        "expected": [
+         -48.06,
+         10.79,
+         -27.05
+        ],
+        "got": [
+         -48.06,
+         10.79,
+         -27.05
+        ],
+        "error_mm": 0.0,
+        "ok": true
+       },
+       {
+        "label": 3,
+        "expected": [
+         0.44,
+         32.47,
+         -20.86
+        ],
+        "got": [
+         0.44,
+         32.47,
+         -20.86
+        ],
+        "error_mm": 0.0,
+        "ok": true
+       },
+       {
+        "label": 4,
+        "expected": [
+         -42.86,
+         35.02,
+         -31.18
+        ],
+        "got": [
+         -42.86,
+         35.02,
+         -31.18
+        ],
+        "error_mm": 0.0,
+        "ok": true
+       },
+       {
+        "label": 5,
+        "expected": [
+         -15.15,
+         35.02,
+         20.41
+        ],
+        "got": [
+         -15.15,
+         35.02,
+         20.41
+        ],
+        "error_mm": 0.0,
+        "ok": true
+       },
+       {
+        "label": 6,
+        "expected": [
+         -37.67,
+         35.02,
+         14.22
+        ],
+        "got": [
+         -37.67,
+         35.02,
+         14.22
+        ],
+        "error_mm": 0.0,
+        "ok": true
+       }
+      ]
+     },
+     {
+      "seed": 1,
+      "status": "PASS",
+      "in_axcodes": "PLS",
+      "out_axcodes": "RAS",
+      "orientation_ok": null,
+      "tol_mm": 1.892,
+      "detail": "",
+      "landmarks": [
+       {
+        "label": 1,
+        "expected": [
+         -10.66,
+         50.24,
+         47.4
+        ],
+        "got": [
+         -10.44,
+         50.36,
+         47.35
+        ],
+        "error_mm": 0.25,
+        "ok": true
+       },
+       {
+        "label": 2,
+        "expected": [
+         30.97,
+         44.26,
+         18.31
+        ],
+        "got": [
+         31.32,
+         44.49,
+         18.28
+        ],
+        "error_mm": 0.42,
+        "ok": true
+       },
+       {
+        "label": 3,
+        "expected": [
+         31.47,
+         10.02,
+         49.17
+        ],
+        "got": [
+         31.4,
+         9.73,
+         49.12
+        ],
+        "error_mm": 0.3,
+        "ok": true
+       },
+       {
+        "label": 4,
+        "expected": [
+         25.28,
+         56.25,
+         44.12
+        ],
+        "got": [
+         25.2,
+         56.07,
+         44.11
+        ],
+        "error_mm": 0.2,
+        "ok": true
+       },
+       {
+        "label": 5,
+        "expected": [
+         -1.08,
+         50.88,
+         18.99
+        ],
+        "got": [
+         -1.08,
+         50.99,
+         18.95
+        ],
+        "error_mm": 0.12,
+        "ok": true
+       },
+       {
+        "label": 6,
+        "expected": [
+         23.64,
+         1.76,
+         26.73
+        ],
+        "got": [
+         23.68,
+         1.67,
+         26.68
+        ],
+        "error_mm": 0.11,
+        "ok": true
+       }
+      ]
+     },
+     {
+      "seed": 2,
+      "status": "PASS",
+      "in_axcodes": "IAR",
+      "out_axcodes": "RAS",
+      "orientation_ok": null,
+      "tol_mm": 0.05,
+      "detail": "",
+      "landmarks": [
+       {
+        "label": 1,
+        "expected": [
+         17.03,
+         17.91,
+         -28.57
+        ],
+        "got": [
+         17.03,
+         17.91,
+         -28.57
+        ],
+        "error_mm": 0.0,
+        "ok": true
+       },
+       {
+        "label": 2,
+        "expected": [
+         3.94,
+         11.88,
+         -27.22
+        ],
+        "got": [
+         3.94,
+         11.88,
+         -27.22
+        ],
+        "error_mm": 0.0,
+        "ok": true
+       },
+       {
+        "label": 3,
+        "expected": [
+         6.39,
+         48.04,
+         -4.27
+        ],
+        "got": [
+         6.39,
+         48.04,
+         -4.27
+        ],
+        "error_mm": 0.0,
+        "ok": true
+       },
+       {
+        "label": 4,
+        "expected": [
+         19.48,
+         9.87,
+         2.48
+        ],
+        "got": [
+         19.48,
+         9.87,
+         2.48
+        ],
+        "error_mm": 0.0,
+        "ok": true
+       },
+       {
+        "label": 5,
+        "expected": [
+         20.3,
+         -8.21,
+         -27.22
+        ],
+        "got": [
+         20.3,
+         -8.21,
+         -27.22
+        ],
+        "error_mm": 0.0,
+        "ok": true
+       },
+       {
+        "label": 6,
+        "expected": [
+         3.94,
+         -0.17,
+         -4.27
+        ],
+        "got": [
+         3.94,
+         -0.17,
+         -4.27
+        ],
+        "error_mm": 0.0,
+        "ok": true
+       }
+      ]
+     }
+    ],
+    "worst_error_mm": 0.42,
+    "any_lost": false,
+    "feedback": "VERDICT: PASS  (tolerance 1.5 mm; contract {'world_frame': 'RAS', 'units': 'mm', 'affine_convention': 'voxel_center_to_world', 'array_orientation': None})\nphantom seed=0: PASS; input axcodes=RSA zooms_mm=[1.732, 2.063, 1.275] -> output axcodes=RAS zooms_mm=[1.732, 1.275, 2.063]; orientation_ok=None; lossless=True tol_used=0.05 mm; 0/6 landmarks off\nphantom seed=1: PASS; input axcodes=PLS zooms_mm=[2.185, 1.545, 1.6] -> output axcodes=RAS zooms_mm=[1.545, 2.185, 1.6]; orientation_ok=None; lossless=False tol_used=1.892 mm; 0/6 landmarks off\nphantom seed=2: PASS; input axcodes=IAR zooms_mm=[1.35, 2.009, 0.818] -> output axcodes=RAS zooms_mm=[0.818, 2.009, 1.35]; orientation_ok=None; lossless=True tol_used=0.05 mm; 0/6 landmarks off"
+   },
+   "same_as_upstream": "yes"
+  },
+  {
+   "kind": "library",
+   "id": "torchio_sitk_ras_lps",
+   "title": "Real library bug: TorchIO RAS/LPS (a different fix than upstream)",
+   "description": "SimpleITK writer received RAS affines without RAS->LPS conversion, double-flipping x/y on save",
+   "source": "SPATIAL_CONTRACT = {\"world_frame\": \"RAS\", \"units\": \"mm\", \"affine_convention\": \"voxel_center_to_world\"}\n\n\ndef process(in_path, out_path):\n    import torchio as tio\n\n    tio.ScalarImage(in_path).save(out_path)\n",
+   "contract": {
+    "world_frame": "RAS",
+    "units": "mm",
+    "affine_convention": "voxel_center_to_world",
+    "array_orientation": null
+   },
+   "outcome": "REPAIRED",
+   "tokens_total": 256549,
+   "llm_calls": 33,
+   "n_steps": 33,
+   "oracle_runs": 1,
+   "localized": true,
+   "touched": [
+    "torchio/data/image.py"
+   ],
+   "upstream_files": [
+    "torchio/data/image.py",
+    "torchio/data/io.py"
+   ],
+   "diff": "--- a/torchio/data/image.py\n+++ b/torchio/data/image.py\n@@ -582,7 +582,14 @@\n             sitk_image = sitk.GetImageFromArray(array, isVector=True)\n         sitk_image.SetSpacing(self.affine.spacing)\n-        sitk_image.SetOrigin(self.affine.origin)\n+        origin = self.affine.origin\n+        lps_origin = np.array([-origin[0], -origin[1], origin[2]])\n+        sitk_image.SetOrigin(lps_origin)\n+        direction = self.affine.direction.numpy()\n+        flip = np.array([[-1, 0, 0],\n+                         [0, -1, 0],\n+                         [0, 0, 1]], dtype=direction.dtype)\n+        lps_direction = np.dot(flip, direction)\n         sitk_image.SetDirection(\n-            rearrange(self.affine.direction, \"i j -> (i j)\").tolist()\n+            rearrange(lps_direction, \"i j -> (i j)\").tolist()\n         )\n         sitk.WriteImage(sitk_image, str(path), **kwargs)\n",
+   "heldout": {
+    "passed": true,
+    "summary": {
+     "hidden_bank": "PASS",
+     "per_run": "PASS",
+     "paired": "PASS",
+     "differential": "PASS"
+    }
+   },
+   "status": "done",
+   "source_run": "results/real_repair/real3/logs/torchio_sitk_ras_lps_r1.jsonl",
+   "model": "nvidia/nemotron-3-super-120b-a12b",
+   "steps": [],
+   "tool_counts": {
+    "read_file": 27,
+    "search": 3,
+    "replace_lines": 2,
+    "run_oracle": 1
+   },
+   "initial": {
+    "verdict": "FAIL",
+    "reasons": [],
+    "frame": "RAS",
+    "array_orientation": null,
+    "phantoms": [
+     {
+      "seed": 0,
+      "status": "FAIL",
+      "in_axcodes": "RSA",
+      "out_axcodes": "LSP",
+      "orientation_ok": null,
+      "tol_mm": 0.05,
+      "detail": "",
+      "landmarks": [
+       {
+        "label": 1,
+        "expected": [
+         -6.49,
+         8.24,
+         -24.99
+        ],
+        "got": [
+         6.49,
+         -8.24,
+         -24.99
+        ],
+        "error_mm": 20.98,
+        "ok": false
+       },
+       {
+        "label": 2,
+        "expected": [
+         -48.06,
+         10.79,
+         -27.05
+        ],
+        "got": [
+         48.06,
+         -10.79,
+         -27.05
+        ],
+        "error_mm": 98.51,
+        "ok": false
+       },
+       {
+        "label": 3,
+        "expected": [
+         0.44,
+         32.47,
+         -20.86
+        ],
+        "got": [
+         -0.44,
+         -32.47,
+         -20.86
+        ],
+        "error_mm": 64.94,
+        "ok": false
+       },
+       {
+        "label": 4,
+        "expected": [
+         -42.86,
+         35.02,
+         -31.18
+        ],
+        "got": [
+         42.86,
+         -35.02,
+         -31.18
+        ],
+        "error_mm": 110.7,
+        "ok": false
+       },
+       {
+        "label": 5,
+        "expected": [
+         -15.15,
+         35.02,
+         20.41
+        ],
+        "got": [
+         15.15,
+         -35.02,
+         20.41
+        ],
+        "error_mm": 76.31,
+        "ok": false
+       },
+       {
+        "label": 6,
+        "expected": [
+         -37.67,
+         35.02,
+         14.22
+        ],
+        "got": [
+         37.67,
+         -35.02,
+         14.22
+        ],
+        "error_mm": 102.86,
+        "ok": false
+       }
+      ]
+     },
+     {
+      "seed": 1,
+      "status": "FAIL",
+      "in_axcodes": "PLS",
+      "out_axcodes": "ARS",
+      "orientation_ok": null,
+      "tol_mm": 0.05,
+      "detail": "",
+      "landmarks": [
+       {
+        "label": 1,
+        "expected": [
+         -10.66,
+         50.24,
+         47.4
+        ],
+        "got": [
+         10.66,
+         -50.24,
+         47.4
+        ],
+        "error_mm": 102.72,
+        "ok": false
+       },
+       {
+        "label": 2,
+        "expected": [
+         30.97,
+         44.26,
+         18.31
+        ],
+        "got": [
+         -30.97,
+         -44.26,
+         18.31
+        ],
+        "error_mm": 108.04,
+        "ok": false
+       },
+       {
+        "label": 3,
+        "expected": [
+         31.47,
+         10.02,
+         49.17
+        ],
+        "got": [
+         -31.47,
+         -10.02,
+         49.17
+        ],
+        "error_mm": 66.06,
+        "ok": false
+       },
+       {
+        "label": 4,
+        "expected": [
+         25.28,
+         56.25,
+         44.12
+        ],
+        "got": [
+         -25.28,
+         -56.25,
+         44.12
+        ],
+        "error_mm": 123.34,
+        "ok": false
+       },
+       {
+        "label": 5,
+        "expected": [
+         -1.08,
+         50.88,
+         18.99
+        ],
+        "got": [
+         1.08,
+         -50.88,
+         18.99
+        ],
+        "error_mm": 101.78,
+        "ok": false
+       },
+       {
+        "label": 6,
+        "expected": [
+         23.64,
+         1.76,
+         26.73
+        ],
+        "got": [
+         -23.64,
+         -1.76,
+         26.73
+        ],
+        "error_mm": 47.4,
+        "ok": false
+       }
+      ]
+     },
+     {
+      "seed": 2,
+      "status": "FAIL",
+      "in_axcodes": "IAR",
+      "out_axcodes": "IPL",
+      "orientation_ok": null,
+      "tol_mm": 0.05,
+      "detail": "",
+      "landmarks": [
+       {
+        "label": 1,
+        "expected": [
+         17.03,
+         17.91,
+         -28.57
+        ],
+        "got": [
+         -17.03,
+         -17.91,
+         -28.57
+        ],
+        "error_mm": 49.42,
+        "ok": false
+       },
+       {
+        "label": 2,
+        "expected": [
+         3.94,
+         11.88,
+         -27.22
+        ],
+        "got": [
+         -3.94,
+         -11.88,
+         -27.22
+        ],
+        "error_mm": 25.03,
+        "ok": false
+       },
+       {
+        "label": 3,
+        "expected": [
+         6.39,
+         48.04,
+         -4.27
+        ],
+        "got": [
+         -6.39,
+         -48.04,
+         -4.27
+        ],
+        "error_mm": 96.92,
+        "ok": false
+       },
+       {
+        "label": 4,
+        "expected": [
+         19.48,
+         9.87,
+         2.48
+        ],
+        "got": [
+         -19.48,
+         -9.87,
+         2.48
+        ],
+        "error_mm": 43.68,
+        "ok": false
+       },
+       {
+        "label": 5,
+        "expected": [
+         20.3,
+         -8.21,
+         -27.22
+        ],
+        "got": [
+         -20.3,
+         8.21,
+         -27.22
+        ],
+        "error_mm": 43.79,
+        "ok": false
+       },
+       {
+        "label": 6,
+        "expected": [
+         3.94,
+         -0.17,
+         -4.27
+        ],
+        "got": [
+         -3.94,
+         0.17,
+         -4.27
+        ],
+        "error_mm": 7.89,
+        "ok": false
+       }
+      ]
+     }
+    ],
+    "worst_error_mm": 123.34,
+    "any_lost": false,
+    "feedback": "VERDICT: FAIL  (tolerance 1.5 mm; contract {'world_frame': 'RAS', 'units': 'mm', 'affine_convention': 'voxel_center_to_world', 'array_orientation': None})\nphantom seed=0: FAIL; input axcodes=RSA zooms_mm=[1.732, 2.063, 1.275] -> output axcodes=LSP zooms_mm=[1.732, 2.063, 1.275]; orientation_ok=None; lossless=True tol_used=0.05 mm; 6/6 landmarks off\n  landmark 1: expected (-6.488, 8.243, -24.987) got (6.488, -8.243, -24.987) error 20.98 mm\n  landmark 2: expected (-48.059, 10.793, -27.050) got (48.059, -10.793, -27.050) error 98.51 mm\n  landmark 3: expected (0.441, 32.468, -20.860) got (-0.441, -32.468, -20.860) error 64.94 mm\nphantom seed=1: FAIL; input axcodes=PLS zooms_mm=[2.185, 1.545, 1.6] -> output axcodes=ARS zooms_mm=[2.185, 1.545, 1.6]; orientation_ok=None; lossless=True tol_used=0.05 mm; 6/6 landmarks off\n  landmark 1: expected (-10.659, 50.242, 47.402) got (10.659, -50.242, 47.402) error 102.72 mm\n  landmark 2: expected (30.971, 44.257, 18.310) got (-30.971, -44.257, 18.310) error 108.04 mm\n  landmark 3: expected (31.474, 10.016, 49.169) got (-31.474, -10.016, 49.169) error 66.06 mm\nphantom seed=2: FAIL; input axcodes=IAR zooms_mm=[1.35, 2.009, 0.818] -> output axcodes=IPL zooms_mm=[1.35, 2.009, 0.818]; orientation_ok=None; lossless=True tol_used=0.05 mm; 6/6 landmarks off"
+   },
+   "upstream_diff_lines": null,
+   "events": [
+    {
+     "step": 1,
+     "name": "read_file",
+     "what": "torchio/io.py",
+     "result": "torchio/io.py lines 1-119 of 119 |     1|\"\"\"I/O helpers for spatial transforms and matrices.\"\"\" |     2| |     3|from __future__ import annotation"
+    },
+    {
+     "step": 2,
+     "name": "read_file",
+     "what": "torchio/__init__.py",
+     "result": "torchio/__init__.py lines 1-105 of 105 |     1|\"\"\"TorchIO: Medical image preprocessing, augmentation, and patch-based training.\"\"\" |     2| |     "
+    },
+    {
+     "step": 3,
+     "name": "read_file",
+     "what": "torchio/data/image.py",
+     "result": "torchio/data/image.py lines 1-150 of 916 |     1|\"\"\"Image classes for TorchIO.\"\"\" |     2| |     3|from __future__ import annotations |     4| |     5"
+    },
+    {
+     "step": 4,
+     "name": "search",
+     "what": "def save",
+     "result": "torchio/data/image.py:549: def save("
+    },
+    {
+     "step": 5,
+     "name": "read_file",
+     "what": "torchio/data/image.py [540-580]",
+     "result": "torchio/data/image.py lines 540-580 of 916 |   540|        points_copy, bboxes_copy = self._deep_copy_annotations() |   541|        return type("
+    },
+    {
+     "step": 6,
+     "name": "read_file",
+     "what": "torchio/data/image.py [580-620]",
+     "result": "torchio/data/image.py lines 580-620 of 916 |   580|        else: |   581|            array = rearrange(data, \"c i j k -> k j i c\") |   582|       "
+    },
+    {
+     "step": 7,
+     "name": "read_file",
+     "what": "torchio/data/affine.py",
+     "result": "torchio/data/affine.py lines 1-150 of 248 |     1|\"\"\"Affine matrix class.\"\"\" |     2| |     3|from __future__ import annotations |     4| |     5|impo"
+    },
+    {
+     "step": 8,
+     "name": "read_file",
+     "what": "torchio/data/image.py [574-588]",
+     "result": "torchio/data/image.py lines 574-588 of 916 |   574|    def _save_sitk(self, path: Path, **kwargs: Any) -> None: |   575|        data = self.data"
+    },
+    {
+     "step": 9,
+     "name": "read_file",
+     "what": "torchio/data/image.py [574-588]",
+     "result": "torchio/data/image.py lines 574-588 of 916 |   574|    def _save_sitk(self, path: Path, **kwargs: Any) -> None: |   575|        data = self.data"
+    },
+    {
+     "step": 10,
+     "name": "read_file",
+     "what": "torchio/data/image.py [574-588]",
+     "result": "torchio/data/image.py lines 574-588 of 916 |   574|    def _save_sitk(self, path: Path, **kwargs: Any) -> None: |   575|        data = self.data"
+    },
+    {
+     "step": 11,
+     "name": "read_file",
+     "what": "torchio/data/image.py [574-588]",
+     "result": "torchio/data/image.py lines 574-588 of 916 |   574|    def _save_sitk(self, path: Path, **kwargs: Any) -> None: |   575|        data = self.data"
+    },
+    {
+     "step": 12,
+     "name": "read_file",
+     "what": "torchio/data/image.py [570-595]",
+     "result": "torchio/data/image.py lines 570-595 of 916 |   570|            self._save_nii_zarr(path) |   571|        else: |   572|            self._save_sitk"
+    },
+    {
+     "step": 13,
+     "name": "read_file",
+     "what": "torchio/data/image.py [580-590]",
+     "result": "torchio/data/image.py lines 580-590 of 916 |   580|        else: |   581|            array = rearrange(data, \"c i j k -> k j i c\") |   582|       "
+    },
+    {
+     "step": 14,
+     "name": "read_file",
+     "what": "torchio/data/image.py [583-587]",
+     "result": "torchio/data/image.py lines 583-587 of 916 |   583|        sitk_image.SetSpacing(self.affine.spacing) |   584|        sitk_image.SetOrigin(self."
+    },
+    {
+     "step": 15,
+     "name": "search",
+     "what": "class Affine",
+     "result": "torchio/data/affine.py:20: class Affine:"
+    },
+    {
+     "step": 16,
+     "name": "read_file",
+     "what": "torchio/data/affine.py",
+     "result": "torchio/data/affine.py lines 1-150 of 248 |     1|\"\"\"Affine matrix class.\"\"\" |     2| |     3|from __future__ import annotations |     4| |     5|impo"
+    },
+    {
+     "step": 17,
+     "name": "read_file",
+     "what": "torchio/io.py",
+     "result": "torchio/io.py lines 1-119 of 119 |     1|\"\"\"I/O helpers for spatial transforms and matrices.\"\"\" |     2| |     3|from __future__ import annotation"
+    },
+    {
+     "step": 18,
+     "name": "read_file",
+     "what": "torchio/data/image.py [580-590]",
+     "result": "torchio/data/image.py lines 580-590 of 916 |   580|        else: |   581|            array = rearrange(data, \"c i j k -> k j i c\") |   582|       "
+    },
+    {
+     "step": 19,
+     "name": "read_file",
+     "what": "torchio/data/image.py [560-590]",
+     "result": "torchio/data/image.py lines 560-590 of 916 |   560| |   561|        Args: |   562|            path: Output file path. The format is inferred from "
+    },
+    {
+     "step": 20,
+     "name": "replace_lines",
+     "what": "torchio/data/image.py [583-586]",
+     "result": "rejected: the edit makes torchio/data/image.py a syntax error (unmatched ')', line 590); nothing was changed"
+    },
+    {
+     "step": 21,
+     "name": "read_file",
+     "what": "torchio/data/image.py [570-595]",
+     "result": "torchio/data/image.py lines 570-595 of 916 |   570|            self._save_nii_zarr(path) |   571|        else: |   572|            self._save_sitk"
+    },
+    {
+     "step": 22,
+     "name": "read_file",
+     "what": "torchio/data/image.py [1-30]",
+     "result": "torchio/data/image.py lines 1-30 of 916 |     1|\"\"\"Image classes for TorchIO.\"\"\" |     2| |     3|from __future__ import annotations |     4| |     5|"
+    },
+    {
+     "step": 23,
+     "name": "read_file",
+     "what": "torchio/data/image.py [30-60]",
+     "result": "torchio/data/image.py lines 30-60 of 916 |    30|from .invertible import Invertible |    31|from .io import ImageSource |    32|from .io import de"
+    },
+    {
+     "step": 24,
+     "name": "search",
+     "what": "FLIPXY",
+     "result": "torchio/io.py:16: FLIPXY_33 = np.diag([-1.0, -1.0, 1.0]) | torchio/io.py:17: FLIPXY_44 = np.diag([-1.0, -1.0, 1.0, 1.0]) | torchio/io.py:70: mat"
+    },
+    {
+     "step": 25,
+     "name": "read_file",
+     "what": "torchio/io.py",
+     "result": "torchio/io.py lines 1-119 of 119 |     1|\"\"\"I/O helpers for spatial transforms and matrices.\"\"\" |     2| |     3|from __future__ import annotation"
+    },
+    {
+     "step": 26,
+     "name": "read_file",
+     "what": "torchio/data/image.py [580-584]",
+     "result": "torchio/data/image.py lines 580-584 of 916 |   580|        else: |   581|            array = rearrange(data, \"c i j k -> k j i c\") |   582|       "
+    },
+    {
+     "step": 27,
+     "name": "read_file",
+     "what": "torchio/data/image.py [580-590]",
+     "result": "torchio/data/image.py lines 580-590 of 916 |   580|        else: |   581|            array = rearrange(data, \"c i j k -> k j i c\") |   582|       "
+    },
+    {
+     "step": 28,
+     "name": "read_file",
+     "what": "torchio/data/image.py [560-590]",
+     "result": "torchio/data/image.py lines 560-590 of 916 |   560| |   561|        Args: |   562|            path: Output file path. The format is inferred from "
+    },
+    {
+     "step": 29,
+     "name": "read_file",
+     "what": "torchio/data/image.py [1-20]",
+     "result": "torchio/data/image.py lines 1-20 of 916 |     1|\"\"\"Image classes for TorchIO.\"\"\" |     2| |     3|from __future__ import annotations |     4| |     5|"
+    },
+    {
+     "step": 30,
+     "name": "read_file",
+     "what": "torchio/data/image.py [1-30]",
+     "result": "torchio/data/image.py lines 1-30 of 916 |     1|\"\"\"Image classes for TorchIO.\"\"\" |     2| |     3|from __future__ import annotations |     4| |     5|"
+    },
+    {
+     "step": 31,
+     "name": "read_file",
+     "what": "torchio/data/image.py [20-40]",
+     "result": "torchio/data/image.py lines 20-40 of 916 |    20|from torch import Tensor |    21| |    22|from ..types import TypeImageData |    23|from ..types im"
+    },
+    {
+     "step": 32,
+     "name": "replace_lines",
+     "what": "torchio/data/image.py [574-588]",
+     "result": "edited torchio/data/image.py; it now reads: |   572|            self._save_sitk(path, **(writer_kwargs or {})) |   573| |   574|    def _save_sitk"
+    },
+    {
+     "step": 33,
+     "name": "run_oracle",
+     "what": "",
+     "result": "PASS",
+     "verdict": "PASS"
+    },
+    {
+     "step": 33,
+     "name": "run_oracle",
+     "what": "",
+     "result": "VERDICT: PASS  (tolerance 1.5 mm; contract {'world_frame': 'RAS', 'units': 'mm', 'affine_convention': 'voxel_center_to_world', 'array_orient"
+    }
+   ],
+   "final": {
+    "verdict": "PASS",
+    "reasons": [],
+    "frame": "RAS",
+    "array_orientation": null,
+    "phantoms": [
+     {
+      "seed": 0,
+      "status": "PASS",
+      "in_axcodes": "RSA",
+      "out_axcodes": "RSA",
+      "orientation_ok": null,
+      "tol_mm": 0.05,
+      "detail": "",
+      "landmarks": [
+       {
+        "label": 1,
+        "expected": [
+         -6.49,
+         8.24,
+         -24.99
+        ],
+        "got": [
+         -6.49,
+         8.24,
+         -24.99
+        ],
+        "error_mm": 0.0,
+        "ok": true
+       },
+       {
+        "label": 2,
+        "expected": [
+         -48.06,
+         10.79,
+         -27.05
+        ],
+        "got": [
+         -48.06,
+         10.79,
+         -27.05
+        ],
+        "error_mm": 0.0,
+        "ok": true
+       },
+       {
+        "label": 3,
+        "expected": [
+         0.44,
+         32.47,
+         -20.86
+        ],
+        "got": [
+         0.44,
+         32.47,
+         -20.86
+        ],
+        "error_mm": 0.0,
+        "ok": true
+       },
+       {
+        "label": 4,
+        "expected": [
+         -42.86,
+         35.02,
+         -31.18
+        ],
+        "got": [
+         -42.86,
+         35.02,
+         -31.18
+        ],
+        "error_mm": 0.0,
+        "ok": true
+       },
+       {
+        "label": 5,
+        "expected": [
+         -15.15,
+         35.02,
+         20.41
+        ],
+        "got": [
+         -15.15,
+         35.02,
+         20.41
+        ],
+        "error_mm": 0.0,
+        "ok": true
+       },
+       {
+        "label": 6,
+        "expected": [
+         -37.67,
+         35.02,
+         14.22
+        ],
+        "got": [
+         -37.67,
+         35.02,
+         14.22
+        ],
+        "error_mm": 0.0,
+        "ok": true
+       }
+      ]
+     },
+     {
+      "seed": 1,
+      "status": "PASS",
+      "in_axcodes": "PLS",
+      "out_axcodes": "PLS",
+      "orientation_ok": null,
+      "tol_mm": 0.05,
+      "detail": "",
+      "landmarks": [
+       {
+        "label": 1,
+        "expected": [
+         -10.66,
+         50.24,
+         47.4
+        ],
+        "got": [
+         -10.66,
+         50.24,
+         47.4
+        ],
+        "error_mm": 0.0,
+        "ok": true
+       },
+       {
+        "label": 2,
+        "expected": [
+         30.97,
+         44.26,
+         18.31
+        ],
+        "got": [
+         30.97,
+         44.26,
+         18.31
+        ],
+        "error_mm": 0.0,
+        "ok": true
+       },
+       {
+        "label": 3,
+        "expected": [
+         31.47,
+         10.02,
+         49.17
+        ],
+        "got": [
+         31.47,
+         10.02,
+         49.17
+        ],
+        "error_mm": 0.0,
+        "ok": true
+       },
+       {
+        "label": 4,
+        "expected": [
+         25.28,
+         56.25,
+         44.12
+        ],
+        "got": [
+         25.28,
+         56.25,
+         44.12
+        ],
+        "error_mm": 0.0,
+        "ok": true
+       },
+       {
+        "label": 5,
+        "expected": [
+         -1.08,
+         50.88,
+         18.99
+        ],
+        "got": [
+         -1.08,
+         50.88,
+         18.99
+        ],
+        "error_mm": 0.0,
+        "ok": true
+       },
+       {
+        "label": 6,
+        "expected": [
+         23.64,
+         1.76,
+         26.73
+        ],
+        "got": [
+         23.64,
+         1.76,
+         26.73
+        ],
+        "error_mm": 0.0,
+        "ok": true
+       }
+      ]
+     },
+     {
+      "seed": 2,
+      "status": "PASS",
+      "in_axcodes": "IAR",
+      "out_axcodes": "IAR",
+      "orientation_ok": null,
+      "tol_mm": 0.05,
+      "detail": "",
+      "landmarks": [
+       {
+        "label": 1,
+        "expected": [
+         17.03,
+         17.91,
+         -28.57
+        ],
+        "got": [
+         17.03,
+         17.91,
+         -28.57
+        ],
+        "error_mm": 0.0,
+        "ok": true
+       },
+       {
+        "label": 2,
+        "expected": [
+         3.94,
+         11.88,
+         -27.22
+        ],
+        "got": [
+         3.94,
+         11.88,
+         -27.22
+        ],
+        "error_mm": 0.0,
+        "ok": true
+       },
+       {
+        "label": 3,
+        "expected": [
+         6.39,
+         48.04,
+         -4.27
+        ],
+        "got": [
+         6.39,
+         48.04,
+         -4.27
+        ],
+        "error_mm": 0.0,
+        "ok": true
+       },
+       {
+        "label": 4,
+        "expected": [
+         19.48,
+         9.87,
+         2.48
+        ],
+        "got": [
+         19.48,
+         9.87,
+         2.48
+        ],
+        "error_mm": 0.0,
+        "ok": true
+       },
+       {
+        "label": 5,
+        "expected": [
+         20.3,
+         -8.21,
+         -27.22
+        ],
+        "got": [
+         20.3,
+         -8.21,
+         -27.22
+        ],
+        "error_mm": 0.0,
+        "ok": true
+       },
+       {
+        "label": 6,
+        "expected": [
+         3.94,
+         -0.17,
+         -4.27
+        ],
+        "got": [
+         3.94,
+         -0.17,
+         -4.27
+        ],
+        "error_mm": 0.0,
+        "ok": true
+       }
+      ]
+     }
+    ],
+    "worst_error_mm": 0.0,
+    "any_lost": false,
+    "feedback": "VERDICT: PASS  (tolerance 1.5 mm; contract {'world_frame': 'RAS', 'units': 'mm', 'affine_convention': 'voxel_center_to_world', 'array_orientation': None})\nphantom seed=0: PASS; input axcodes=RSA zooms_mm=[1.732, 2.063, 1.275] -> output axcodes=RSA zooms_mm=[1.732, 2.063, 1.275]; orientation_ok=None; lossless=True tol_used=0.05 mm; 0/6 landmarks off\nphantom seed=1: PASS; input axcodes=PLS zooms_mm=[2.185, 1.545, 1.6] -> output axcodes=PLS zooms_mm=[2.185, 1.545, 1.6]; orientation_ok=None; lossless=True tol_used=0.05 mm; 0/6 landmarks off\nphantom seed=2: PASS; input axcodes=IAR zooms_mm=[1.35, 2.009, 0.818] -> output axcodes=IAR zooms_mm=[1.35, 2.009, 0.818]; orientation_ok=None; lossless=True tol_used=0.05 mm; 0/6 landmarks off"
+   },
+   "same_as_upstream": "partly"
+  },
+  {
+   "kind": "library",
+   "id": "torchio_crop",
+   "title": "Real library bug: TorchIO Crop (a failed run)",
+   "description": "Crop computed new_affine but never assigned it, so cropped images kept the old origin (issue #351)",
+   "source": "SPATIAL_CONTRACT = {\"world_frame\": \"RAS\", \"units\": \"mm\", \"affine_convention\": \"voxel_center_to_world\"}\n\n\ndef process(in_path, out_path):\n    import torchio\n\n    subject = torchio.Subject(img=torchio.ScalarImage(in_path))\n    out = torchio.Crop((4, 1, 3, 5, 5, 2))(subject)\n    out.img.save(out_path)\n",
+   "contract": {
+    "world_frame": "RAS",
+    "units": "mm",
+    "affine_convention": "voxel_center_to_world",
+    "array_orientation": null
+   },
+   "outcome": "FAILED",
+   "tokens_total": 306979,
+   "llm_calls": 28,
+   "n_steps": 28,
+   "oracle_runs": 2,
+   "localized": true,
+   "touched": [
+    "torchio/transforms/preprocessing/spatial/crop.py"
+   ],
+   "upstream_files": [
+    "torchio/transforms/preprocessing/spatial/crop.py"
+   ],
+   "diff": "--- a/torchio/transforms/preprocessing/spatial/crop.py\n+++ b/torchio/transforms/preprocessing/spatial/crop.py\n@@ -34,4 +34,5 @@\n             new_affine = image.affine.copy()\n             new_affine[:3, 3] = new_origin\n+            image.affine = new_affine\n             i0, j0, k0 = index_ini\n             i1, j1, k1 = index_fin\n",
+   "heldout": null,
+   "status": "done",
+   "source_run": "results/real_repair/real3/logs/torchio_crop_r0.jsonl",
+   "model": "nvidia/nemotron-3-super-120b-a12b",
+   "steps": [],
+   "tool_counts": {
+    "list_dir": 3,
+    "read_file": 19,
+    "run_oracle": 2,
+    "replace_lines": 1,
+    "search": 3
+   },
+   "initial": {
+    "verdict": "FAIL",
+    "reasons": [],
+    "frame": "RAS",
+    "array_orientation": null,
+    "phantoms": [
+     {
+      "seed": 0,
+      "status": "FAIL",
+      "in_axcodes": "RSA",
+      "out_axcodes": "RSA",
+      "orientation_ok": null,
+      "tol_mm": 0.05,
+      "detail": "",
+      "landmarks": [
+       {
+        "label": 1,
+        "expected": [
+         -6.49,
+         8.24,
+         -24.99
+        ],
+        "got": [
+         -13.42,
+         1.87,
+         -31.18
+        ],
+        "error_mm": 11.27,
+        "ok": false
+       },
+       {
+        "label": 2,
+        "expected": [
+         -48.06,
+         10.79,
+         -27.05
+        ],
+        "got": [
+         -54.99,
+         4.42,
+         -33.24
+        ],
+        "error_mm": 11.27,
+        "ok": false
+       },
+       {
+        "label": 3,
+        "expected": [
+         0.44,
+         32.47,
+         -20.86
+        ],
+        "got": [
+         -6.49,
+         26.09,
+         -27.05
+        ],
+        "error_mm": 11.27,
+        "ok": false
+       },
+       {
+        "label": 4,
+        "expected": [
+         -42.86,
+         35.02,
+         -31.18
+        ],
+        "got": [
+         -49.79,
+         28.64,
+         -37.37
+        ],
+        "error_mm": 11.27,
+        "ok": false
+       },
+       {
+        "label": 5,
+        "expected": [
+         -15.15,
+         35.02,
+         20.41
+        ],
+        "got": [
+         -22.08,
+         28.64,
+         14.22
+        ],
+        "error_mm": 11.27,
+        "ok": false
+       },
+       {
+        "label": 6,
+        "expected": [
+         -37.67,
+         35.02,
+         14.22
+        ],
+        "got": [
+         -44.59,
+         28.64,
+         8.03
+        ],
+        "error_mm": 11.27,
+        "ok": false
+       }
+      ]
+     },
+     {
+      "seed": 1,
+      "status": "FAIL",
+      "in_axcodes": "PLS",
+      "out_axcodes": "PLS",
+      "orientation_ok": null,
+      "tol_mm": 0.05,
+      "detail": "",
+      "landmarks": [
+       {
+        "label": 1,
+        "expected": [
+         -10.66,
+         50.24,
+         47.4
+        ],
+        "got": [
+         -5.97,
+         57.0,
+         37.7
+        ],
+        "error_mm": 12.72,
+        "ok": false
+       },
+       {
+        "label": 2,
+        "expected": [
+         30.97,
+         44.26,
+         18.31
+        ],
+        "got": [
+         35.66,
+         51.02,
+         8.61
+        ],
+        "error_mm": 12.72,
+        "ok": false
+       },
+       {
+        "label": 3,
+        "expected": [
+         31.47,
+         10.02,
+         49.17
+        ],
+        "got": [
+         36.16,
+         16.78,
+         39.46
+        ],
+        "error_mm": 12.72,
+        "ok": false
+       },
+       {
+        "label": 4,
+        "expected": [
+         25.28,
+         56.25,
+         44.12
+        ],
+        "got": [
+         29.97,
+         63.01,
+         34.42
+        ],
+        "error_mm": 12.72,
+        "ok": false
+       },
+       {
+        "label": 5,
+        "expected": [
+         -1.08,
+         50.88,
+         18.99
+        ],
+        "got": [
+         3.61,
+         57.64,
+         9.28
+        ],
+        "error_mm": 12.72,
+        "ok": false
+       },
+       {
+        "label": 6,
+        "expected": [
+         23.64,
+         1.76,
+         26.73
+        ],
+        "got": [
+         28.33,
+         8.52,
+         17.02
+        ],
+        "error_mm": 12.72,
+        "ok": false
+       }
+      ]
+     },
+     {
+      "seed": 2,
+      "status": "FAIL",
+      "in_axcodes": "IAR",
+      "out_axcodes": "IAR",
+      "orientation_ok": null,
+      "tol_mm": 0.05,
+      "detail": "",
+      "landmarks": [
+       {
+        "label": 1,
+        "expected": [
+         17.03,
+         17.91,
+         -28.57
+        ],
+        "got": [
+         12.94,
+         11.88,
+         -23.17
+        ],
+        "error_mm": 9.07,
+        "ok": false
+       },
+       {
+        "label": 2,
+        "expected": [
+         3.94,
+         11.88,
+         -27.22
+        ],
+        "got": [
+         -0.15,
+         5.85,
+         -21.82
+        ],
+        "error_mm": 9.07,
+        "ok": false
+       },
+       {
+        "label": 3,
+        "expected": [
+         6.39,
+         48.04,
+         -4.27
+        ],
+        "got": [
+         2.3,
+         42.01,
+         1.13
+        ],
+        "error_mm": 9.07,
+        "ok": false
+       },
+       {
+        "label": 4,
+        "expected": [
+         19.48,
+         9.87,
+         2.48
+        ],
+        "got": [
+         15.39,
+         3.85,
+         7.88
+        ],
+        "error_mm": 9.07,
+        "ok": false
+       },
+       {
+        "label": 5,
+        "expected": [
+         20.3,
+         -8.21,
+         -27.22
+        ],
+        "got": [
+         16.21,
+         -14.23,
+         -21.82
+        ],
+        "error_mm": 9.07,
+        "ok": false
+       },
+       {
+        "label": 6,
+        "expected": [
+         3.94,
+         -0.17,
+         -4.27
+        ],
+        "got": [
+         -0.15,
+         -6.2,
+         1.13
+        ],
+        "error_mm": 9.07,
+        "ok": false
+       }
+      ]
+     }
+    ],
+    "worst_error_mm": 12.72,
+    "any_lost": false,
+    "feedback": "VERDICT: FAIL  (tolerance 1.5 mm; contract {'world_frame': 'RAS', 'units': 'mm', 'affine_convention': 'voxel_center_to_world', 'array_orientation': None})\nphantom seed=0: FAIL; input axcodes=RSA zooms_mm=[1.732, 2.063, 1.275] -> output axcodes=RSA zooms_mm=[1.732, 2.063, 1.275]; orientation_ok=None; lossless=True tol_used=0.05 mm; 6/6 landmarks off\n  landmark 1: expected (-6.488, 8.243, -24.987) got (-13.416, 1.868, -31.177) error 11.27 mm\n  landmark 2: expected (-48.059, 10.793, -27.050) got (-54.988, 4.418, -33.241) error 11.27 mm\n  landmark 3: expected (0.441, 32.468, -20.860) got (-6.488, 26.093, -27.050) error 11.27 mm\nphantom seed=1: FAIL; input axcodes=PLS zooms_mm=[2.185, 1.545, 1.6] -> output axcodes=PLS zooms_mm=[2.185, 1.545, 1.6]; orientation_ok=None; lossless=True tol_used=0.05 mm; 6/6 landmarks off\n  landmark 1: expected (-10.659, 50.242, 47.402) got (-5.968, 57.001, 37.699) error 12.72 mm\n  landmark 2: expected (30.971, 44.257, 18.310) got (35.662, 51.016, 8.606) error 12.72 mm\n  landmark 3: expected (31.474, 10.016, 49.169) got (36.165, 16.775, 39.465) error 12.72 mm\nphantom seed=2: FAIL; input axcodes=IAR zooms_mm=[1.35, 2.009, 0.818] -> output axcodes=IAR zooms_mm=[1.35, 2.009, 0.818]; orientation_ok=None; lossless=True tol_used=0.05 mm; 6/6 landmarks off"
+   },
+   "upstream_diff_lines": null,
+   "events": [
+    {
+     "step": 1,
+     "name": "list_dir",
+     "what": "torchio/transforms",
+     "result": "torchio/transforms/augmentation/ | torchio/transforms/preprocessing/ | torchio/transforms/__init__.py  (73 lines) | torchio/transforms/intensity_t"
+    },
+    {
+     "step": 2,
+     "name": "list_dir",
+     "what": "torchio/transforms/preprocessing",
+     "result": "torchio/transforms/preprocessing/intensity/ | torchio/transforms/preprocessing/spatial/ | torchio/transforms/preprocessing/__init__.py  (23 line"
+    },
+    {
+     "step": 3,
+     "name": "list_dir",
+     "what": "torchio/transforms/preprocessing/spatial",
+     "result": "torchio/transforms/preprocessing/spatial/__init__.py  (0 lines) | torchio/transforms/preprocessing/spatial/bounds_transform.py  (64 lines) | tor"
+    },
+    {
+     "step": 4,
+     "name": "read_file",
+     "what": "torchio/transforms/preprocessing/spatial/crop.py",
+     "result": "torchio/transforms/preprocessing/spatial/crop.py lines 1-39 of 39 |     1|import numpy as np |     2|import nibabel as nib |     3|from ....torchi"
+    },
+    {
+     "step": 5,
+     "name": "read_file",
+     "what": "torchio/transforms/preprocessing/spatial/bounds_transform.py",
+     "result": "torchio/transforms/preprocessing/spatial/bounds_transform.py lines 1-64 of 64 |     1|from typing import Union, Tuple, List, Optional |     2|im"
+    },
+    {
+     "step": 6,
+     "name": "read_file",
+     "what": "torchio/transforms/spatial_transform.py",
+     "result": "torchio/transforms/spatial_transform.py lines 1-12 of 12 |     1|from .transform import Transform |     2| |     3| |     4|class SpatialTransform(T"
+    },
+    {
+     "step": 7,
+     "name": "run_oracle",
+     "what": "",
+     "result": "FAIL",
+     "verdict": "FAIL"
+    },
+    {
+     "step": 7,
+     "name": "run_oracle",
+     "what": "",
+     "result": "VERDICT: FAIL  (tolerance 1.5 mm; contract {'world_frame': 'RAS', 'units': 'mm', 'affine_convention': 'voxel_center_to_world', 'array_orient"
+    },
+    {
+     "step": 8,
+     "name": "replace_lines",
+     "what": "torchio/transforms/preprocessing/spatial/crop.py [33-35]",
+     "result": "edited torchio/transforms/preprocessing/spatial/crop.py; it now reads: |    31|        index_fin = np.array(sample.spatial_shape) - high |    32"
+    },
+    {
+     "step": 9,
+     "name": "read_file",
+     "what": "torchio/transforms/preprocessing/spatial/crop.py",
+     "result": "torchio/transforms/preprocessing/spatial/crop.py lines 1-40 of 40 |     1|import numpy as np |     2|import nibabel as nib |     3|from ....torchi"
+    },
+    {
+     "step": 10,
+     "name": "run_oracle",
+     "what": "",
+     "result": "ERROR",
+     "verdict": "ERROR"
+    },
+    {
+     "step": 10,
+     "name": "run_oracle",
+     "what": "",
+     "result": "VERDICT: ERROR  (tolerance 1.5 mm; contract {'world_frame': 'RAS', 'units': 'mm', 'affine_convention': 'voxel_center_to_world', 'array_orien"
+    },
+    {
+     "step": 11,
+     "name": "search",
+     "what": "class ScalarImage",
+     "result": "torchio/data/image.py:476: class ScalarImage(Image):"
+    },
+    {
+     "step": 12,
+     "name": "read_file",
+     "what": "torchio/data/image.py",
+     "result": "torchio/data/image.py lines 1-150 of 531 |     1|import warnings |     2|from pathlib import Path |     3|from typing import Any, Dict, Tuple, Opt"
+    },
+    {
+     "step": 13,
+     "name": "read_file",
+     "what": "torchio/data/image.py",
+     "result": "torchio/data/image.py lines 1-150 of 531 |     1|import warnings |     2|from pathlib import Path |     3|from typing import Any, Dict, Tuple, Opt"
+    },
+    {
+     "step": 14,
+     "name": "read_file",
+     "what": "torchio/data/image.py",
+     "result": "torchio/data/image.py lines 1-150 of 531 |     1|import warnings |     2|from pathlib import Path |     3|from typing import Any, Dict, Tuple, Opt"
+    },
+    {
+     "step": 15,
+     "name": "read_file",
+     "what": "torchio/data/image.py",
+     "result": "torchio/data/image.py lines 1-150 of 531 |     1|import warnings |     2|from pathlib import Path |     3|from typing import Any, Dict, Tuple, Opt"
+    },
+    {
+     "step": 16,
+     "name": "read_file",
+     "what": "torchio/data/image.py",
+     "result": "torchio/data/image.py lines 1-150 of 531 |     1|import warnings |     2|from pathlib import Path |     3|from typing import Any, Dict, Tuple, Opt"
+    },
+    {
+     "step": 17,
+     "name": "search",
+     "what": "def affine",
+     "result": "torchio/data/image.py:187: def affine(self) -> np.ndarray:"
+    },
+    {
+     "step": 18,
+     "name": "read_file",
+     "what": "torchio/data/image.py",
+     "result": "torchio/data/image.py lines 1-150 of 531 |     1|import warnings |     2|from pathlib import Path |     3|from typing import Any, Dict, Tuple, Opt"
+    },
+    {
+     "step": 19,
+     "name": "read_file",
+     "what": "torchio/data/image.py",
+     "result": "torchio/data/image.py lines 1-150 of 531 |     1|import warnings |     2|from pathlib import Path |     3|from typing import Any, Dict, Tuple, Opt"
+    },
+    {
+     "step": 20,
+     "name": "read_file",
+     "what": "torchio/data/image.py",
+     "result": "torchio/data/image.py lines 1-150 of 531 |     1|import warnings |     2|from pathlib import Path |     3|from typing import Any, Dict, Tuple, Opt"
+    },
+    {
+     "step": 21,
+     "name": "read_file",
+     "what": "torchio/data/image.py",
+     "result": "torchio/data/image.py lines 1-150 of 531 |     1|import warnings |     2|from pathlib import Path |     3|from typing import Any, Dict, Tuple, Opt"
+    },
+    {
+     "step": 22,
+     "name": "search",
+     "what": "@property",
+     "result": "torchio/data/image.py:176: @property | torchio/data/image.py:181: @property | torchio/data/image.py:186: @property | torchio/data/image.py:191: @p"
+    },
+    {
+     "step": 23,
+     "name": "read_file",
+     "what": "torchio/data/image.py",
+     "result": "torchio/data/image.py lines 1-150 of 531 |     1|import warnings |     2|from pathlib import Path |     3|from typing import Any, Dict, Tuple, Opt"
+    },
+    {
+     "step": 24,
+     "name": "read_file",
+     "what": "torchio/data/image.py",
+     "result": "torchio/data/image.py lines 1-150 of 531 |     1|import warnings |     2|from pathlib import Path |     3|from typing import Any, Dict, Tuple, Opt"
+    },
+    {
+     "step": 25,
+     "name": "read_file",
+     "what": "torchio/data/image.py",
+     "result": "torchio/data/image.py lines 1-150 of 531 |     1|import warnings |     2|from pathlib import Path |     3|from typing import Any, Dict, Tuple, Opt"
+    },
+    {
+     "step": 26,
+     "name": "read_file",
+     "what": "torchio/data/image.py",
+     "result": "torchio/data/image.py lines 1-150 of 531 |     1|import warnings |     2|from pathlib import Path |     3|from typing import Any, Dict, Tuple, Opt"
+    },
+    {
+     "step": 27,
+     "name": "read_file",
+     "what": "torchio/data/image.py",
+     "result": "torchio/data/image.py lines 1-150 of 531 |     1|import warnings |     2|from pathlib import Path |     3|from typing import Any, Dict, Tuple, Opt"
+    },
+    {
+     "step": 28,
+     "name": "read_file",
+     "what": "torchio/data/image.py",
+     "result": "torchio/data/image.py lines 1-150 of 531 |     1|import warnings |     2|from pathlib import Path |     3|from typing import Any, Dict, Tuple, Opt"
+    }
+   ],
+   "final": {
+    "verdict": "ERROR",
+    "reasons": [],
+    "frame": "RAS",
+    "array_orientation": null,
+    "phantoms": [
+     {
+      "seed": 0,
+      "status": "ERROR",
+      "in_axcodes": null,
+      "out_axcodes": null,
+      "orientation_ok": null,
+      "tol_mm": null,
+      "detail": "exit 1: AttributeError: property 'affine' of 'ScalarImage' object has no setter (after 1 retry; first attempt: exit 1: AttributeError: property 'affine' of 'ScalarImage' object has no setter)",
+      "landmarks": []
+     },
+     {
+      "seed": 1,
+      "status": "ERROR",
+      "in_axcodes": null,
+      "out_axcodes": null,
+      "orientation_ok": null,
+      "tol_mm": null,
+      "detail": "exit 1: AttributeError: property 'affine' of 'ScalarImage' object has no setter (after 1 retry; first attempt: exit 1: AttributeError: property 'affine' of 'ScalarImage' object has no setter)",
+      "landmarks": []
+     },
+     {
+      "seed": 2,
+      "status": "ERROR",
+      "in_axcodes": null,
+      "out_axcodes": null,
+      "orientation_ok": null,
+      "tol_mm": null,
+      "detail": "exit 1: AttributeError: property 'affine' of 'ScalarImage' object has no setter (after 1 retry; first attempt: exit 1: AttributeError: property 'affine' of 'ScalarImage' object has no setter)",
+      "landmarks": []
+     }
+    ],
+    "worst_error_mm": null,
+    "any_lost": false,
+    "feedback": "VERDICT: ERROR  (tolerance 1.5 mm; contract {'world_frame': 'RAS', 'units': 'mm', 'affine_convention': 'voxel_center_to_world', 'array_orientation': None})\nphantom seed=0: ERROR exit 1: AttributeError: property 'affine' of 'ScalarImage' object has no setter (after 1 retry; first attempt: exit 1: AttributeError: property 'affine' of 'ScalarImage' object has no setter)\nphantom seed=1: ERROR exit 1: AttributeError: property 'affine' of 'ScalarImage' object has no setter (after 1 retry; first attempt: exit 1: AttributeError: property 'affine' of 'ScalarImage' object has no setter)\nphantom seed=2: ERROR exit 1: AttributeError: property 'affine' of 'ScalarImage' object has no setter (after 1 retry; first attempt: exit 1: AttributeError: property 'affine' of 'ScalarImage' object has no setter)"
+   },
+   "same_as_upstream": "no"
   }
  ]
 }

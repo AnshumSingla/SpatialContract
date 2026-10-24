@@ -1,0 +1,71 @@
+--- a/torchio/transforms/reorient.py
++++ b/torchio/transforms/reorient.py
+@@ -62,30 +62,31 @@
+ 
+ def _apply_reorientation(
+-    data: Tensor,
+-    ornt: np.ndarray,
+-) -> Tensor:
+-    """Apply an orientation transform to a tensor.
++     data: Tensor,
++     ornt: np.ndarray,
++ ) -> Tensor:
++     """Apply an orientation transform to a tensor.
+ 
+-    Works on both 4D (C, I, J, K) and 5D (B, C, I, J, K) tensors.
+-    Spatial axes are always addressed as -3, -2, -1.
++     Works on both 4D (C, I, J, K) and 5D (B, C, I, J, K) tensors.
++     Spatial axes are always addressed as -3, -2, -1.
+ 
+-    Args:
+-        data: Input tensor.
+-        ornt: (3, 2) orientation transform from nibabel.
+-    """
+-    input_axes = ornt[:, 0].astype(int)
+-    flip_flags = ornt[:, 1]
++     Args:
++         data: Input tensor.
++         ornt: (3, 2) orientation transform from nibabel.
++     """
++     input_axes = ornt[:, 0].astype(int)
++     flip_flags = ornt[:, 1]
+ 
+-    # Step 1: flip input axes where direction is -1
+-    if flip_dims := [int(input_axes[i]) - 3 for i in range(3) if flip_flags[i] == -1]:
+-        data = torch.flip(data, flip_dims)
++     # Step 1: permute spatial axes (-3, -2, -1)
++     n_leading = data.ndim - 3
++     leading = list(range(n_leading))
++     spatial_perm = [int(a) + n_leading for a in input_axes]
++     data = data.permute(leading + spatial_perm)
+ 
+-    # Step 2: permute spatial axes (-3, -2, -1)
+-    n_leading = data.ndim - 3
+-    leading = list(range(n_leading))
+-    spatial_perm = [int(a) + n_leading for a in input_axes]
+-    data = data.permute(leading + spatial_perm)
++     # Step 2: flip axes where direction is -1
++     flip_dims = [spatial_perm[i] for i in range(3) if flip_flags[i] == -1]
++     if flip_dims:
++         data = torch.flip(data, flip_dims)
+ 
+-    return data.contiguous()
++     return data.contiguous()
+ 
+ 
+@@ -153,8 +154,8 @@
+ 
+         for _name, img_batch in self._get_images(batch).items():
++            spatial_shape = img_batch.data.shape[-3:]
+             img_batch.data = _apply_reorientation(img_batch.data, ornt)
+ 
+             for affine in img_batch.affines:
+-                spatial_shape = img_batch.data.shape[-3:]
+                 inv_aff = orientations.inv_ornt_aff(ornt, spatial_shape)
+                 new_matrix = affine.numpy() @ inv_aff
+@@ -163,5 +164,4 @@
+                     dtype=torch.float64,
+                 )
+-
+         return batch
+ 

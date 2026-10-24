@@ -40,7 +40,8 @@ class RealCase:
     src_subdir: str = ""     # "src" for the TorchIO 2.x layout
     fix_added_regression_test: bool = True
     notes: str = ""
-    seeds: tuple = ()          # phantom bank override (empty => default 0,1,2)
+    seeds: tuple = ()          # visible phantom bank override (empty => default 0,1,2)
+    hidden_seeds: tuple = ()   # held-out bank override (empty => heldout.HIDDEN_SEEDS)
 
     def worktree(self, which: str) -> Path:
         return WORK / "wt" / f"{self.id}_{which}"
@@ -60,7 +61,8 @@ CASES = [
              "2020-11-05", fix_added_regression_test=False),
     RealCase("nilearn_reorder", "nilearn", "5eaeea35758c084de2e50fe35c181143e04154c9", "613c0d76e50c7e7149ea42d61bae28df397448af",
              "legacy", "flipped_axis", "reorder_img off-by-one: origin shifted by one voxel when flipping the y/z axes",
-             "2018-01-10"),
+             "2018-01-10", hidden_seeds=(1000, 1002, 1003, 1004, 250, 251),
+             notes="hidden seed 1001 removed: the upstream fix itself leaves a 0.87 mm error on it (unrelated residual issue)"),
     RealCase("nibabel_conform", "nibabel", "6e1929815f29c1a181cadc8cdb5bf2b39f6a3074", "07fa2543dd61bb7d301ee0c554ab97a540e052f1",
              "legacy", "axis_swap", "conform() re-oriented the output with wrong axis labels, so the result was not in the requested orientation",
              "2020-04-08", fix_added_regression_test=False),
@@ -70,7 +72,7 @@ CASES = [
     RealCase("nibabel_ioorient", "nibabel", "0f61bcbc1c2e4c47291e6ed5ba4c97b24f083002", "927be9130b42ff636f665ece106e8be6cc44208d",
              "modern", "axis_swap", "io_orientation handled competing axes in input order, so strongly oblique affines got inconsistent labels",
              "2025-12-19", notes="fixed across two commits; POST is the second; needs the strong-oblique phantom bank",
-             seeds=tuple(range(200, 208))),
+             seeds=tuple(range(200, 208)), hidden_seeds=tuple(range(208, 224))),
     RealCase("torchio_reorient", "torchio", "83c4f08f1a0d3e59fe8681d0c0772b6a99ff6cc0", "95b1b7446642dd986475ab426001d0332087f23f",
              "modern", "axis_swap", "Reorient permuted before flipping and built the affine from the post-permutation shape",
              "2026-04-14", src_subdir="src"),

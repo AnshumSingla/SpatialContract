@@ -16,9 +16,9 @@ from .contract import UNIT_TO_MM, load_from_source
 VISIBLE_SEEDS = oracle.DEFAULT_SEEDS
 
 
-def structured_report(path, contract, seeds=VISIBLE_SEEDS) -> dict:
+def structured_report(path, contract, seeds=VISIBLE_SEEDS, python=None, pythonpath=None) -> dict:
     """Oracle report reduced to what the page draws: verdict, per-phantom landmark expected/got in mm, orientation info."""
-    rep = oracle.check(path, contract, seeds=seeds)
+    rep = oracle.check(path, contract, seeds=seeds, python=python, pythonpath=pythonpath)
     mm = UNIT_TO_MM.get(contract.units, 1.0) if contract and contract.units else 1.0
     out = {"verdict": rep.verdict, "reasons": rep.reasons, "frame": contract.world_frame if contract else None,
            "array_orientation": contract.array_orientation if contract else None, "phantoms": []}
@@ -155,3 +155,56 @@ def repo_test_block(original: str, base: str, spec: dict | None, log_path=None, 
                 block["baseline_oracle"] = _cache.report(f, contract)
                 block["baseline_rationale"] = patches[-1].get("rationale", "")
     return block
+
+
+def build_library_record(case, run_dir, rep: int, title: str = "") -> dict:
+    """One library-repair run (results/real_repair/<run>/logs/<case>_r<rep>.*) as a record. The pre-fix library is measured at build time, and the
+    agent's saved diff is applied to a fresh private copy to measure its final state; nothing is typed in by hand."""
+    import subprocess
+    import tempfile
+
+    from . import libagent
+    from .realbugs import ENVS
+
+    run_dir = Path(run_dir)
+    log = read_events(run_dir / "logs" / f"{case.id}_r{rep}.jsonl")
+    diff = (run_dir / "logs" / f"{case.id}_r{rep}.diff").read_text(encoding="utf-8")
+    row = next(r for r in map(json.loads, (run_dir / "raw.jsonl").read_text(encoding="utf-8").splitlines()) if r["case"] == case.id and r["rep"] == rep)
+    source = case.script.read_text(encoding="utf-8")
+    contract = load_from_source(source)
+    seeds = case.seeds or VISIBLE_SEEDS
+    py = str(ENVS[case.env])
+    rec = {"kind": "library", "id": case.id, "title": title or case.id, "description": case.summary, "source": source,
+           "contract": contract.to_dict(), "outcome": row["outcome"], "tokens_total": row["tokens"]["prompt"] + row["tokens"]["completion"],
+           "llm_calls": row["llm_calls"], "n_steps": row["steps"], "oracle_runs": row["oracle_runs"], "localized": row["localized"],
+           "touched": row["touched"], "upstream_files": row["upstream_files"], "diff": diff, "heldout": None, "status": "done",
+           "source_run": f"results/real_repair/{run_dir.name}/logs/{case.id}_r{rep}.jsonl", "model": row.get("model"), "steps": [], "tool_counts": row["tool_counts"]}
+    ws = libagent.Workspace(case)
+    try:
+        rec["initial"] = structured_report(case.script, contract, seeds, py, ws.pythonpath)
+        rec["upstream_diff_lines"] = None
+        events = []
+        for e in log:
+            if e["event"] == "tool":
+                a = e["args"]
+                what = a.get("path") or a.get("pattern") or a.get("reason") or ""
+                if a.get("start") is not None and e["name"] == "read_file":
+                    what += f" [{a.get('start')}-{a.get('end', '')}]"
+                if e["name"] == "replace_lines":
+                    what += f" [{a.get('start_line')}-{a.get('end_line')}]"
+                events.append({"step": e["step"], "name": e["name"], "what": what[:110], "result": e["result"][:140].replace(chr(10), " | ")})
+            elif e["event"] == "oracle":
+                events.append({"step": e["step"], "name": "run_oracle", "what": "", "result": f"{e['verdict']}", "verdict": e["verdict"]})
+        rec["events"] = events
+        for e in log:
+            if e["event"] == "heldout":
+                rec["heldout"] = {"passed": e["passed"], "summary": e["summary"]}
+        if diff.strip():
+            d = Path(tempfile.mkdtemp(prefix="sc_demo_apply_")) / "x.diff"
+            d.write_text(diff, encoding="utf-8")
+            r = subprocess.run(["git", "apply", "-p1", "--whitespace=nowarn", str(d)], cwd=ws.lib, capture_output=True, text=True)
+            if r.returncode == 0:
+                rec["final"] = structured_report(case.script, contract, seeds, py, ws.pythonpath)
+    finally:
+        ws.cleanup()
+    return rec

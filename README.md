@@ -31,7 +31,7 @@ SpatialContract makes the intended geometry explicit and measurable:
  REPAIRED  or  OVERFIT
 ```
 
-**See it:** open `docs/index.html` in a browser (self-contained, nine real recorded runs) or run `python scripts/demo.py replay L04_right_multiply`.
+**See it:** open `docs/index.html` in a browser (self-contained, twelve real recorded runs: nine script repairs and three real-library repairs, one of them a failure) or run `python scripts/demo.py replay L04_right_multiply`.
 The first screen shows a script whose unit tests all pass while the oracle reports landmarks up to 227 mm from where they belong.
 
 ## Results at a glance
@@ -41,9 +41,9 @@ The first screen shows a script whose unit tests all pass while the oracle repor
 | Does it touch code that is already correct? | oracle-gated arm: 0 of 33 runs. Unit-test-only arm: modified 18 of 33, broke 8 |
 | Does it guess when the contract is missing or ambiguous? | oracle-gated arm abstains on 21 of 21 runs (a deterministic gate). Unit-test-only arm patched 16 of 21 and abstained twice |
 | Does the oracle detect real, fixed bugs from public libraries? | 7 of 7 reproduced at the pre-fix commit (TorchIO 3, nibabel 2, nilearn 1, MONAI 1); only 4 of 7 on the first attempt, see the notes. The target of 10 was not met |
-| Can the agent repair a bug that lives inside a library? | **Not implemented, not measured** |
+| Can the agent repair a bug that lives inside a real library? | **Sometimes, on the easiest ones**: 3 of 14 runs (2 of the 7 bugs) repaired and validated, with a tool set I tuned on these same 7 bugs. Both repaired nilearn patches equal the public upstream fix, so memorisation is possible. No unit-test baseline for these |
 
-Read these with the limits below: the seeded bugs are the oracle's own classes (circular), the repo-test baseline is mine, and 31 cases is small.
+Read these with the limits below: the seeded bugs are the oracle's own classes (circular), the repo-test baseline is mine, and 31 cases is small. The library-repair row is 14 runs on 7 bugs I selected.
 
 ## Quickstart
 Python 3.10+. No GPU.
@@ -55,12 +55,13 @@ python scripts/audit_docs.py                 # re-checks the numbers quoted in t
 python scripts/demo.py replay L04_right_multiply   # terminal walkthrough of a recorded real run, no tokens
 python scripts/demo.py serve                       # local web UI; paste any script that declares a SPATIAL_CONTRACT
 ```
-To use the real model (Nebius Token Factory):
+To use the real model (Nebius Token Factory; the library-repair runs are long and cost about 300k tokens each, see `docs/ENGINEERING_NOTES.md`):
 ```bash
 cp .env.example .env                       # put your key in NEBIUS_API_KEY; .env is gitignored
 python scripts/list_models.py              # shows the Nemotron models, pricing and tool support (needs SC_ALLOW_API=1)
 SC_ALLOW_API=1 python scripts/repair.py corpus/seeded/R05_stale_affine.py --budget 30000
 SC_ALLOW_API=1 python scripts/demo.py serve --live --budget 60000      # adds the "Repair with Nemotron" button
+SC_ALLOW_API=1 SC_TOKEN_CAP=8000000 python scripts/repair_real.py --cases nilearn_reorder --budget 600000   # repair a bug inside a real library (needs _work/ set up, see notes)
 ```
 Token Factory calls are disabled unless `SC_ALLOW_API=1` is set for that command, and every call is capped by a persistent token ledger (`SC_TOKEN_CAP`, default 200,000; `results/token_ledger.json`). The key is never printed or logged.
 Reproduce the evaluation: `python scripts/evaluate.py --arms arm1 --run-id main` (no tokens), then `SC_ALLOW_API=1 SC_TOKEN_CAP=1500000 python scripts/evaluate.py --arms arm2 arm3 --reps 3 --budget 1000000 --run-id main` (about 600k tokens), then `python scripts/analyze_eval.py main`.
@@ -70,6 +71,7 @@ Reproduce the evaluation: `python scripts/evaluate.py --arms arm1 --run-id main`
 - **Oracle** (`src/spatialcontract/oracle.py`, deterministic, no LLM). Writes a seeded label phantom (six distinct balls, off-centre on every axis, random non-RAS orientation, anisotropic voxels, optional obliquity), runs the script's `process(in_path, out_path)` in a subprocess with a scrubbed environment, finds each landmark in the output, maps it through the *output* affine, and reports the error in mm per landmark. Verdicts: PASS, FAIL, ERROR (crash or unreadable output), ABSTAIN. Tolerance is 0.05 mm for lossless pipelines and scales with voxel size for resampling pipelines (capped at 4 mm).
 - **Agent** (`src/spatialcontract/agent.py`). Nemotron answers with a `submit_patch` tool call carrying the whole file. A guard rejects syntax errors, imports outside numpy/nibabel/scipy/SimpleITK, `open`/`exec`/`eval`, a changed `process` signature and **any change to the contract**. Rejections and oracle measurements go back to the model; at most four iterations. Every step is logged to JSONL.
 - **Held-out validation** (`src/spatialcontract/heldout.py`). After a patch passes the visible oracle: seven hidden phantoms (two strongly oblique), one phantom whose seed derives from the run seed and the patched source, the visible phantoms re-stored in a different valid orientation, and a non-phantom linear-ramp image resampled onto the input grid with SimpleITK and compared voxelwise.
+- **Library repair** (`src/spatialcontract/libagent.py`). For the real bugs the agent edits a private copy of the library at the pre-fix commit with `list_dir`, `read_file`, `search`, `replace_lines`/`replace_in_file`, `revert_file` and `run_oracle`; it is not told which file is at fault. The same oracle and held-out validation judge the result. Needs the worktrees and environments from `scripts/setup_real_bugs.py`.
 - **Three arms** (`src/spatialcontract/evaluation.py`): (1) oracle only, a generic single-mutation search with no LLM; (2) the same model with only ordinary unit tests as feedback, no gate, plus `report_no_bug` and `abstain` tools; (3) the repair agent. Every final patch from every arm is scored by the same visible oracle plus held-out validation.
 
 ## How Nemotron and Nebius Token Factory are used
@@ -80,7 +82,7 @@ Reproduce the evaluation: `python scripts/evaluate.py --arms arm1 --run-id main`
 
 ## Limitations and failure cases
 - **Circular seeded results.** The 31 bugs are the oracle's own six classes and each was created by a single edit; the oracle was adjusted after it missed a bug or false-alarmed (phantom bounding-box asymmetry, voxel-scaled tolerance, a lossless tolerance and a strong-oblique bank after real bugs). The seeded numbers are not a blind test. A model-free single-mutation search repairs 77% of them for the same reason.
-- **No repair of real library bugs.** The seven real bugs are *detected* (reproduced at the pre-fix commit), but each defect lives inside a library file and the agent edits one small script. Doing this needs file-navigation tools and a patchable worktree. Also fewer than the targeted 10 real bugs were found, from four libraries I chose, and 3 of 7 only reproduced after I changed the oracle or the repro.
+- **Library repair is partial and not a blind test.** The agent repaired 3 of 14 runs (2 of 7 bugs). All 11 failures ended on the 300k-token cap. The first full run was invalid because of a bug in my search tool; the tool set was changed four times after I looked at failures on these same 7 bugs; both repaired nilearn patches are identical to the public 2018 upstream fix (possible training-data contamination); the one TorchIO repair differs from upstream and is a valid fix. There is no unit-test baseline for the real bugs. Also fewer than the targeted 10 real bugs were found, from four libraries I chose, and 3 of 7 only reproduced after I changed the oracle or the repro.
 - **The measured lift depends on my unit tests.** They flag 19 of 31 bugs; most of the gap between the arms is on the 12 they do not flag (94% vs 72%; on the 19 they do flag it is 100% vs 95%). A stronger suite would shrink it.
 - **By-construction numbers.** The oracle-gated arm cannot damage correct code or guess a convention because a deterministic gate decides before the model is called; the meaningful comparison is with the ungated arm.
 - **No overfit observed (0 of 91 oracle passes failed held-out validation).** That means the held-out checks have not been shown to catch real LLM overfitting; they are exercised only by a hand-built overfit patch in the tests.
@@ -93,9 +95,9 @@ Reproduce the evaluation: `python scripts/evaluate.py --arms arm1 --run-id main`
 ## Repository layout
 | path | what |
 |---|---|
-| `src/spatialcontract/` | contract, phantom, oracle, held-out validation, agent, mutation search, repo-style tests, evaluation, Token Factory client with token ledger |
+| `src/spatialcontract/` | contract, phantom, oracle, held-out validation, script agent, library agent, mutation search, repo-style tests, evaluation, Token Factory client with token ledger |
 | `corpus/seeded/` | 49 generated cases: 31 seeded bugs, 11 correct controls, 7 must-abstain (readable scripts + manifest) |
-| `corpus/real/` | repro scripts for the 7 real library bugs (pinned commits in `src/spatialcontract/realbugs.py`) |
+| `corpus/real/` | repro scripts for the 7 real library bugs (pinned commits in `src/spatialcontract/realbugs.py`); `results/real_repair/` holds the library-repair runs, logs and diffs |
 | `results/` | raw evaluation rows and logs (`results/eval/main`), oracle results, model listing, smoke test |
 | `demo/`, `docs/index.html`, `scripts/demo.py` | demo server, recordings, static replay page |
 | `docs/ENGINEERING_NOTES.md` | the detailed record: every number with its caveats, what went wrong, what was changed after |
