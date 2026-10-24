@@ -4,7 +4,7 @@ version = "0.0.1"
 description = "Contract-verified repair of spatial/orientation bugs in medical-imaging Python code"
 requires-python = ">=3.10"
 license = { text = "MIT" }
-dependencies = ["numpy", "nibabel", "openai", "python-dotenv"]
+dependencies = ["numpy", "nibabel", "scipy", "SimpleITK", "openai", "python-dotenv"]
 
 [project.optional-dependencies]
 dev = ["pytest"]
