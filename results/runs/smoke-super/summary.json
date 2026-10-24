@@ -28,7 +28,7 @@
    "failing_detail": {}
   },
   "reasons": [],
-  "log_path": "D:\\VS\\Nebius\\SpatialContract\\results\\runs\\smoke-super\\R01_swap_transpose.jsonl",
+  "log_path": "<repo>\\results\\runs\\smoke-super\\R01_swap_transpose.jsonl",
   "seconds": 12.6,
   "model": "nvidia/nemotron-3-super-120b-a12b",
   "thinking": "default"
@@ -62,7 +62,7 @@
    "failing_detail": {}
   },
   "reasons": [],
-  "log_path": "D:\\VS\\Nebius\\SpatialContract\\results\\runs\\smoke-super\\R04_flip_pre.jsonl",
+  "log_path": "<repo>\\results\\runs\\smoke-super\\R04_flip_pre.jsonl",
   "seconds": 12.5,
   "model": "nvidia/nemotron-3-super-120b-a12b",
   "thinking": "default"
@@ -96,7 +96,7 @@
    "failing_detail": {}
   },
   "reasons": [],
-  "log_path": "D:\\VS\\Nebius\\SpatialContract\\results\\runs\\smoke-super\\R12_affine_inverted.jsonl",
+  "log_path": "<repo>\\results\\runs\\smoke-super\\R12_affine_inverted.jsonl",
   "seconds": 12.2,
   "model": "nvidia/nemotron-3-super-120b-a12b",
   "thinking": "default"
@@ -115,7 +115,7 @@
   "reasons": [
    "iteration cap reached without a passing patch"
   ],
-  "log_path": "D:\\VS\\Nebius\\SpatialContract\\results\\runs\\smoke-super\\S06_reshape_order.jsonl",
+  "log_path": "<repo>\\results\\runs\\smoke-super\\S06_reshape_order.jsonl",
   "seconds": 48.5,
   "model": "nvidia/nemotron-3-super-120b-a12b",
   "thinking": "default"
@@ -149,7 +149,7 @@
    "failing_detail": {}
   },
   "reasons": [],
-  "log_path": "D:\\VS\\Nebius\\SpatialContract\\results\\runs\\smoke-super\\L02_rotation_only.jsonl",
+  "log_path": "<repo>\\results\\runs\\smoke-super\\L02_rotation_only.jsonl",
   "seconds": 15.8,
   "model": "nvidia/nemotron-3-super-120b-a12b",
   "thinking": "default"
@@ -183,7 +183,7 @@
    "failing_detail": {}
   },
   "reasons": [],
-  "log_path": "D:\\VS\\Nebius\\SpatialContract\\results\\runs\\smoke-super\\L04_right_multiply.jsonl",
+  "log_path": "<repo>\\results\\runs\\smoke-super\\L04_right_multiply.jsonl",
   "seconds": 15.5,
   "model": "nvidia/nemotron-3-super-120b-a12b",
   "thinking": "default"
@@ -217,7 +217,7 @@
    "failing_detail": {}
   },
   "reasons": [],
-  "log_path": "D:\\VS\\Nebius\\SpatialContract\\results\\runs\\smoke-super\\M03_not_converted.jsonl",
+  "log_path": "<repo>\\results\\runs\\smoke-super\\M03_not_converted.jsonl",
   "seconds": 12.8,
   "model": "nvidia/nemotron-3-super-120b-a12b",
   "thinking": "default"
@@ -251,7 +251,7 @@
    "failing_detail": {}
   },
   "reasons": [],
-  "log_path": "D:\\VS\\Nebius\\SpatialContract\\results\\runs\\smoke-super\\C03_voxel_added_to_world.jsonl",
+  "log_path": "<repo>\\results\\runs\\smoke-super\\C03_voxel_added_to_world.jsonl",
   "seconds": 13.1,
   "model": "nvidia/nemotron-3-super-120b-a12b",
   "thinking": "default"
@@ -285,7 +285,7 @@
    "failing_detail": {}
   },
   "reasons": [],
-  "log_path": "D:\\VS\\Nebius\\SpatialContract\\results\\runs\\smoke-super\\R02_swap_target_codes.jsonl",
+  "log_path": "<repo>\\results\\runs\\smoke-super\\R02_swap_target_codes.jsonl",
   "seconds": 11.9,
   "model": "nvidia/nemotron-3-super-120b-a12b",
   "thinking": "default"
@@ -302,7 +302,7 @@
   "visible_passed": true,
   "heldout": null,
   "reasons": [],
-  "log_path": "D:\\VS\\Nebius\\SpatialContract\\results\\runs\\smoke-super\\K03_S_reference.jsonl",
+  "log_path": "<repo>\\results\\runs\\smoke-super\\K03_S_reference.jsonl",
   "seconds": 1.4,
   "model": "nvidia/nemotron-3-super-120b-a12b",
   "thinking": "default"
@@ -321,7 +321,7 @@
   "reasons": [
    "affine_convention 'voxel_corner_to_world' unsupported/ambiguous (supported: ('voxel_center_to_world',))"
   ],
-  "log_path": "D:\\VS\\Nebius\\SpatialContract\\results\\runs\\smoke-super\\A05_corner_convention.jsonl",
+  "log_path": "<repo>\\results\\runs\\smoke-super\\A05_corner_convention.jsonl",
   "seconds": 0.0,
   "model": "nvidia/nemotron-3-super-120b-a12b",
   "thinking": "default"
@@ -340,7 +340,7 @@
   "reasons": [
    "no SPATIAL_CONTRACT declared"
   ],
-  "log_path": "D:\\VS\\Nebius\\SpatialContract\\results\\runs\\smoke-super\\A02_no_contract_buggy.jsonl",
+  "log_path": "<repo>\\results\\runs\\smoke-super\\A02_no_contract_buggy.jsonl",
   "seconds": 0.0,
   "model": "nvidia/nemotron-3-super-120b-a12b",
   "thinking": "default"

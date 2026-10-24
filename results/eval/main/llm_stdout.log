@@ -564,5 +564,5 @@ arm3 r2 A07_units_ambiguous          ABSTAIN            repaired=False tokens=0 
 arm3 r2 K09_noop_copy                NO_CHANGE_NEEDED   repaired=True tokens=0 10.3s
 arm3 r2 K10_R_as_closest_canonical   NO_CHANGE_NEEDED   repaired=True tokens=0 10.0s
 arm3 r2 K11_S_nibabel_resample       NO_CHANGE_NEEDED   repaired=True tokens=0 15.2s
-343 rows in D:\VS\Nebius\SpatialContract\results\eval\main\raw.jsonl
+343 rows in <repo>\results\eval\main\raw.jsonl
 ledger total: 870844

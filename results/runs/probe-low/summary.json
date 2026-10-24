@@ -13,7 +13,7 @@
   "reasons": [
    "iteration cap reached without a passing patch"
   ],
-  "log_path": "D:\\VS\\Nebius\\SpatialContract\\results\\runs\\probe-low\\R05_stale_affine.jsonl",
+  "log_path": "<repo>\\results\\runs\\probe-low\\R05_stale_affine.jsonl",
   "seconds": 30.5,
   "model": "nvidia/NVIDIA-Nemotron-3-Nano-30B-A3B",
   "thinking": "low"
@@ -32,7 +32,7 @@
   "reasons": [
    "iteration cap reached without a passing patch"
   ],
-  "log_path": "D:\\VS\\Nebius\\SpatialContract\\results\\runs\\probe-low\\C02_index_order.jsonl",
+  "log_path": "<repo>\\results\\runs\\probe-low\\C02_index_order.jsonl",
   "seconds": 244.9,
   "model": "nvidia/NVIDIA-Nemotron-3-Nano-30B-A3B",
   "thinking": "low"
@@ -66,7 +66,7 @@
    "failing_detail": {}
   },
   "reasons": [],
-  "log_path": "D:\\VS\\Nebius\\SpatialContract\\results\\runs\\probe-low\\M01_zoom_only.jsonl",
+  "log_path": "<repo>\\results\\runs\\probe-low\\M01_zoom_only.jsonl",
   "seconds": 184.4,
   "model": "nvidia/NVIDIA-Nemotron-3-Nano-30B-A3B",
   "thinking": "low"

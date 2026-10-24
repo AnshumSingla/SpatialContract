@@ -28,7 +28,7 @@
    "failing_detail": {}
   },
   "reasons": [],
-  "log_path": "D:\\VS\\Nebius\\SpatialContract\\results\\runs\\first-r05\\R05_stale_affine.jsonl",
+  "log_path": "<repo>\\results\\runs\\first-r05\\R05_stale_affine.jsonl",
   "seconds": 67.2,
   "model": "nvidia/NVIDIA-Nemotron-3-Nano-30B-A3B"
  }
