@@ -65,9 +65,13 @@ check("FEEDBACK", f"{n_calls} of {n_calls}", "tool-call reliability")
 
 real = json.loads((ROOT / "results/real_bugs_oracle.json").read_text(encoding="utf-8"))
 check("README", f"{sum(r['reproduced'] for r in real)} of {len(real)} reproduced", "real bugs")
-led = json.loads((ROOT / "results/token_ledger.json").read_text(encoding="utf-8"))["total_tokens"]
-print("ledger", led)
-check("FEEDBACK", f"About {led / 1e6:.1f} million tokens", "token total")
+ledger_file = ROOT / "results/token_ledger.json"      # gitignored: absent in a fresh clone
+if ledger_file.exists():
+    led = json.loads(ledger_file.read_text(encoding="utf-8"))["total_tokens"]
+    print("ledger", led)
+    check("FEEDBACK", f"About {led / 1e6:.1f} million tokens", "token total")
+else:
+    print("SKIP token total: results/token_ledger.json is not in the repository (it is gitignored)")
 n_tests = len(list((ROOT / "tests").glob("test_*.py")))
 print("test files", n_tests)
 # ---- library repair (results/real_repair/real3)

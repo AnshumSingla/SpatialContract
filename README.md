@@ -50,7 +50,7 @@ Python 3.10+. No GPU.
 ```bash
 python -m venv .venv
 .venv/Scripts/pip install -e ".[dev]"      # Linux/macOS: .venv/bin/pip
-pytest                                      # 70 tests, about 3 minutes, no network, no API key needed
+pytest                                      # 89 tests (72 run in a fresh clone, 17 that need the old library worktrees skip themselves), about 3-5 minutes, no network, no API key
 python scripts/audit_docs.py                 # re-checks the numbers quoted in the docs against results/*
 python scripts/demo.py replay L04_right_multiply   # terminal walkthrough of a recorded real run, no tokens
 python scripts/demo.py serve                       # local web UI; paste any script that declares a SPATIAL_CONTRACT
