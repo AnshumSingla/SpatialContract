@@ -1,53 +1,43 @@
-# Feedback on Nebius Token Factory and NVIDIA models
+# Feedback on Nebius Token Factory and the NVIDIA Nemotron models
 
-Kept as I go. Only things I actually observed are recorded here.
+Written from what I actually ran (2026-10-23 and 2026-10-24). About 873,000 tokens went through Token Factory in total: a 514-token smoke test, a few hundred tokens of probes, about 255k tokens of repair experiments on two models, and about 600k tokens for the three-arm evaluation (271 model calls). Latencies are single samples, not benchmarks.
 
-## Nebius Token Factory (OpenAI-compatible API)
-- Onboarding zero -> hello world (observed 2026-10-23): key was already in `.env`; `GET /v1/models?verbose=true` returned 200 with 30 models in one call, no tokens spent. The verbose listing exposes `pricing`, `context_length`, `supported_features` (e.g. `["tools","reasoning"]`), `per_request_limits` and region per model, which made picking the cheapest Nemotron and confirming tool support possible without a single completion. That was genuinely useful.
-- Standard `openai` Python SDK worked unchanged with `base_url=https://api.tokenfactory.nebius.com/v1/`; `usage` is returned on every response, which made a client-side token ledger easy.
-- Friction: a first attempt on 2026-10-16 from a different network failed with a proxy `403 Forbidden` before reaching the API (not a Token Factory error; recorded because it cost a debugging round). The 2026-10-23 run on the current network was fine.
-- Friction: the pip-resolved `openai` 3.37.0 depends on a package named `httpx2` rather than `httpx`; code that does `import httpx` directly breaks. I switched my listing script to stdlib `urllib`.
+**Used:** Token Factory (OpenAI-compatible chat completions with tool calling, and the model listing); `nvidia/nemotron-3-super-120b-a12b` (the repair model); `nvidia/NVIDIA-Nemotron-3-Nano-30B-A3B` (tried first, then dropped).
+**Listed but not used:** `nvidia/Nemotron-3_5-Lightning`, `nvidia/Nemotron-3-Ultra-550b-a55b`, `nvidia/Nemotron-3.5-Super-VL`. I have no opinion on them.
 
-## NVIDIA Nemotron (model id used: nvidia/nemotron-3-super-120b-a12b, to confirm via /models)
-Models listed as Nemotron on Token Factory (from `/models`, 2026-10-23): `nvidia/NVIDIA-Nemotron-3-Nano-30B-A3B` and `nvidia/Nemotron-3_5-Lightning` ($0.06 in / $0.24 out per M tokens), `nvidia/nemotron-3-super-120b-a12b` ($0.30 / $0.90), `nvidia/Nemotron-3-Ultra-550b-a55b` ($1.00 / $3.00), `nvidia/Nemotron-3.5-Super-VL`. All advertise `tools` + `reasoning`.
+## Nebius Token Factory
 
-### nvidia/NVIDIA-Nemotron-3-Nano-30B-A3B (smoke test only so far)
-- What it is used for: planned first-choice repair model (cheapest); so far only a hello + tool-call smoke test.
-- What worked: plain chat returned "Hello." (49 completion tokens for a 2-token answer, i.e. hidden reasoning is billed). Tool call `add(1234, 4321)` came back as a valid structured call, `finish_reason=tool_calls`, args correct, 305 prompt + 135 completion tokens, 1.5 s. Whole smoke test cost 514 tokens.
-- What did not / cautions: first call latency was 13 s (cold start?; single sample, not a benchmark). Reasoning tokens count against `max_tokens`, so small caps risk truncated answers on real repair prompts. Repair quality is NOT yet evaluated.
-- Would use again: undecided; depends on step 6/7 results.
+**What I used it for.** The runtime model calls of a repair agent (the model reads a small imaging script plus measurements and returns a patched file as a tool call), 4-way parallel for the evaluation. No other Nebius service.
 
+**Onboarding, zero to hello world.** An API key was already in `.env`. The first successful call was `GET /v1/models?verbose=true`: HTTP 200, 30 models, no tokens spent. That listing was the most useful onboarding surface: per model it gives pricing, context length, `per_request_limits` (tokens and requests per minute), region and `supported_features` (all five Nemotron entries say `["tools","reasoning"]`), so I could pick the cheapest model, confirm tool support and set a token budget before the first completion. The standard `openai` Python client worked unchanged with `base_url=https://api.tokenfactory.nebius.com/v1/`. The first completion (hello) and the first tool call (`add(1234, 4321)`, valid arguments, `finish_reason=tool_calls`) together cost 514 tokens.
 
-## Step 6 observations (repair agent; all numbers from results/runs/*, 2026-10-24)
-### Nebius Token Factory
-- Tool calling: with `tools=[submit_patch]` and `tool_choice="auto"`, 16 of 16 Super-120B calls came back as a well-formed tool call whose `arguments` parsed as JSON (patched files up to about 1.4k characters). Nano-30B (excluding the discarded first run): 19 of 27 calls did; the rest were empty content with `finish_reason=length`, or plain text.
-- Reasoning controls that worked through the OpenAI-compatible API: `extra_body={"chat_template_kwargs": {"enable_thinking": False}}` (hello-world 57 -> 3 completion tokens) and `extra_body={"reasoning_effort": "low"}` (-> 17). I found these by trial, not from the model listing; the `/models` entry only says `supported_features: ["tools","reasoning"]`. A line in the docs or in the model entry would have saved calls.
-- Reasoning tokens are billed and count against `max_tokens`: with `max_tokens=6000`, one Nano call spent all 6000 on reasoning and returned empty content (`finish_reason=length`). `usage.completion_tokens` does not split reasoning from answer, so I could only estimate the reasoning share from the length of `reasoning_content`.
-- Latency (single samples, not a benchmark): Super 12-16 s per single-call repair; Nano 40-100 s when it reasons at length.
-- Rate limits from `/models`: Super 200k tokens/min and 300 req/min; Nano 800k tokens/min. I never hit a limit.
-- `usage` on every response made the hard token ledger trivial, and `/models` pricing allowed cost estimates before spending.
+**What worked.**
+- Tool calling: 271 of 271 evaluation requests (three tools offered, `tool_choice="auto"`, Super-120B) returned a well-formed tool call whose JSON arguments parsed; none ended on `finish_reason=length` at `max_tokens=8000`. (Nano-30B in my trial runs: 19 of 27 calls returned a tool call.)
+- Reliability at modest scale: about 600k tokens in roughly 25 minutes with 4 parallel workers, no 429s, no transport errors. I never approached the listed 300 requests/minute for Super.
+- `usage` on every response, which made a hard, thread-safe cumulative token cap with a persistent ledger easy to build.
+- Parameters pass through `extra_body`: `{"chat_template_kwargs": {"enable_thinking": false}}` cut a hello from 57 to 3 completion tokens, and `{"reasoning_effort": "low"}` gave 17.
+- Cost: the whole evaluation cost well under $1 at the listed prices.
 
-### nvidia/NVIDIA-Nemotron-3-Nano-30B-A3B (repair)
-- Worked: 2 of 3 trial cases with default thinking (a crop-index bug in 2 calls, a units bug in 1).
-- Did not work: stale-affine bug failed after 4 calls; it hallucinated an API (`nibabel.orientations.ornt_from_axcodes` does not exist) and kept using it for three iterations; with thinking off, one call generated a 23,496-character "patched source" (repetition) that failed to parse; with `reasoning_effort=low`, 7 of 12 calls hit the length limit.
-- Would I use it again for this task: not as the repair model. It used more tokens per solved case than Super.
+**What did not, and what I would change.**
+- I found the reasoning controls above by trial. The model listing only says `supported_features: ["tools","reasoning"]`; the listing or the docs should state which switches each model accepts. This cost me several probe calls.
+- Reasoning tokens are billed and count against `max_tokens`, but `usage.completion_tokens` does not separate reasoning from answer. With `max_tokens=6000`, one Nano call spent all 6000 reasoning and returned empty content. A `reasoning_tokens` field in `usage` would remove the guesswork.
+- A first attempt on 2026-10-16 from a different network failed with a proxy `403 Forbidden` before reaching the API. Not a Token Factory error, but it cost a debugging round; I record it because it is what zero-to-hello-world looked like on that network.
+- Environment note, not Token Factory: the pip-resolved `openai` 3.37.0 depends on `httpx2` rather than `httpx`, so code that imports `httpx` directly breaks.
 
-### nvidia/nemotron-3-super-120b-a12b (repair)
-- What for: the repair model (reads a pipeline of about 25 lines plus oracle measurements, returns the whole patched file via a tool call).
-- Worked: 11 of 12 seeded bugs repaired across two runs, almost always in one call (about 300-450 completion tokens, 12-16 s). Every accepted patch also passed the held-out validation. It never tried to edit the SPATIAL_CONTRACT (the guard did not fire on a Super call).
-- Did not work: S06 (Fortran-order reshape): four rewrites of unrelated correct code. It does not localise a one-token bug when the measurements only say "all landmarks off".
-- Would use again: yes for this task. The three-arm comparison (step 7) will say whether the oracle feedback is what makes it work.
+**Would I use it again?** Yes. For an agent that makes a few thousand small tool-calling requests it was reliable, cheap and transparent about price and limits.
 
+## nvidia/nemotron-3-super-120b-a12b ($0.30 in / $0.90 out per M tokens, 200k tokens/min, 300 requests/min)
 
-## Step 7 observations (three-arm evaluation, 2026-10-24; results/eval/main)
-### Nebius Token Factory
-- Scale: about 600k tokens (271 model calls in 4-way parallel plus 10 dry-run calls) took roughly 25 minutes wall-clock with no throttling, no 429s and no transport errors. The documented 300 requests/minute for Super was never approached.
-- Tool calling was reliable at this scale: 271 of 271 calls returned a tool call with JSON arguments that parsed, and 0 ended with `finish_reason=length` at `max_tokens=8000` (Super, default reasoning). With three tools offered (`submit_patch`, `report_no_bug`, `abstain`) it never produced a malformed call (it abstained 6 times in total, only 2 of them on the 21 must-abstain runs, where I would have preferred many more).
-- Token cost per task is low enough to matter little: arm 2 used 1,891 tokens per bug case, arm 3 used 3,213; the full evaluation was under $1 at the listed Super prices. The listing's pricing made that estimate possible up front.
-- A thread-safe budget was needed (parallel callers could overshoot a naive cap); the API gave no help there, but `usage` on every response made the accounting exact.
+- **What for.** The repair model in the final system: given a ~25-line pipeline, a contract and either oracle measurements or unit-test results, return the whole patched file through `submit_patch`; it can also call `report_no_bug` or `abstain` in the baseline arm.
+- **What worked.** With oracle measurements it repaired 91 of 93 seeded-bug runs (98%), 85 on the first call; typically about 300-450 completion tokens and 12-16 s. With only unit-test results it repaired 80 of 93 (86%); 12 of the 13 misses were patches the unit tests accepted while the bug remained. Every accepted patch also passed held-out validation (hidden phantoms, a fresh phantom, a paired orientation, a non-phantom check). It never tried to edit the SPATIAL_CONTRACT; the guard rejected only 2 patches in the whole evaluation (both plain syntax errors, one per arm).
+- **What did not.** (1) Told to abstain when the convention cannot be determined, it still patched 16 of 21 must-abstain runs (abstained 2, said "no bug" 3). (2) When told a script was reported as wrong, it modified 18 of 33 already-correct pipelines and broke 8 (it said "no bug" in 11). It follows the "reported as wrong" framing more than the "do not guess" rule. (3) It does not localise a one-token bug when the measurements only say "all landmarks off": on a Fortran-order reshape bug it rewrote correct code four times (one failed run in three; a second run repaired it on the third try).
+- **Onboarding.** Zero friction beyond choosing it: the same chat and tool-call code that worked for Nano worked unchanged.
+- **Would I use it again?** Yes, as a component. The evidence here is that its repairs are good when it is shown measurements, and that stopping it from guessing needed an external check, not a better prompt. My comparison is one model, one prompt, 31 cases and a unit-test baseline that I wrote, so it is evidence about this task, not a general ranking.
 
-### nvidia/nemotron-3-super-120b-a12b (repair, baseline and oracle-guided)
-- What for: the same model in two arms: given oracle measurements (arm 3) or only unit-test results (arm 2).
-- Worked: with oracle measurements it repaired 91 of 93 seeded-bug runs (98%), 85 on the first call. With unit-test results only it repaired 80 of 93 (86%); 12 of the 13 misses were patches the unit tests accepted while the bug remained.
-- Did not work: told to abstain when the convention cannot be determined, it still patched 16 of 21 must-abstain runs (it abstained in 2 and said "no bug" in 3). It also modified 18 of 33 already-correct pipelines when the task text said they were reported as wrong (it said "no bug" in 11). It follows the "reported as wrong" framing more than the "do not guess" rule.
-- Would use again: yes. As a component it is cheap and reliable; the evidence in this project is that its repairs are good when it is shown measurements, and that it needs an external check, not a prompt, to stop it from guessing.
+## nvidia/NVIDIA-Nemotron-3-Nano-30B-A3B ($0.06 in / $0.24 out per M tokens, 800k tokens/min)
+
+- **What for.** First-choice repair model because it is the cheapest; replaced by Super after a three-case trial.
+- **What worked.** Hello and a tool call worked first time. On three trial bugs (stale affine, a crop-index bug, a units bug) with default reasoning it repaired two (the crop-index bug in 2 calls, the units bug in 1).
+- **What did not.** The stale-affine bug failed after 4 calls. It hallucinated an API (`nibabel.orientations.ornt_from_axcodes` does not exist) and kept using it for three iterations. With thinking off, one call produced a 23,496-character "patched source" that failed to parse (repetition), and thinking-off repaired 1 of 3 (plus a budget stop). With `reasoning_effort=low`, 7 of 12 calls ended on `finish_reason=length` and 1 of 3 was repaired. Latency was 13 s for a one-word answer on the first call and 40-100 s when it reasoned at length.
+- **Onboarding.** Same code path as Super; the only extra work was learning the reasoning switches.
+- **Would I use it again?** Not for this repair task: it used more tokens per solved case than Super (46.6k tokens for the three trial cases against 10.8k for Super on the same three, which it solved 3 of 3). It may be fine for simpler jobs; I did not test any.

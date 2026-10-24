@@ -1,246 +1,106 @@
 # SpatialContract
 
-> STATUS: oracle, corpora, repair agent and a first three-arm evaluation on the seeded corpus are implemented and measured (see Results sections). Real-library bugs are detected but not yet repaired; video script and Devpost text are still to do; the demo is built (see Demo).
+**An agent that repairs orientation and affine bugs in medical-imaging Python code, judged by a physical-coordinate oracle instead of the model's opinion.**
 
-An agent that repairs spatial / orientation / affine bugs in medical-imaging Python code
-(nibabel, SimpleITK, MONAI, TorchIO style), verified by a **deterministic physical-coordinate
-oracle** instead of the LLM's opinion. The pipeline declares a spatial contract; the oracle
-pushes an asymmetric phantom through the code and reports which landmark landed how many mm off;
-an NVIDIA Nemotron model (via Nebius Token Factory) proposes patches; the agent abstains when
-the contract is missing or ambiguous.
+Built for the Nebius x NVIDIA Global AI Hackathon (track: Coding and Agentic Engineering). Imaging only: NIfTI-style pipelines written with nibabel / SimpleITK / MONAI / TorchIO-style code.
 
-## Setup
-```bash
-python -m venv .venv && .venv/Scripts/pip install -e ".[dev]"   # Linux/macOS: .venv/bin/pip
-cp .env.example .env        # then paste your Nebius Token Factory key into .env
-python scripts/list_models.py      # zero-token: lists Nemotron model ids
-python scripts/smoke_test.py       # budget-capped completion + tool-call test
-pytest
+## The problem, in 30 seconds
+Spatial bugs do not crash. A flipped axis, a stale affine after a crop, or millimetres written where metres were declared produce a valid image in the wrong place, and ordinary unit tests often pass.
+In this repo's seeded corpus, 12 of 31 bugs pass the 3-4 ordinary unit tests per pipeline that I wrote as a baseline.
+
+SpatialContract makes the intended geometry explicit and measurable:
+
+```
+ script + SPATIAL_CONTRACT {frame, units, orientation}
+        |
+        v
+ gate: usable contract? --no--> ABSTAIN (no model call, no guessed convention)
+        | yes
+        v
+ oracle: asymmetric landmark phantoms -> process() -> where did each landmark land vs where the contract says (mm)
+        | pass -> leave the code alone            | fail
+        v                                         v
+                           Nemotron (Nebius Token Factory, tool call) proposes a patch
+                           -> patch guard (contract is immutable, import allow-list)
+                           -> oracle again, up to 4 iterations
+        | visible oracle passes
+        v
+ held-out validation the model never sees: hidden phantoms, a fresh phantom generated after the patch,
+ the same content stored in another orientation, a non-phantom image checked with SimpleITK
+        v
+ REPAIRED  or  OVERFIT
 ```
 
-## Demo (step 8)
-The first screen is the whole pitch: for a script whose **unit tests all pass**, the oracle shows **18/18 landmark measurements off, worst 227 mm**, drawn as expected-vs-actual positions in three anatomical views. Press Play and the agent's real run steps through four iterations (two of which crash in the sandbox) to a patch that puts every landmark within 0.05 mm, followed by four checks the model never saw.
-```bash
-python scripts/demo.py replay L04_right_multiply     # terminal walkthrough of a recorded real run, no API, no tokens
-python scripts/demo.py serve                         # local web UI: recorded runs + "check any script with the oracle" (no tokens)
-SC_ALLOW_API=1 python scripts/demo.py serve --live --budget 60000   # adds a working "Repair with Nemotron" button (capped tokens)
-```
-- **Static replay page for a demo URL:** `docs/index.html` is one self-contained file (175 KB, no network, no external scripts) with nine recorded runs embedded. Serve `docs/` with GitHub Pages or any static host; `python demo/build_static.py` rebuilds it.
-- **What the nine runs are:** real agent runs taken from the evaluation logs (`results/eval/main/logs`), not staged. Landmark positions are re-measured by the deterministic oracle on each saved patch; rationale text, token counts and held-out results come from the run logs. They include a **failed run** (S06, shown on purpose), two abstentions and a no-change case. The recorded runs were chosen by me to be instructive (the hero case is one where the repo tests pass); the evaluation table above, not the demo, is the evidence for how often this works.
-- **Live mode:** checks any pasted script (it must declare a `SPATIAL_CONTRACT`) and, with `--live`, runs the same agent against Nebius Token Factory; one end-to-end live repair was exercised through the HTTP API (R05: repaired in one iteration, 2,210 tokens, all held-out checks passed). The server binds to `127.0.0.1` only and executes submitted Python in a subprocess with a scrubbed environment and an import allow-list; **that is not a security boundary, do not expose it.**
-- Tests: `tests/test_demo.py` checks that every recording matches its evaluation row, that `docs/index.html` is up to date and has no external URLs, the live check/guard logic, and the CLI walkthrough.
+**See it:** open `docs/index.html` in a browser (self-contained, nine real recorded runs) or run `python scripts/demo.py replay L04_right_multiply`.
+The first screen shows a script whose unit tests all pass while the oracle reports landmarks up to 227 mm from where they belong.
 
-## Oracle (implemented, step 3)
-- `contract.py`: `SPATIAL_CONTRACT = {...}` literal declared in the pipeline (read with `ast.literal_eval`,
-  never executed): `world_frame` (RAS/LPS), `units` (mm/m/um), `affine_convention`, optional `array_orientation`.
-  Missing / unknown / unsupported values make the oracle return `ABSTAIN` without running the code.
-- `phantom.py`: seeded label volume, 6 distinct balls, off-centre on every axis, random non-RAS signed-permutation
-  orientation, anisotropic voxels, optional obliquity, random origin. Ground truth is exact world position.
-- `oracle.py`: runs `process(in_path, out_path)` in a subprocess with a scrubbed environment (no API key),
-  locates each label in the output, maps it through the OUTPUT affine and reports error in mm per landmark.
-  Verdicts: PASS / FAIL / ERROR (crash) / ABSTAIN.
-- Tested: correct reorientation passes (0.00 mm); axis swap, flipped axis, stale affine, voxel-vs-world,
-  wrong units and transposed affine each fail on every individual phantom (worst errors 60 to 98 mm).
-  Caveat: the reference pipeline is a lossless reorientation, so interpolation tolerance (`tol_mm=1.5`) is not yet
-  exercised by a resampling pipeline.
-
-## Seeded-bug corpus (implemented, step 4; oracle only, no LLM involved)
-`corpus/seeded/` (generated by `src/spatialcontract/seeded.py`, one readable script per case + `manifest.json`):
-5 small pipelines (reorient-to-RAS, hand-written 2 mm resampler, foreground crop, RAS->LPS, mm->m).
-- 31 seeded bugs across the six classes (axis swap 5, flipped axis 6, stale affine 5, voxel-vs-world 5, wrong units 7, transposed/inverted affine 3).
-- 11 correct controls (incl. a resampler at 2 and 3 mm, `nibabel.processing.resample_to_output`, `as_closest_canonical`).
-- 7 must-abstain cases (no contract, `unknown`/ambiguous units, voxel-corner convention, missing frame), 3 of which also contain a bug.
-
-Oracle-only result (`python scripts/run_seeded_oracle.py` -> `results/seeded_oracle.json`):
-31/31 bugs detected, 0/11 false alarms, 7/7 abstentions. On each of 8 phantom seeds alone (`scripts/per_phantom_robustness.py`)
-the same: 31/31 and 0/11. **This is circular by construction** (we injected the bugs the oracle was designed to catch) and says nothing
-about real bugs; the real-bug corpus (step 5) is reported separately.
-
-Things the corpus exposed, fixed after the fact (so the numbers above are NOT a blind test):
-1. Bug `C02` (crop offset with reversed axis order) initially slipped through because on seeds 0-2 the foreground bounding-box margins were
-   palindromic (`[3,6,3]`), making the reversal a no-op. The phantom generator now requires the margins to differ across axes.
-2. A correct 3 mm nearest-neighbour resampler false-alarmed on one seed at a fixed 1.5 mm tolerance (observed error up to ~0.5 voxel).
-   The tolerance is now `min(max(1.5, 0.866 x output voxel), 4.0)` mm. Consequence: errors below roughly one coarse voxel are invisible
-   (smallest detected bug error: 3.2 mm for `C02`; a sub-voxel shift would pass).
-
-## Real-bug corpus (implemented, step 5; oracle only, no LLM involved)
-Seven fixed spatial bugs from public libraries, each reproduced by running the library at the **parent of the fix commit (PRE)** and at the
-**fix commit (POST)** through the same `process(in, out)` script and contract (`corpus/real/*.py`, pinned SHAs in
-`src/spatialcontract/realbugs.py`, raw results in `results/real_bugs_oracle.json`). Reproduced = oracle FAILs PRE and PASSes POST.
-
-| id | library | fix date | what was wrong | class | oracle signal at PRE | fix commit touched a test? |
-|---|---|---|---|---|---|---|
-| torchio_crop | TorchIO 0.17 | 2020-11-05 | `Crop` computed the new affine but never assigned it | stale affine | 12.7 mm | no |
-| nilearn_reorder | nilearn 0.4 | 2018-01-10 | `reorder_img` origin off by one voxel when flipping y/z | flipped axis | 1.0 mm | yes |
-| nibabel_conform | nibabel 3.1 | 2020-04-08 | `conform()` re-oriented with wrong axis labels (visible for `orientation="LIA"`, not for `"RAS"`) | axis swap | orientation contract violated (got `LSP`, wanted `LIA`); landmarks within tolerance | no |
-| monai_spacing_offset | MONAI 1.0 | 2022-10-04 | `Spacing(scale_extent=True)` wrong output offset on oblique affines (#5253) | voxel vs world | landmarks lost on the oblique phantoms (seed 1); seed 0 passes | yes |
-| nibabel_ioorient | nibabel 5.4 | 2025-12-19 | `io_orientation` labelled competing axes in input order | axis swap | orientation contract violated (0 mm world error) | yes |
-| torchio_reorient | TorchIO 2.0a | 2026-04-14 | `Reorient` permuted before flipping, affine built from wrong shape | axis swap | 43.2 mm | yes |
-| torchio_sitk_ras_lps | TorchIO 2.0a | 2026-04-05 | affine written to SimpleITK without RAS->LPS, double flip on save | flipped axis | 123.3 mm | yes |
-
-**7/7 reproduced, so the real corpus is not labelled synthetic-only. The target of >=10 was not met: 7.** dipy, ANTsPy and SimpleITK contribute
-zero cases (candidates I found were streamline/diffusion/plotting code, or ITK-internal fixes with no checkable file-in/file-out behaviour).
-Repo coverage: TorchIO 3, nibabel 2, nilearn 1, MONAI 1.
-
-How much to trust this (read before quoting the 7/7):
-- **First-attempt oracle detection was 4/7, not 7/7.** Three cases first passed or did not trigger, and I changed the harness or the repro afterwards:
-  (1) `nilearn_reorder`: the error is exactly one voxel (1.0 mm), under the old fixed 1.5 mm tolerance. The oracle now uses a 0.05 mm tolerance when the output is
-  lossless (every landmark keeps its voxel count) and the voxel-scaled tolerance only for resampling pipelines. (2) `nibabel_ioorient`: needs a 50-70 degree
-  oblique affine, my default phantoms tilt at most 12 degrees. I added an opt-in strong-oblique bank (seeds 200-207); **only 1 of those 8 phantoms triggers the bug**
-  (output `RIA` instead of `RAS`) and the world-coordinate error is 0 mm, so only the declared `array_orientation` contract catches it. (3) `nibabel_conform`: with
-  `orientation="RAS"` pre- and post-fix behave identically; I changed the target to `LIA` after reading the diff.
-- **Selection bias.** I mined git history for commits that looked spatial, kept the ones I judged expressible as `process(in, out)`, wrote the contracts and scripts
-  myself, and knew the fix when I did. Bugs needing other inputs (NRRD/DICOM readers, augmentation transforms, streamlines) were skipped.
-- PRE/POST are commits (library source imported from git worktrees), not releases. Old libraries run in a legacy virtualenv (numpy 1.23, nibabel 4.0.2, torch 2.2).
-  Environment shims (not in any library under test): `sklearn.externals.joblib` + `Memory(cachedir=)` for nilearn 0.4, and a fake `torchio` dist-info for TorchIO 2.0a worktrees.
-- "Fix commit touched a test" is read from `git show --name-only`. I did **not** run the pre-fix test suites, so "the repo's own tests missed it" is only supported
-  as "the covering test was added together with the fix (5 of 7) or not in that commit (2 of 7)".
-- 7 cases: any rate computed from them has a wide interval (7/7 has a 95% Clopper-Pearson lower bound of about 0.59).
-- Reproduce: `python scripts/setup_real_bugs.py` (needs network), create `_work/env_legacy` and `_work/env_modern` with the pins in the table above, then `python scripts/run_real_bugs.py`.
-
-## Repair agent (implemented, step 6; preliminary runs only, NOT the evaluation)
-`src/spatialcontract/agent.py`, CLI `scripts/repair.py` (needs `SC_ALLOW_API=1`; every call is capped by a persistent token ledger):
-1. **Gate.** No `SPATIAL_CONTRACT`, or an unusable one (unknown/ambiguous field) -> `ABSTAIN` with the reasons, before any model call.
-2. **Oracle** on the visible phantoms (seeds 0-2). Already passing -> `NO_CHANGE_NEEDED` (no model call, no edit).
-3. **Nemotron** gets the script, the fixed contract and the measurements, and must answer with a `submit_patch` tool call carrying the whole file.
-4. **Patch guard** rejects, without running: syntax errors, imports outside numpy/nibabel/scipy/SimpleITK, `open/exec/eval/...`, a changed `process`
-   signature, and **any change to `SPATIAL_CONTRACT`** (the agent cannot make a failure disappear by editing the contract). A rejection goes back to the model.
-5. **Re-run** the oracle in a subprocess (scrubbed environment, no API key), feed the new measurements back, up to `--max-iters` (default 4).
-6. A patch that passes the visible oracle is checked on **held-out validation** the model never sees (`heldout.py`): 7 hidden phantoms (5 ordinary, 2 strongly oblique), one phantom
-   whose seed is derived from the run seed *and the patched source* (generated after the patch), the visible phantoms re-stored in a different valid orientation
-   (paired transform), and a non-phantom linear-ramp volume resampled onto the input grid with SimpleITK and compared voxelwise. Any failure => `OVERFIT`, else `REPAIRED`.
-   Sanity check of this validator (no LLM): all 11 correct controls pass it and all 31 seeded bugs fail it. A hand-written overfit patch (fixes only the visible orientations) is caught (`tests/test_agent.py`).
-7. Every step is written to `results/runs/<run-id>/<case>.jsonl` (initial oracle, model response, patch, rejection reason, oracle after patch, held-out result) with each patched file kept.
-
-Mechanics are tested offline with a scripted fake model (`tests/test_agent.py`, 10 tests: abstain, no-change, repair, contract-edit rejection, forbidden import, overfit, iteration cap, budget stop, code-block fallback).
-
-Preliminary real-model runs (small, single runs; the three-arm evaluation is step 7):
-
-| model / setting | cases | repaired | notes |
-|---|---|---|---|
-| Nano-30B, thinking off | R05, C02, M01 | 1/3 (+1 budget stop) | hallucinated `nibabel.orientations.ornt_from_axcodes`; one 23k-character runaway "patch" |
-| Nano-30B, `reasoning_effort=low` | same | 1/3 | 7 of 12 calls ended with `finish_reason=length` |
-| Nano-30B, default thinking | same | 2/3 | 46.6k tokens for 3 cases |
-| **Super-120B**, default thinking | same | **3/3** | 10.8k tokens for 3 cases |
-| Super-120B, default | 9 other seeded bugs (R01 R02 R04 R12 S06 L02 L04 M03 C03) | 8/9 | all 8 also passed held-out validation |
-
-Super is therefore the default model (`NEBIUS_MODEL`); Nano was tried first as the cheapest. Super also used fewer tokens per solved case than Nano because it reasons much less.
-All 16 Super calls returned a tool call; none hit the length limit. Token Factory spend for everything above is below roughly 255k tokens (an upper bound under $0.25 at Super prices).
-
-**Published failure case (S06, Fortran-order reshape).** The bug is `order="F"` in the final reshape. In four iterations the model rewrote the (correct) bounding-box and sampling code each time and never touched the reshape.
-The oracle output was identical every round (6/6 landmarks off), so the model received no new signal. A failure like this is what the oracle-feedback arm will have to be judged on.
-
-Caveats that matter for how to read the above:
-- The abstention in this agent is a **deterministic gate** on the contract, so "abstention precision" on the corpus is 100% by construction; it measures the gate, not the model's judgement. What step 7 can measure is how often the baseline LLM (no gate) patches code that has no contract, i.e. guesses a convention.
-- The seeded bugs are the oracle's own classes (circular); 12 cases is far too few for any rate.
-- **Real-library bugs are not yet repairable by this agent**: the defect lives inside the library (e.g. TorchIO's `Crop`), not in the small driver script. Wiring that up needs file-navigation tools and a patchable worktree; it is open work, not a claim.
-- One control in `test_seeded` failed once and then passed on seven repeats of the full evaluation; I could not reproduce or explain it. The oracle now retries an `ERROR` verdict once.
-- During the first real run the model could read a header comment in the corpus file that described the bug. I removed such comments from `corpus/seeded` and `corpus/real` and discarded that run; all numbers above come from files without them.
-
-## Evaluation: three arms on the seeded corpus (step 7)
-**Scope.** Seeded corpus only: 31 buggy pipelines, 11 correct controls, 7 must-abstain cases. The 7 real-library bugs are *not* part of this evaluation: the
-agent cannot yet repair a bug that lives inside a library (see Limitations), so for them only oracle *detection* (7/7, above) is measured. Seeded and real results are not mixed.
-
-| arm | what it is |
+## Results at a glance
+| question | answer |
 |---|---|
-| 1. oracle only | no LLM. Generate-and-test over ~150-2,500 single AST mutations per script (delete a statement, unwrap `.T`/flip/`inv`/scale, change a constant, swap a variable, wrap a variable in `.T`/`inv`/flip/transpose/scale), screened by the oracle, first survivor taken |
-| 2. LLM + repo tests | same model (`nemotron-3-super-120b-a12b`), same loop and patch guard, but the only feedback is ordinary unit tests (3-4 per pipeline, `src/spatialcontract/repo_tests.py`), no contract gate, plus `report_no_bug` and `abstain` tools. A patch is accepted as soon as the tests pass |
-| 3. LLM + oracle feedback | the repair agent: contract gate, oracle measurements as feedback, iteration cap 4 |
+| Same model, oracle feedback vs only the repo's unit tests: which repairs more of 31 seeded bugs? | **98% vs 86%**; paired difference +12 points, 95% CI +3 to +22 (3 repetitions, one model) |
+| Does it touch code that is already correct? | oracle-gated arm: 0 of 33 runs. Unit-test-only arm: modified 18 of 33, broke 8 |
+| Does it guess when the contract is missing or ambiguous? | oracle-gated arm abstains on 21 of 21 runs (a deterministic gate). Unit-test-only arm patched 16 of 21 and abstained twice |
+| Does the oracle detect real, fixed bugs from public libraries? | 7 of 7 reproduced at the pre-fix commit (TorchIO 3, nibabel 2, nilearn 1, MONAI 1); only 4 of 7 on the first attempt, see the notes. The target of 10 was not met |
+| Can the agent repair a bug that lives inside a library? | **Not implemented, not measured** |
 
-Every final patch, from every arm, is scored the same way: visible oracle (phantoms 0-2), then held-out validation (hidden bank, per-run seed generated after the patch, paired orientation, non-phantom differential).
-"Repaired" = both pass. LLM arms: 3 repetitions per case; arm 1 is deterministic (1 run). CIs are 95% percentile bootstrap over *cases* (repetitions averaged within a case), Wilson for plain proportions.
-Raw rows: `results/eval/main/raw.jsonl` (343 rows); per-step logs and every patched file: `results/eval/main/logs/`; tables regenerate with `python scripts/analyze_eval.py main`.
+Read these with the limits below: the seeded bugs are the oracle's own classes (circular), the repo-test baseline is mine, and 31 cases is small.
 
-### Repair on the 31 seeded bugs (mean over repetitions per case; 95% bootstrap CI over cases)
+## Quickstart
+Python 3.10+. No GPU.
+```bash
+python -m venv .venv
+.venv/Scripts/pip install -e ".[dev]"      # Linux/macOS: .venv/bin/pip
+pytest                                      # 70 tests, about 3 minutes, no network, no API key needed
+python scripts/audit_docs.py                 # re-checks the numbers quoted in the docs against results/*
+python scripts/demo.py replay L04_right_multiply   # terminal walkthrough of a recorded real run, no tokens
+python scripts/demo.py serve                       # local web UI; paste any script that declares a SPATIAL_CONTRACT
+```
+To use the real model (Nebius Token Factory):
+```bash
+cp .env.example .env                       # put your key in NEBIUS_API_KEY; .env is gitignored
+python scripts/list_models.py              # shows the Nemotron models, pricing and tool support (needs SC_ALLOW_API=1)
+SC_ALLOW_API=1 python scripts/repair.py corpus/seeded/R05_stale_affine.py --budget 30000
+SC_ALLOW_API=1 python scripts/demo.py serve --live --budget 60000      # adds the "Repair with Nemotron" button
+```
+Token Factory calls are disabled unless `SC_ALLOW_API=1` is set for that command, and every call is capped by a persistent token ledger (`SC_TOKEN_CAP`, default 200,000; `results/token_ledger.json`). The key is never printed or logged.
+Reproduce the evaluation: `python scripts/evaluate.py --arms arm1 --run-id main` (no tokens), then `SC_ALLOW_API=1 SC_TOKEN_CAP=1500000 python scripts/evaluate.py --arms arm2 arm3 --reps 3 --budget 1000000 --run-id main` (about 600k tokens), then `python scripts/analyze_eval.py main`.
 
-| arm | repaired (visible + held-out) | passed visible oracle | overfit among visible passes | tokens / case | LLM calls / case | oracle screenings / case |
-|---|---|---|---|---|---|---|
-| 1. oracle only (no LLM) | 77% [61%, 90%] | 77% [61%, 90%] | 0/24 (0%-14%, Wilson) | 0 | 0.0 | 163 |
-| 2. LLM + repo tests | 86% [75%, 95%] | 86% [75%, 95%] | 0/80 (0%-5%, Wilson) | 1891 | 1.1 | 0 |
-| 3. LLM + oracle feedback | 98% [95%, 100%] | 98% [95%, 100%] | 0/91 (0%-4%, Wilson) | 3213 | 1.2 | 0 |
+## How it works
+- **Contract.** A pipeline declares `SPATIAL_CONTRACT = {"world_frame": "RAS"|"LPS", "units": "mm"|"m"|"um", "affine_convention": "voxel_center_to_world", "array_orientation": optional}`, read with `ast.literal_eval` (never executed). Missing, `unknown` or unsupported fields make everything downstream **abstain**.
+- **Oracle** (`src/spatialcontract/oracle.py`, deterministic, no LLM). Writes a seeded label phantom (six distinct balls, off-centre on every axis, random non-RAS orientation, anisotropic voxels, optional obliquity), runs the script's `process(in_path, out_path)` in a subprocess with a scrubbed environment, finds each landmark in the output, maps it through the *output* affine, and reports the error in mm per landmark. Verdicts: PASS, FAIL, ERROR (crash or unreadable output), ABSTAIN. Tolerance is 0.05 mm for lossless pipelines and scales with voxel size for resampling pipelines (capped at 4 mm).
+- **Agent** (`src/spatialcontract/agent.py`). Nemotron answers with a `submit_patch` tool call carrying the whole file. A guard rejects syntax errors, imports outside numpy/nibabel/scipy/SimpleITK, `open`/`exec`/`eval`, a changed `process` signature and **any change to the contract**. Rejections and oracle measurements go back to the model; at most four iterations. Every step is logged to JSONL.
+- **Held-out validation** (`src/spatialcontract/heldout.py`). After a patch passes the visible oracle: seven hidden phantoms (two strongly oblique), one phantom whose seed derives from the run seed and the patched source, the visible phantoms re-stored in a different valid orientation, and a non-phantom linear-ramp image resampled onto the input grid with SimpleITK and compared voxelwise.
+- **Three arms** (`src/spatialcontract/evaluation.py`): (1) oracle only, a generic single-mutation search with no LLM; (2) the same model with only ordinary unit tests as feedback, no gate, plus `report_no_bug` and `abstain` tools; (3) the repair agent. Every final patch from every arm is scored by the same visible oracle plus held-out validation.
 
-Paired difference, arm 3 - arm 2, repaired rate: **+12 points** (95% CI +3 to +22).
-Paired difference, arm 3 - arm 1: +20 points (95% CI +6 to +35).
+## How Nemotron and Nebius Token Factory are used
+- **Model:** `nvidia/nemotron-3-super-120b-a12b` through the Nebius Token Factory OpenAI-compatible API (`https://api.tokenfactory.nebius.com/v1/`), default reasoning, tool calling. It is the only model in the evaluation.
+- **Why Super and not the cheapest model:** `nvidia/NVIDIA-Nemotron-3-Nano-30B-A3B` was tried first and repaired 2 of 3 trial cases with default thinking, 1 of 3 with thinking off or low (runaway output, a hallucinated nibabel function, calls ending on the length limit). Super repaired 3 of 3 on the same cases and used fewer tokens per solved case because it reasons less. These are small single runs; the table is in `docs/ENGINEERING_NOTES.md`.
+- **Where Token Factory helped:** `GET /models?verbose=true` gave pricing, rate limits and `supported_features`, so models could be chosen and a budget set before the first completion; `usage` on every response made a hard, thread-safe token cap easy; tool calling returned a well-formed call on all 271 evaluation requests with no throttling or transport errors. Complaints and details: `FEEDBACK.md`.
+- **Other Nebius tools:** none. No GPU instance was needed. No Tavily call is made.
 
-### Arm comparison split by whether the repo tests flag the bug at the start (19 flagged / 12 not flagged)
+## Limitations and failure cases
+- **Circular seeded results.** The 31 bugs are the oracle's own six classes and each was created by a single edit; the oracle was adjusted after it missed a bug or false-alarmed (phantom bounding-box asymmetry, voxel-scaled tolerance, a lossless tolerance and a strong-oblique bank after real bugs). The seeded numbers are not a blind test. A model-free single-mutation search repairs 77% of them for the same reason.
+- **No repair of real library bugs.** The seven real bugs are *detected* (reproduced at the pre-fix commit), but each defect lives inside a library file and the agent edits one small script. Doing this needs file-navigation tools and a patchable worktree. Also fewer than the targeted 10 real bugs were found, from four libraries I chose, and 3 of 7 only reproduced after I changed the oracle or the repro.
+- **The measured lift depends on my unit tests.** They flag 19 of 31 bugs; most of the gap between the arms is on the 12 they do not flag (94% vs 72%; on the 19 they do flag it is 100% vs 95%). A stronger suite would shrink it.
+- **By-construction numbers.** The oracle-gated arm cannot damage correct code or guess a convention because a deterministic gate decides before the model is called; the meaningful comparison is with the ungated arm.
+- **No overfit observed (0 of 91 oracle passes failed held-out validation).** That means the held-out checks have not been shown to catch real LLM overfitting; they are exercised only by a hand-built overfit patch in the tests.
+- **Failure case, published on purpose.** On the Fortran-order reshape bug (S06) the model rewrote correct code four times and never touched `order="F"`; the oracle's output was identical each round, so it had no new signal. One further run (S01, `inv` forgotten in a resampler) also failed.
+- **Oracle blind spots.** Errors under about one coarse voxel are invisible on resampling pipelines; a bug needing a 50-70 degree oblique affine triggered on only 1 of 8 strong-oblique phantoms; the differential check is a linear ramp and cannot see intensity-dependent bugs; only NIfTI in, NIfTI out.
+- **Small samples.** 31 bug cases, 3 repetitions, one model, one prompt, no prompt search. One unexplained transient oracle failure (a correct control reported wrong once, not reproducible in seven full reruns) led to an automatic retry of ERROR verdicts.
+- **Not a novel idea.** Phantom oracles for orientation bugs have adjacent prior art (Imaging-101, AutoMedImg). The contribution is the declared contract, abstention, and the measured comparison.
+- **Demo server.** `demo/server.py` executes submitted Python in a subprocess with a scrubbed environment and an import allow-list. That is not a security boundary; it binds to localhost only and must not be exposed.
 
-| arm | repo tests flag it (n=19) | repo tests do not flag it (n=12) |
-|---|---|---|
-| 1. oracle only (no LLM) | 79% [58%, 95%] | 75% [50%, 100%] |
-| 2. LLM + repo tests | 95% [89%, 100%] | 72% [47%, 94%] |
-| 3. LLM + oracle feedback | 100% [100%, 100%] | 94% [86%, 100%] |
-
-### Repaired rate by bug class (case means; small n per class)
-
-| class | n | 1. oracle only (no LLM) | 2. LLM + repo tests | 3. LLM + oracle feedback |
-|---|---|---|---|---|
-| axis_swap | 5 | 80% | 100% | 93% |
-| flipped_axis | 6 | 83% | 94% | 100% |
-| stale_affine | 5 | 60% | 87% | 100% |
-| voxel_vs_world | 5 | 40% | 47% | 93% |
-| wrong_units | 7 | 100% | 90% | 100% |
-| transposed_affine | 3 | 100% | 100% | 100% |
-
-### Correct controls (11): did the arm touch or break code that was already right?
-
-| arm | modified a correct pipeline | broke it (fails oracle or held-out afterwards) |
-|---|---|---|
-| 1. oracle only (no LLM) | 0/11 (0%-26%) | 0/11 (0%-26%) |
-| 2. LLM + repo tests | 18/33 (38%-70%) | 8/33 (13%-41%) |  (said 'no bug': 11/33)
-| 3. LLM + oracle feedback | 0/33 (0%-10%) | 0/33 (0%-10%) |
-
-### Abstention (the 7 must-abstain cases; abstentions elsewhere count against precision)
-
-| arm | abstained on must-abstain | patched instead (guessed a convention) | abstained on cases it should have handled | precision | recall |
-|---|---|---|---|---|---|
-| 1. oracle only (no LLM) | 7/7 | 0/7 | 0/42 | 100% | 100% |
-| 2. LLM + repo tests | 2/21 | 16/21 | 4/126 | 33% | 10% |
-| 3. LLM + oracle feedback | 21/21 | 0/21 | 0/126 | 100% | 100% |
-
-Arms 1 and 3 abstain through the same deterministic gate on the contract, so their abstention numbers measure the gate and are 100% by construction.
-
-Rows: 343. Harness errors: none.
-
-### What this shows, and what it does not
-- **The kill condition did not trigger on this corpus.** Arm 3 (98%) beat arm 2 (86%) by +12 points, paired 95% CI +3 to +22. The lower end is small and the corpus is 31 cases, so read it as "probably better here", not as a precise effect.
-- **The whole gap is on bugs the repo tests do not flag.** Where the repo tests fail on the original (19 bugs) arm 2 reaches 95% against 100% for arm 3. Where they do not (12 bugs) it is 72% against 94%.
-  12 of arm 2's 13 unrepaired runs were patches that the tests *accepted* while the bug remained; only 1 was the model saying "no bug". So the gap is the tests' blind spots, not my extra `report_no_bug` tool.
-- **It depends on how strong the repo tests are.** I wrote them (3-4 ordinary property tests per pipeline) before looking at results and they flag 19/31 bugs and 0/11 controls. A stronger suite would shrink the gap; a weaker one would widen it. The gap is a statement about *this* suite.
-- **Arm 2 is a strong baseline here.** The same model with only unit tests repaired 86%; the LLM is doing most of the work on single-edit bugs. Arm 1, with no model at all, repaired 77%, which says more about how simple the seeded bugs are (each was created by a single edit) than about the method.
-- **No overfit was observed (0 of 24 / 80 / 91 visible-oracle passes failed held-out validation).** That means the held-out machinery never had to reject an LLM patch in this run; it is exercised only by a hand-built overfit patch in the unit tests. It is a safety net whose catch rate on real LLM overfitting is unmeasured.
-- **False alarms and abstention for arm 3 are by construction.** Arm 3 never touches correct code because the oracle gate decides before the model is called, and its abstention is a deterministic check on the contract. The fair reading is the contrast with arm 2, which *did* act on its own judgement:
-  it modified 18 of 33 correct pipelines (broke 8) and, on the 21 must-abstain runs, patched anyway 16 times (a guessed convention) and abstained 2 times, despite being told to abstain when the convention is unknown. Part of that is the framing ("reported as wrong"), which a gate-free workflow shares.
-- **Remaining arm 3 failures:** S01 (`inv` forgotten in a resampler) and S06 (Fortran-order reshape) once each in three runs; the S06 trajectory is the failure case described in the step 6 section.
-- **Circularity is untouched.** The oracle was built for these bug classes and the bugs were injected for the same classes; arm 3's feedback is the oracle's own measurement. These numbers say nothing about how arm 3 does on bugs outside the oracle's classes or on real library bugs.
-- **Cost.** About 299k tokens per LLM arm for 147 runs each (arm 2: 1,891 tokens per bug case; arm 3: 3,213, because oracle reports are longer). The whole evaluation added about 600k tokens to the ledger (total 870,844 since the start of the project), well under $1 at Super prices.
-- **Model.** All LLM numbers are `nemotron-3-super-120b-a12b`, default reasoning, `max_tokens=8000`. All 271 model calls in the evaluation returned a tool call and none ended on the length limit. Nano-30B and Ultra-550B were not evaluated.
-
-## How Nemotron / Token Factory are used
-- **Model:** `nvidia/nemotron-3-super-120b-a12b` through the Nebius Token Factory OpenAI-compatible endpoint (`https://api.tokenfactory.nebius.com/v1/`), default reasoning, tool calling. `nvidia/NVIDIA-Nemotron-3-Nano-30B-A3B` was tried first as the cheapest and was clearly weaker on repair (step 6 table).
-- **Role:** the model reads a small pipeline, the fixed contract and the oracle's measurements, and answers with a `submit_patch` tool call containing the whole patched file. In the baseline arm it gets repo-test results instead and two extra tools (`report_no_bug`, `abstain`).
-- **Where Token Factory helped:** the `/models?verbose=true` listing (pricing, rate limits, `supported_features`) let me pick and budget models before spending anything; `usage` on every response made a hard cumulative token cap (persistent ledger, thread-safe reservations) trivial; tool calling worked on all 271 evaluation calls. Details and complaints are in `FEEDBACK.md`.
-- **Other Nebius tools:** none used. No Nebius AI Cloud GPU was needed (everything else is CPU numpy/nibabel). Tavily was not used.
-
-## Results (summary)
-| question | answer | where |
-|---|---|---|
-| Does the oracle catch the seeded bugs and leave correct code alone? | 31/31 bugs, 0/11 false alarms, 7/7 abstentions (circular: designed for these classes) | Seeded-bug corpus |
-| Does it catch real fixed bugs from public libraries? | 7/7 reproduced at the pre-fix commit (3 only after I changed the harness; target of 10 not met) | Real-bug corpus |
-| Does oracle feedback beat repo tests for the same LLM? | yes on the seeded corpus: 98% vs 86%, paired difference +12 points (CI +3 to +22) | Evaluation |
-| Does the agent guess when the contract is missing? | arm 3 abstains by a deterministic gate; the ungated LLM patched 16 of 21 must-abstain runs | Evaluation |
-| Can it repair a bug inside a real library? | not implemented, not measured | Limitations |
-
-## Limitations (known up front)
-- **Not novel as an idea.** Phantom oracles for orientation bugs have adjacent prior art (Imaging-101, AutoMedImg). The contribution here is the declared contract, abstention, and a measured repair lift.
-- **Seeded results are circular.** The bugs are the oracle's own classes, each created by a single edit; the oracle was adjusted several times after it missed a bug or false-alarmed on a control (phantom bounding-box asymmetry; voxel-scaled tolerance; a lossless tolerance and a strong-oblique bank after real bugs), so the seeded numbers are not a blind test.
-- **Real-bug repair is missing.** Seven real bugs are detected and reproduced, but in all of them the defect sits inside a library file, not in a driver script, and the agent only edits a single small script. Closing this needs file-navigation tools and a patchable worktree.
-  Fewer than 10 real bugs were found; all came from four libraries chosen by me.
-- **Blind spots of the oracle.** Errors below about one coarse voxel are invisible on resampling pipelines (tolerance up to 4 mm); a bug that needs a strongly oblique affine shows only on a small fraction of phantoms (1 of 8 for the nibabel `io_orientation` case); the differential check is a linear ramp, so it cannot see intensity-dependent bugs. Only NIfTI in, NIfTI out.
-- **Repo-test baseline is mine.** Its strength sets the size of the measured lift (19/31 bugs flagged by the tests).
-- **Abstention precision for the gated arms is 100% by construction**; it measures a deterministic contract check, not the model's judgement.
-- **Small samples.** 31 bug cases, 3 repetitions, one model, one prompt. No hyper-parameter or prompt search was done, and one unexplained transient failure of the oracle (retried automatically) is noted in the step 6 section.
-- **Kill condition.** If LLM+oracle had not beaten LLM+repo-tests this would be "a CI harness" and the README would say so. It did beat it here, with a confidence interval whose lower end is +3 points.
-- **Imaging-only scope.** NIfTI-style pipelines (nibabel / SimpleITK / MONAI / TorchIO style code); nothing else is claimed.
+## Repository layout
+| path | what |
+|---|---|
+| `src/spatialcontract/` | contract, phantom, oracle, held-out validation, agent, mutation search, repo-style tests, evaluation, Token Factory client with token ledger |
+| `corpus/seeded/` | 49 generated cases: 31 seeded bugs, 11 correct controls, 7 must-abstain (readable scripts + manifest) |
+| `corpus/real/` | repro scripts for the 7 real library bugs (pinned commits in `src/spatialcontract/realbugs.py`) |
+| `results/` | raw evaluation rows and logs (`results/eval/main`), oracle results, model listing, smoke test |
+| `demo/`, `docs/index.html`, `scripts/demo.py` | demo server, recordings, static replay page |
+| `docs/ENGINEERING_NOTES.md` | the detailed record: every number with its caveats, what went wrong, what was changed after |
+| `docs/VIDEO_SCRIPT.md`, `docs/DEVPOST.md` | 3-minute video script, Devpost text |
+| `FEEDBACK.md` | written feedback on Nebius Token Factory and each NVIDIA model used |
 
 ## License
-MIT
+MIT (see `LICENSE`).
