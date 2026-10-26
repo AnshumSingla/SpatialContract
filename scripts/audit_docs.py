@@ -32,22 +32,21 @@ rep = {a: ev.per_case(rows, a, "repaired", bugs) for a in ("arm1", "arm2", "arm3
 means = {a: sum(v.values()) / len(v) for a, v in rep.items()}
 d = ev.boot_diff_ci(rep["arm3"], rep["arm2"])
 print({a: pct(m) for a, m in means.items()}, "diff", [round(100 * x) for x in d])
-check("README", f"**{pct(means['arm3'])} vs {pct(means['arm2'])}**", "headline repair rates")
-check("README", f"+{round(100 * d[0])} points, 95% CI +{round(100 * d[1])} to +{round(100 * d[2])}", "paired difference")
+check("README", f"oracle feedback **{pct(means['arm3'])}**", "headline repair rate")
+check("README", f"Oracle vs original tests: +{round(100 * d[0])} points (95% CI +{round(100 * d[1])} to +{round(100 * d[2])})", "paired difference")
 check("DEVPOST", f"+{round(100 * d[0])} points (95% CI +{round(100 * d[1])} to +{round(100 * d[2])})", "paired difference")
 check("DEVPOST", f"| {pct(means['arm1'])} |", "arm 1 rate")
-check("VIDEO", f"{round(100 * d[1]) and 'three'} to twenty-two", "CI wording")
 
 a2c = R("arm2", ctrl)
 mod, broke = sum(bool(r["changed"]) for r in a2c), sum(bool(r["changed"]) and not (r["visible_pass"] and r["heldout_pass"]) for r in a2c)
-check("README", f"modified {mod} of {len(a2c)}, broke {broke}", "arm 2 controls")
+check("README", f"original tests {mod} (broke {broke})", "arm 2 controls")
 check("FEEDBACK", f"modified {mod} of {len(a2c)}", "arm 2 controls")
 a3c = R("arm3", ctrl)
 check("README", f"0 of {len(a3c)} runs", "arm 3 controls untouched") if not any(r["changed"] for r in a3c) else bad.append("arm3 changed a control")
 
 ab2, ab3 = R("arm2", abst), R("arm3", abst)
 guessed, abstained = sum(bool(r["changed"]) for r in ab2), sum(bool(r["abstained"]) for r in ab2)
-check("README", f"patched {guessed} of {len(ab2)} and abstained twice" if abstained == 2 else "?", "arm 2 abstention")
+check("README", f"original tests {guessed}, stronger" if abstained == 2 else "?", "arm 2 abstention")
 check("README", f"abstains on {sum(bool(r['abstained']) for r in ab3)} of {len(ab3)} runs", "arm 3 abstention")
 check("VIDEO", "sixteen of twenty-one" if guessed == 16 and len(ab2) == 21 else "?", "video abstention")
 
@@ -72,6 +71,28 @@ if ledger_file.exists():
     check("FEEDBACK", f"About {led / 1e6:.1f} million tokens", "token total")
 else:
     print("SKIP token total: results/token_ledger.json is not in the repository (it is gitignored)")
+# ---- extra baselines (results/eval/extra)
+ex = [json.loads(l) for l in (ROOT / "results/eval/extra/raw.jsonl").read_text(encoding="utf-8").splitlines()]
+E = lambda arm, ids: [r for r in ex if r["arm"] == arm and r["id"] in ids]   # noqa: E731
+rep0, rep2s = ev.per_case(ex, "arm0", "repaired", bugs), ev.per_case(ex, "arm2s", "repaired", bugs)
+m0, m2s = sum(rep0.values()) / len(rep0), sum(rep2s.values()) / len(rep2s)
+d2s = ev.boot_diff_ci(rep["arm3"], rep2s)
+print("arm0", pct(m0), "arm2s", pct(m2s), "arm3-arm2s", [round(100 * x) for x in d2s])
+check("README", f"no feedback {pct(m0)}", "arm 0 repair rate")
+check("README", f"stronger unit-test suite {pct(m2s)}**", "arm 2s repair rate")
+check("README", f"**+{round(100 * d2s[0])} point (CI {round(100 * d2s[1])} to +{round(100 * d2s[2])})", "arm 3 - arm 2s")
+for arm, label in (("arm0", "no feedback"), ("arm2s", "stronger tests")):
+    c, a = E(arm, ctrl), E(arm, abst)
+    mod_, broke_ = sum(bool(r["changed"]) for r in c), sum(bool(r["changed"]) and not (r["visible_pass"] and r["heldout_pass"]) for r in c)
+    check("README", f"{label} {mod_} of {len(c)} (broke {broke_})" if arm == "arm0" else f"stronger tests {mod_} (broke {broke_})", f"{arm} controls")
+    check("DEVPOST", f"{mod_} of {len(c)} (broke {broke_})", f"{arm} controls in Devpost")
+    check("README", f"{label} {sum(bool(r['changed']) for r in a)} of {len(a)}" if arm == "arm0" else f"stronger tests {sum(bool(r['changed']) for r in a)}", f"{arm} abstention")
+n_extra = sum(1 for p in (ROOT / "results/eval/extra/logs").rglob("*.jsonl") for l in p.read_text(encoding="utf-8").splitlines() if '"event": "llm_response"' in l)
+print("extra model calls", n_extra)
+check("FEEDBACK", f"{n_extra} model calls", "extra baseline calls")
+check("DEVPOST", f"| {pct(m0)} |", "arm 0 in Devpost")
+check("DEVPOST", f"| {pct(m2s)} |", "arm 2s in Devpost")
+
 n_tests = len(list((ROOT / "tests").glob("test_*.py")))
 print("test files", n_tests)
 # ---- library repair (results/real_repair/real3)

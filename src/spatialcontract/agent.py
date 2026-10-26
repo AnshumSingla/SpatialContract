@@ -82,6 +82,27 @@ Rules:
 5. Keep the change minimal. Only numpy, nibabel, scipy and SimpleITK may be imported; no file or network access besides the two paths.
 """
 
+SYSTEM_PROMPT_NONE = """You repair spatial / orientation / affine bugs in medical-imaging Python scripts (nibabel, numpy, scipy, SimpleITK).
+Each script defines process(in_path, out_path): it reads a NIfTI volume and writes a NIfTI volume. A module-level SPATIAL_CONTRACT
+dict, when present, declares what the physical coordinates of the OUTPUT must mean.
+
+Conventions: a NIfTI affine maps voxel index (voxel centre) to world coordinates. RAS+ means +x Right, +y Anterior, +z Superior;
+LPS+ is the opposite in x and y. The units of the affine's world coordinates must match the contract's units
+(mm, or m = 1/1000 of a mm). "array_orientation", when present, means the output voxel axes (i, j, k) must run toward those
+patient directions (nibabel.aff2axcodes of the output affine, expressed in RAS).
+
+No tests or measurements are available: you get one look at the script and must decide. Your first patch is final.
+Hidden checks of the output's physical coordinates are applied afterwards.
+
+Rules:
+1. To change the script, call submit_patch with the COMPLETE patched file.
+2. If you believe the script already satisfies its contract, call report_no_bug. If the script declares no usable SPATIAL_CONTRACT
+   (missing, unknown or ambiguous fields) so that the intended convention cannot be determined, call abstain: never guess a convention.
+3. Do not change SPATIAL_CONTRACT or the signature of process.
+4. Fix the root cause in general. Do not special-case particular inputs, shapes, orientations or voxel sizes.
+5. Keep the change minimal. Only numpy, nibabel, scipy and SimpleITK may be imported; no file or network access besides the two paths.
+"""
+
 TOOLS_TESTS = TOOLS + [
     {"type": "function", "function": {
         "name": "report_no_bug",
@@ -186,6 +207,7 @@ def repair(case_path, client, *, max_iters: int = 4, run_seed: int = 0, max_toke
            workdir=None, evaluate_factory: Callable = oracle_evaluator, gate: bool = True, validate: bool = True,
            llm_kwargs: dict | None = None, arm: str = "oracle") -> RepairResult:
     """arm="oracle": gate + oracle feedback (arm 3). arm="tests": no gate, repo-test feedback, report_no_bug/abstain tools (arm 2).
+    arm="none": no gate and no feedback; the first submitted patch is final (the "just ask the model" baseline, arm 0).
     ``evaluate_factory(contract)`` must return ``evaluate(path) -> (done, text, verdict)`` for the chosen arm."""
     case_path = Path(case_path)
     original = case_path.read_text(encoding="utf-8")
@@ -208,7 +230,7 @@ def repair(case_path, client, *, max_iters: int = 4, run_seed: int = 0, max_toke
     cur_path.write_text(original, encoding="utf-8")
 
     done, text, verdict = evaluate(cur_path)
-    log.event("initial_oracle" if arm == "oracle" else "initial_repo_tests", verdict=verdict, feedback=text)
+    log.event({"oracle": "initial_oracle", "tests": "initial_repo_tests", "none": "initial_no_feedback"}[arm], verdict=verdict, feedback=text)
     if done and arm == "oracle":
         res.outcome, res.visible_passed, res.final_source = "NO_CHANGE_NEEDED", True, original
         return res
@@ -225,11 +247,12 @@ def repair(case_path, client, *, max_iters: int = 4, run_seed: int = 0, max_toke
         declared = load_from_source(original)
         contract_line = ("No SPATIAL_CONTRACT is declared in this script." if declared is None
                          else f"SPATIAL_CONTRACT (fixed, do not edit): {json.dumps(declared.to_dict())}")
+        what = f"Repo test results on the original script:\n{text}" if arm == "tests" else "No tests or measurements are available."
         messages = [
-            {"role": "system", "content": SYSTEM_PROMPT_TESTS},
+            {"role": "system", "content": SYSTEM_PROMPT_TESTS if arm == "tests" else SYSTEM_PROMPT_NONE},
             {"role": "user", "content": (
                 "This script is reported to produce wrongly placed or oriented output. Fix it, or say if there is nothing to fix.\n\n"
-                f"{contract_line}\n\nScript:\n```python\n{original}```\n\nRepo test results on the original script:\n{text}")},
+                f"{contract_line}\n\nScript:\n```python\n{original}```\n\n{what}")},
         ]
     tools = TOOLS if arm == "oracle" else TOOLS_TESTS
     best_source = original
@@ -293,7 +316,7 @@ def repair(case_path, client, *, max_iters: int = 4, run_seed: int = 0, max_toke
                 done, text, verdict = evaluate(cur_path)
                 log.event("oracle_after_patch", iteration=it, verdict=verdict, feedback=text)
                 best_source = patched
-                if done and arm == "tests":
+                if arm == "none" or (done and arm == "tests"):
                     res.outcome, res.final_source, res.visible_passed = "ACCEPTED_BY_TESTS", patched, True
                     log.event("accepted_by_repo_tests", iteration=it)
                     return res

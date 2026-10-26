@@ -158,3 +158,27 @@ def test_arm2_stops_when_repo_tests_pass_even_if_oracle_would_not(tmp_path):
 def test_arm2_can_add_nothing_to_a_missing_contract(tmp_path):
     added = src("A02_no_contract_buggy").replace("import numpy as np", 'import numpy as np\nSPATIAL_CONTRACT = {"world_frame": "RAS"}')
     assert any("contract" in p.lower() for p in agent.check_patch(src("A02_no_contract_buggy"), added))
+
+
+def test_arm0_first_patch_is_final_and_no_feedback_is_shown(tmp_path):
+    calls = []
+
+    def factory(_contract):
+        def evaluate(p):
+            calls.append(p)
+            return len(calls) > 1, "", "NONE"
+        return evaluate
+    fake = Fake(tool_resp(src("K01_R_reference")))
+    r = agent.repair(CORPUS / "R05_stale_affine.py", fake, log_dir=tmp_path / "log", evaluate_factory=factory,
+                     gate=False, validate=False, arm="none")
+    assert r.outcome == "ACCEPTED_BY_TESTS" and r.iterations == 1 and r.llm_calls == 1
+    first_user = fake.calls[0][1]["content"]
+    assert "No tests or measurements are available" in first_user and "Repo test" not in first_user and "Oracle" not in first_user
+    assert "one look" in fake.calls[0][0]["content"]
+
+
+def test_arm0_can_abstain_or_claim_no_bug(tmp_path):
+    fake = Fake(tool_named("abstain", reason="unknown units"))
+    r = agent.repair(CORPUS / "A04_units_unknown.py", fake, log_dir=tmp_path / "log", evaluate_factory=lambda c: (lambda p: (False, "", "NONE")),
+                     gate=False, validate=False, arm="none")
+    assert r.outcome == "ABSTAIN" and r.llm_calls == 1

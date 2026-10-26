@@ -45,3 +45,19 @@ def test_abstain_cases_abstain_without_running_code(rows):
     for r in rows:
         if r["kind"] == "abstain":
             assert r["verdict"] == "ABSTAIN", r["id"]
+
+
+def test_strong_repo_tests_flag_every_bug_and_no_control():
+    """The stronger baseline suite (arm 2s) must never fail a correct control, otherwise it would not be a fair baseline."""
+    import json
+    from concurrent.futures import ThreadPoolExecutor
+    from spatialcontract import repo_tests
+    from spatialcontract.seeded import CORPUS
+    m = [x for x in json.loads((CORPUS / "manifest.json").read_text()) if x["kind"] in ("bug", "control")]
+
+    def run(x):
+        return x["kind"], repo_tests.run_repo_tests(CORPUS / x["file"], x["base"], x["spec"], strong=True).passed
+    with ThreadPoolExecutor(8) as ex:
+        res = list(ex.map(run, m))
+    assert all(not passed for kind, passed in res if kind == "bug")
+    assert all(passed for kind, passed in res if kind == "control")

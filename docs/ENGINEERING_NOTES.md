@@ -202,6 +202,22 @@ Rows: 343. Harness errors: none.
 - **Model.** All LLM numbers are `nemotron-3-super-120b-a12b`, default reasoning, `max_tokens=8000`. All 271 model calls in the evaluation returned a tool call and none ended on the length limit. Nano-30B and Ultra-550B were not evaluated.
 
 
+## Extra baselines: no feedback, and a stronger unit-test suite (added after the main evaluation)
+
+A judge's obvious objection was that the unit-test baseline is mine and weak (it flags 19 of 31 bugs), and that there was no arm showing what the model does with no feedback at all. I added two arms (`arm0`, `arm2s`; `results/eval/extra`, `python scripts/analyze_extra.py`; 294 rows, 344 model calls, about 0.68M tokens, no harness errors):
+
+- `arm0`: same model, same tools (`submit_patch`, `report_no_bug`, `abstain`), no tests and no measurements; the first patch is final.
+- `arm2s`: same as arm 2 but with a stronger suite: the original tests plus a landmark test (three blocks in a volume with oblique, anisotropic, non-RAS affines; the world centroid of each block in the output must be where the contract puts it). **I wrote this suite after seeing the first results and knowing the bug classes**, so it is deliberately strong and not independent. It flags 31 of 31 bugs and passes all 11 correct controls (`tests/test_seeded.py`).
+
+| arm | repaired (31 bugs) | modified correct code (of 33 runs) | broke it | patched instead of abstaining (of 21) |
+|---|---|---|---|---|
+| 0 no feedback | 86% [75, 95] | 16 | 10 | 9 |
+| 2 original tests | 86% [75, 95] | 18 | 8 | 16 |
+| 2s stronger tests | 97% [91, 100] | 26 | 4 | 14 |
+| 3 oracle feedback | 98% [95, 100] | 0 (gate) | 0 | 0 (gate) |
+
+Reading: (1) the original unit tests added nothing over no feedback at all (86% both); (2) a test that checks physical positions closes essentially the whole repair-rate gap (arm 3 minus arm 2s: +1 point, CI 0 to +3); (3) the gate is the part no ungated arm replicates: the stronger tests made the model rewrite correct code more often (26 of 33), (I did not investigate why; one plausible reason is that the model was shown test output and told the script was reported as wrong), though only 4 of those rewrites broke the output. The headline repair-rate claim was therefore withdrawn from the README, Devpost text, video script and demo footer, and replaced by this reading.
+
 ## Repairing bugs inside real libraries (step 10)
 `src/spatialcontract/libagent.py`, CLI `scripts/repair_real.py`, results in `results/real_repair/`. This closes the gap named in the limitations of the earlier sections: the seven real bugs live inside library files, not in a driver script.
 

@@ -16,7 +16,7 @@ from spatialcontract.llm import Client, TokenBudget, require_api_enabled  # noqa
 
 def main() -> int:
     ap = argparse.ArgumentParser()
-    ap.add_argument("--arms", nargs="+", default=["arm1", "arm2", "arm3"], choices=["arm1", "arm2", "arm3"])
+    ap.add_argument("--arms", nargs="+", default=["arm1", "arm2", "arm3"], choices=["arm0", "arm1", "arm2", "arm2s", "arm3"])
     ap.add_argument("--reps", type=int, default=3, help="repetitions for the LLM arms (arm1 is deterministic: 1)")
     ap.add_argument("--ids", nargs="*", help="restrict to these case ids")
     ap.add_argument("--kinds", nargs="+", default=["bug", "control", "abstain"])
@@ -29,7 +29,7 @@ def main() -> int:
     a = ap.parse_args()
 
     client = None
-    if any(x in ("arm2", "arm3") for x in a.arms):
+    if any(x in ("arm0", "arm2", "arm2s", "arm3") for x in a.arms):
         require_api_enabled()
         base = TokenBudget()
         client = Client(budget=TokenBudget(cap=min(base.cap, base.total + a.budget)), model=a.model)

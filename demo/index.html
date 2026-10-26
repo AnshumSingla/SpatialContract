@@ -335,7 +335,7 @@ async function liveRepair(){
     $('#mode').innerHTML = '<span class="badge b-warn">replay</span> Every run below is a real run, recorded from the project\'s own evaluation logs with <b>' + esc(RECORDED.model) + '</b> through Nebius Token Factory. Landmark positions are re-measured by the deterministic oracle. Nothing here calls an API.';
   }
   chips(); if(recs.length) pick(0, true);
-  $('#foot').innerHTML = 'Honest numbers: on 31 seeded bugs, the same model repaired 98% with oracle feedback vs 86% with only unit tests (paired difference +12 points, 95% CI +3 to +22; 3 repetitions, one model). Those bugs are the oracle\'s own classes, so this is circular; seven real library bugs are <i>detected</i> (7/7 reproduced at the pre-fix commit) but not yet repaired. The failed run above is shown on purpose. See the README for limitations.';
+  $('#foot').innerHTML = 'Honest numbers: on 31 seeded bugs, the same model repaired 98% with oracle feedback, 86% with only my first unit tests, and 97% with a stronger unit-test suite that includes a landmark check (oracle vs stronger tests: +1 point, CI 0 to +3). What the oracle gate adds is not touching correct code and not guessing a convention. Those bugs are the oracle\'s own classes, so this is circular; of seven real library bugs, all 7 are <i>detected</i> and the agent repaired 2 of them (3 of 14 runs). The failed run above is shown on purpose. See the README for limitations.';
 })();
 </script>
 </body>

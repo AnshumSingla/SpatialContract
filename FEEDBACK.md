@@ -1,6 +1,6 @@
 # Feedback on Nebius Token Factory and the NVIDIA Nemotron models
 
-Written from what I actually ran (2026-10-23 and 2026-10-24). About 7.3 million tokens went through Token Factory in total: a 514-token smoke test, a few hundred tokens of probes, about 255k tokens of repair experiments on two models, about 600k tokens for the three-arm evaluation (271 model calls), and about 6.4M tokens for the library-repair runs (pilots, one invalid run, and the final 14 runs). Latencies are single samples, not benchmarks.
+Written from what I actually ran (2026-10-23 and 2026-10-24). About 8.0 million tokens went through Token Factory in total: a 514-token smoke test, a few hundred tokens of probes, about 255k tokens of repair experiments on two models, about 600k tokens for the three-arm evaluation (271 model calls), about 6.4M tokens for the library-repair runs (pilots, one invalid run, and the final 14 runs), and about 0.7M tokens (344 model calls) for two extra baselines run afterwards. Latencies are single samples, not benchmarks.
 
 **Used:** Token Factory (OpenAI-compatible chat completions with tool calling, and the model listing); `nvidia/nemotron-3-super-120b-a12b` (the repair model); `nvidia/NVIDIA-Nemotron-3-Nano-30B-A3B` (tried first, then dropped).
 **Listed but not used:** `nvidia/Nemotron-3_5-Lightning`, `nvidia/Nemotron-3-Ultra-550b-a55b`, `nvidia/Nemotron-3.5-Super-VL`. I have no opinion on them.

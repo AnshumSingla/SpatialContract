@@ -3,6 +3,8 @@
 arm1  oracle only: generic single-mutation search guided by the oracle, no language model        (mutate.py)
 arm2  LLM + repo tests only: same model/loop/guards, feedback = ordinary unit tests, no gate,    (agent.py arm="tests")
       plus report_no_bug / abstain tools
+arm0  LLM with no feedback at all (extra baseline, run after the main evaluation): one look, the first patch is final   (agent.py arm="none")
+arm2s LLM + a STRONGER repo-test suite that includes a physical landmark test (extra baseline, run after the main evaluation)
 arm3  LLM + oracle feedback: the repair agent with the contract gate and oracle measurements      (agent.py arm="oracle")
 
 Every final patch is scored identically: visible oracle (phantoms 0-2) and then held-out validation (hidden bank, per-run seed
@@ -85,10 +87,20 @@ def run_task(arm: str, rep: int, m: dict, client, *, corpus: Path, log_dir: Path
         if arm == "arm3":
             r = agent.repair(path, client, max_iters=max_iters, run_seed=rep, max_tokens=max_tokens, log_dir=log_dir / f"{arm}_r{rep}",
                              llm_kwargs=llm_kwargs, arm="oracle")
-        else:
-            def factory(_contract, base=m["base"], spec=m.get("spec") or {}):
+        elif arm == "arm0":      # no feedback at all: the first patch is final
+            def factory(_contract):
+                calls = []
+
                 def evaluate(code_path):
-                    res = repo_tests.run_repo_tests(code_path, base, spec)
+                    calls.append(code_path)
+                    return len(calls) > 1, "", "NONE"
+                return evaluate
+            r = agent.repair(path, client, max_iters=max_iters, run_seed=rep, max_tokens=max_tokens, log_dir=log_dir / f"{arm}_r{rep}",
+                             llm_kwargs=llm_kwargs, evaluate_factory=factory, gate=False, validate=False, arm="none")
+        else:                    # arm2 (weak repo tests) and arm2s (stronger repo tests)
+            def factory(_contract, base=m["base"], spec=m.get("spec") or {}, strong=arm == "arm2s"):
+                def evaluate(code_path):
+                    res = repo_tests.run_repo_tests(code_path, base, spec, strong=strong)
                     return res.passed, res.text(), "PASS" if res.passed else "FAIL"
                 return evaluate
             r = agent.repair(path, client, max_iters=max_iters, run_seed=rep, max_tokens=max_tokens, log_dir=log_dir / f"{arm}_r{rep}",

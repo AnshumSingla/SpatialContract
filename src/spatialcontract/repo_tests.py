@@ -172,12 +172,100 @@ SUITES = {
 }
 
 
-def run_repo_tests(code_path, base: str, spec: dict | None = None) -> RepoTestResult:
+# ---- stronger suite ("arm2s"): the weak tests plus a physical landmark test, the kind of check a maintainer who knows about
+# orientation bugs would add. Written by the project author AFTER the first evaluation, with the bug classes known, so it is a
+# deliberately strong baseline, not an independent one. Each test puts three distinguishable blocks into a volume with an
+# oblique, anisotropic, non-RAS affine and compares the world-space centroid of each block in the output with where the
+# contract says it must be. This is a tiny oracle written as a unit test; it exists to show how the arm-3 lift depends on test strength.
+def _affine(perm, signs, zooms, origin, shear=0.0):
+    a = np.zeros((4, 4))
+    a[3, 3] = 1.0
+    for col, (row, s, z) in enumerate(zip(perm, signs, zooms)):
+        a[row, col] = s * z
+    a[:3, 3] = origin
+    if shear:                       # a small oblique component
+        a[0, 1] += shear * zooms[1]
+        a[1, 2] -= shear * zooms[2]
+    return a
+
+
+STRONG_AFFINES = [
+    _affine((0, 1, 2), (1, 1, 1), (1.0, 2.0, 3.0), (-12.0, 7.0, 30.0)),
+    _affine((1, 0, 2), (-1, 1, -1), (2.0, 1.5, 3.0), (20.0, -40.0, 5.0)),
+    _affine((2, 0, 1), (1, -1, 1), (1.0, 2.5, 2.0), (-30.0, 10.0, -15.0), shear=0.15),
+]
+STRONG_SHAPE = (16, 18, 20)
+STRONG_BLOCKS = {1: (slice(3, 6), slice(4, 6), slice(5, 9)), 2: (slice(9, 13), slice(10, 12), slice(4, 6)), 3: (slice(5, 8), slice(12, 16), slice(13, 17))}
+
+
+def _landmark_img(affine):
+    data = np.zeros(STRONG_SHAPE, np.float32)
+    for v, sl in STRONG_BLOCKS.items():
+        data[sl] = v
+    img = nib.Nifti1Image(data, affine)
+    img.set_sform(affine, code=1)
+    img.set_qform(affine, code=1)
+    return img
+
+
+def _world_centroids(img):
+    data = np.asarray(img.dataobj)
+    out = {}
+    for v in STRONG_BLOCKS:
+        idx = np.argwhere(np.rint(data) == v)
+        if len(idx) == 0:
+            out[v] = None
+        else:
+            out[v] = (img.affine @ np.append(idx.mean(axis=0), 1.0))[:3]
+    return out
+
+
+def _landmark_test(code, tmp, expect, tol, tag):
+    for n, aff in enumerate(STRONG_AFFINES):
+        img = _landmark_img(aff)
+        want = _world_centroids(img)
+        out = _run(code, img, tmp, f"{tag}{n}")
+        got = _world_centroids(out)
+        for v in STRONG_BLOCKS:
+            assert got[v] is not None, f"marker {v} (affine {n}) is missing from the output"
+            w = expect(want[v])
+            err = float(np.linalg.norm(got[v] - w))
+            assert err <= tol, f"marker {v} (affine {n}) is {err:.3g} world units from where it should be ({np.round(got[v], 3)} vs {np.round(w, 3)})"
+
+
+def x_landmarks_r(code, tmp, spec):
+    _landmark_test(code, tmp, lambda w: w, 0.01, "xr")
+    out = _run(code, _landmark_img(STRONG_AFFINES[1]), tmp, "xr_ori")
+    if spec.get("canonicalise", True):
+        assert "".join(nib.aff2axcodes(out.affine)) == "RAS", f"output orientation {''.join(nib.aff2axcodes(out.affine))}, expected RAS"
+
+
+def x_landmarks_s(code, tmp, spec):
+    _landmark_test(code, tmp, lambda w: w, 0.9 * spec.get("vox", 2.0), "xs")
+
+
+def x_landmarks_c(code, tmp, spec):
+    _landmark_test(code, tmp, lambda w: w, 0.01, "xc")
+
+
+def x_landmarks_l(code, tmp, spec):
+    _landmark_test(code, tmp, lambda w: w * np.array([-1.0, -1.0, 1.0]), 0.01, "xl")
+
+
+def x_landmarks_m(code, tmp, spec):
+    _landmark_test(code, tmp, lambda w: w * 1e-3, 1e-5, "xm")
+
+
+STRONG_SUITES = {b: SUITES[b] + [{"R": x_landmarks_r, "S": x_landmarks_s, "C": x_landmarks_c, "L": x_landmarks_l, "M": x_landmarks_m}[b]]
+                 for b in SUITES}
+
+
+def run_repo_tests(code_path, base: str, spec: dict | None = None, strong: bool = False) -> RepoTestResult:
     code = Path(code_path).resolve()
     res = RepoTestResult(True)
     with tempfile.TemporaryDirectory(prefix="sc_repotest_") as d:
         tmp = Path(d)
-        for fn in SUITES[base]:
+        for fn in (STRONG_SUITES if strong else SUITES)[base]:
             try:
                 fn(code, tmp, spec or {})
                 res.results.append((fn.__name__, True, ""))
