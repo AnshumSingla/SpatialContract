@@ -65,8 +65,10 @@ def test_static_page_is_up_to_date_and_self_contained():
     built = (ROOT / "docs" / "index.html").read_text(encoding="utf-8")
     html = (ROOT / "demo" / "index.html").read_text(encoding="utf-8")
     data = json.dumps(REC, separators=(",", ":")).replace("</", "<\\/")
-    assert built == html.replace("/*__DATA__*/null", data), "docs/index.html is stale: run python demo/build_static.py"
-    assert not re.search(r"https?://", built) and "<script src" not in built and "<link " not in built
+    brain = (ROOT / "demo" / "brain3d.json").read_text(encoding="utf-8")
+    assert built == html.replace("/*__DATA__*/null", data).replace("/*__BRAIN__*/null", brain), "docs/index.html is stale: run python demo/build_static.py"
+    # self-contained: nothing is loaded from elsewhere (plain <a href> links to the repository are fine)
+    assert not re.search(r"""(src\s*=|url\()\s*["']?https?://""", built) and "<script src" not in built and "<link " not in built
 
 
 def test_live_check_endpoint_logic():

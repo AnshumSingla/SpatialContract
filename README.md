@@ -14,7 +14,7 @@ Built for the Nebius x NVIDIA Global AI Hackathon (track: Coding and Agentic Eng
 
 A pipeline declares a contract; a gate abstains when it is missing or ambiguous. The oracle measures where landmarks land and describes the error. Only on a failure does the model get involved, and every patch it proposes goes back through the guard, the oracle and finally checks it never saw. For bugs inside a library, a runtime trace ranks suspect functions first. The same oracle runs on its own from the CLI, pytest or CI.
 
-**See it:** the demo page (`docs/index.html`, self-contained, 12 recorded real runs, including three inside real libraries: two repairs and one failure) shows each phantom's landmarks in 3D world millimetres: blue rings where each landmark must be, orange dots where the original code put it, green diamonds where it lands after the agent's patch. Or run `python scripts/demo.py replay L04_right_multiply` in a terminal.
+**See it:** the demo page (`docs/index.html`, self-contained, 12 recorded real runs, including three inside real libraries: two repairs and one failure) shows each phantom's landmarks in 3D world millimetres: blue rings where each landmark must be, orange dots where the original code put it, green diamonds where it lands after the agent's patch. Below the runs, a real brain scan (Colin27, stored PIR) is shown in 3D as three orthogonal slices, each placed by its own file's affine: the input, the output of a seeded bug (correlation 0.68 with the input) and Nemotron's repair of it (1.00), followed by step-by-step instructions to try it yourself. Or run `python scripts/demo.py replay L04_right_multiply` in a terminal.
 
 **Open the files yourself:** `samples/` holds real inputs and outputs you can load in any NIfTI viewer (ITK-SNAP, 3D Slicer, FSLeyes): a landmark phantom and nibabel's real T1 scan, each run through a seeded bug (R01, which swaps two array axes and leaves the affine alone), Nemotron's recorded repair of it, and the reference pipeline. On the phantom the bug puts landmarks 10.7-61.5 mm from where they belong and the repair 0.00 mm; on the T1 the buggy output correlates 0.04 with the input at the same physical points and the repair 1.00 (`samples/summary.json`, regenerate with `python scripts/export_samples.py`, no tokens).
 
@@ -71,6 +71,7 @@ python scripts/audit_docs.py                 # re-checks the numbers quoted in t
 python scripts/demo.py replay L04_right_multiply   # terminal walkthrough of a recorded real run, no tokens
 python scripts/demo.py serve                       # local web UI; paste any script that declares a SPATIAL_CONTRACT
 python scripts/export_samples.py                   # rebuilds samples/ (inputs, outputs, preview.png), no tokens
+python scripts/export_brain3d.py                   # rebuilds the demo's real-brain 3D view (needs Colin27, below), no tokens
 python scripts/fetch_colin27.py                    # downloads the Colin27 brain (1.9 MB, pinned commit, SHA-256 checked) for the 4-scan real-scan checks
 python scripts/validate_real_scans.py              # real-scan check of every seeded repair; on 2 scans without Colin27
 ```
@@ -145,7 +146,7 @@ Reproduce the seeded evaluation: `python scripts/evaluate.py --arms arm1 --run-i
 | `results/` | raw evaluation rows and logs (`results/eval/main`, `extra`, `diag`, `gated.json`, `autofix.json`), oracle results, localisation ranking, own-test analysis, real-scan results, repair comparison and gate checks (`repair_comparison.json`, `regression_check.json`, `reader_check.json`, `noop_check.json`), suggester evaluation, token ledger, model listing, smoke test |
 | `samples/` | example inputs and outputs (phantom and real T1: buggy, repaired, reference), `preview.png`, `summary.json` |
 | `examples/` | in-memory API example, a script without a contract for `spatialcontract init`, and a GitHub Actions workflow |
-| `demo/`, `docs/index.html`, `scripts/demo.py` | demo server, recordings, static replay page with the 3D landmark view |
+| `demo/`, `docs/index.html`, `scripts/demo.py` | demo server, recordings, static replay page with the 3D landmark view, the real-brain 3D view (`demo/brain3d.json`) and a try-it guide |
 | `docs/ENGINEERING_NOTES.md` | the detailed record: every number with its caveats, what went wrong, what was changed after |
 | `docs/architecture.svg`, `docs/architecture.png` | architecture diagram |
 | `docs/VIDEO_SCRIPT.md`, `docs/DEVPOST.md` | 3-minute video script, Devpost text |

@@ -103,17 +103,90 @@ table{display:block;max-width:100%;overflow-x:auto}
 .space .ctl{margin:8px 0 0}
 .space tr.hl td{background:var(--code)}
 @media (max-width:900px){.space .body{grid-template-columns:minmax(0,1fr)}.space .head{font-size:16px}}
+/* ---- a real brain in 3D, and how to try it ---- */
+.brain,.try{margin-top:14px}
+.brain .top{display:flex;flex-wrap:wrap;gap:6px 16px;align-items:center;justify-content:space-between}
+.brain .top h2,.try h2{margin:0}
+.brain .body{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(0,1fr);gap:14px;align-items:start;margin-top:10px}
+.brain .body>div{min-width:0}
+.brain canvas{display:block;width:100%;height:auto;aspect-ratio:600/440;background:#0b0e13;border-radius:8px;cursor:grab;touch-action:pan-y}
+.brain canvas.drag{cursor:grabbing}
+.brain canvas:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.brain .ctl{margin:8px 0 0}
+.brain .brhead{font-size:19px;font-weight:650;line-height:1.3;margin:0 0 8px}
+.brain .brtext{margin:0 0 10px}
+#brsrc{overflow-wrap:anywhere}
+.try ol{margin:10px 0 0;padding-left:22px;display:flex;flex-direction:column;gap:14px;max-width:100ch}
+.try pre{margin:6px 0;max-height:none}
+.try code{font:12.5px ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;background:var(--code);padding:1px 5px;border-radius:4px}
+.try a,.brain a,.jump a{color:var(--accent)}
+.jump{margin:0 0 6px}
+@media (max-width:900px){.brain .body{grid-template-columns:minmax(0,1fr)}}
 </style>
 </head>
 <body>
 <div class="wrap">
   <h1>SpatialContract</h1>
   <p class="tag">An agent that repairs orientation and affine bugs in medical-imaging code. Nemotron proposes the fix; a physical-coordinate oracle with known landmarks verifies it.</p>
+  <p class="note jump"><a href="#brain">See it on a real brain scan</a> · <a href="#try">Try it yourself</a></p>
   <div id="mode" class="note"></div>
   <div class="chips" id="chips" role="group" aria-label="Recorded runs"></div>
   <div id="strip"></div>
   <div id="space"></div>
   <div id="app"></div>
+  <section class="card brain" id="brain" hidden>
+    <div class="top"><h2>A real brain scan, before and after the repair · world mm, RAS</h2>
+      <div class="ctl" role="group" aria-label="Which volume to show">
+        <button class="btn" data-br="input" aria-pressed="false">Input scan</button>
+        <button class="btn primary" data-br="buggy" aria-pressed="true">Buggy output</button>
+        <button class="btn" data-br="repaired" aria-pressed="false">Nemotron's repair</button>
+      </div>
+    </div>
+    <div class="body">
+      <div>
+        <canvas id="brc" width="600" height="440" tabindex="0" role="img" aria-label="3D view of a real brain scan"></canvas>
+        <div class="ctl"><button class="btn" id="brreset">Reset view</button><button class="btn" id="brspin" aria-pressed="false">Auto-rotate</button><span class="note">Drag to rotate, or focus the view and use the arrow keys.</span></div>
+      </div>
+      <div>
+        <p class="brhead" id="brhead"></p>
+        <p class="brtext" id="brtext"></p>
+        <p class="note" id="brsrc"></p>
+      </div>
+    </div>
+  </section>
+  <section class="card try" id="try">
+    <h2>Try it yourself</h2>
+    <p class="note">Steps 1 to 3 run on your machine with no API key, no GPU and no network after install.</p>
+    <ol>
+      <li><b>Install</b> (Python 3.10+):
+<pre>git clone https://github.com/AnshumSingla/SpatialContract
+cd SpatialContract
+python -m venv .venv
+.venv/Scripts/pip install -e ".[dev]"      # Linux/macOS: .venv/bin/pip, then activate the venv</pre></li>
+      <li><b>Watch the oracle catch a bug.</b> A buggy and a fixed crop, checked against landmarks at known physical positions:
+<pre>spatialcontract check examples/inmemory_example.py::crop_buggy examples/inmemory_example.py::crop_fixed</pre>
+        <span class="note">Prints <code>FAIL  worst landmark 25.3 mm off</code>, a line naming the kind of mistake, then <code>PASS  worst landmark 0.00 mm off</code>.</span></li>
+      <li><b>Check your own pipeline.</b> A script with a <code>process(in_path, out_path)</code> function that reads one 3D NIfTI and writes one declares what it promises at the top:
+<pre>SPATIAL_CONTRACT = {
+    "world_frame": "RAS",                          # or "LPS"
+    "units": "mm",
+    "affine_convention": "voxel_center_to_world",
+    "array_orientation": "RAS"                     # optional
+}
+
+def process(in_path, out_path):
+    ...                                            # your code, unchanged</pre>
+<pre>spatialcontract check my_pipeline.py      # exit 0 PASS, 1 FAIL, 3 ERROR, 4 ABSTAIN</pre>
+        <span class="note">For an in-memory function, use the <code>@spatial_contract(world_frame="RAS", units="mm")</code> decorator or the <code>spatial_oracle</code> pytest fixture instead; <code>examples/inmemory_example.py</code> shows both.</span></li>
+      <li><b>Let Nemotron repair it</b> (needs a Nebius Token Factory key):
+<pre>cp .env.example .env                                         # put your key in NEBIUS_API_KEY
+SC_ALLOW_API=1 python scripts/repair.py my_pipeline.py --budget 30000
+SC_ALLOW_API=1 spatialcontract init my_pipeline.py           # no contract yet? Nemotron drafts one</pre>
+        <span class="note">Your file is never edited: every patch is written to <code>results/runs/&lt;run-id&gt;/</code>, and a patch counts as a repair only if it also passes hidden phantoms. <code>init</code> only prints a draft, quoting the source line behind each field, for you to confirm. Every call is capped by a token ledger. In PowerShell, set <code>$env:SC_ALLOW_API=1</code> first.</span></li>
+      <li><b>Keep it in CI.</b> Copy <code>examples/ci/spatialcontract.yml</code> into <code>.github/workflows/</code> to run the check on every pull request.</li>
+    </ol>
+    <p class="note">Sample inputs and outputs to open in ITK-SNAP or 3D Slicer are in <a href="https://github.com/AnshumSingla/SpatialContract/tree/main/samples">samples/</a>. Replay a recorded run in the terminal with <code>python scripts/demo.py replay L04_right_multiply</code>, or paste any script into the local web UI with <code>python scripts/demo.py serve</code>.</p>
+  </section>
   <p class="foot" id="foot"></p>
 </div>
 <script id="payload" type="application/json">/*__DATA__*/null</script>
@@ -585,6 +658,115 @@ async function liveRepair(){
   }
   chips(); if(recs.length) pick(0, true);
   $('#foot').innerHTML = 'Honest numbers: on 31 seeded bugs, the same model repaired 98% with oracle feedback, 86% with only my first unit tests, and 97% with a stronger unit-test suite that includes a landmark check (oracle vs stronger tests: +1 point, CI 0 to +3). Gated the same way, any check that passes correct code protects it; what the contract adds is that it is written once per pipeline and is the only check that can say the convention is unknown (0 of 21 guesses). Those bugs are the oracle\'s own classes, so this is circular; of eight real library bugs, all 8 are <i>detected</i>; repairing inside a library is harder: with a runtime trace that ranks the right file in its top 10 for all 8, the agent repaired 3 of the 8 (4 of 16 runs), and across every repair method we tried 4 of the 8 have a repair that also passes the library\'s own tests and loader check. The libraries\' own covering tests passed at all 8 pre-fix commits. The failed run above is shown on purpose. See the README for limitations.';
+})();
+</script>
+<script id="brain3d" type="application/json">/*__BRAIN__*/null</script>
+<script>
+/* ---- a real head scan in 3D: surface points placed in world RAS mm through each file's own affine (scripts/export_brain3d.py) ---- */
+(() => {
+  const D = (() => { try { return JSON.parse(document.getElementById('brain3d').textContent); } catch (e) { return null; } })();
+  const sec = document.getElementById('brain');
+  if(!D || !sec) return;
+  sec.hidden = false;
+  const RMb = !!(window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches);
+  const bytes = b64 => { const s = atob(b64), a = new Uint8Array(s.length); for(let i = 0; i < s.length; i++) a[i] = s.charCodeAt(i); return a; };
+  const C = {};                                                        // per volume: world xyz (Float32Array) and intensity, via the file's own affine
+  Object.keys(D.clouds).forEach(k => {
+    const d = D.clouds[k], A = d.affine, ix = bytes(d.idx), val = bytes(d.val), n = val.length, xyz = new Float32Array(3 * n);
+    for(let p = 0; p < n; p++){ const i = ix[3*p], j = ix[3*p + 1], l = ix[3*p + 2];
+      for(let r = 0; r < 3; r++) xyz[3*p + r] = A[r][0]*i + A[r][1]*j + A[r][2]*l + A[r][3]; }
+    C[k] = {xyz, val, n};
+  });
+  const inp = C.input.xyz, c = [0, 1, 2].map(k => { let s = 0; for(let i = k; i < inp.length; i += 3) s += inp[i]; return s / C.input.n; });
+  let R = 0; Object.values(C).forEach(o => { for(let i = 0; i < o.xyz.length; i += 3) R = Math.max(R, Math.hypot(o.xyz[i] - c[0], o.xyz[i+1] - c[1], o.xyz[i+2] - c[2])); });
+  const HOME = {yaw:1.05, pitch:0.28}, V = {yaw:HOME.yaw, pitch:HOME.pitch, show:'buggy', spin:0};
+  const r2 = x => x == null ? 'n/a' : x.toFixed(2);
+  const TXT = {
+    input: ['Input: a real brain scan, stored PIR',
+            'The three orthogonal slices through the middle of the scan (axial, coronal, sagittal). Every voxel is placed in world millimetres through the file\'s own affine: this is where the anatomy physically is.'],
+    buggy: [`Buggy output: correlation ${r2(D.clouds.buggy.r)} with the input`,
+            'The pipeline reorients to RAS, then swaps two array axes without updating the affine. The file loads, and its header says RAS, but the anatomy now sits in the wrong place: compare the slices with the input, drawn faintly where they do not overlap. The scan is real, and nothing crashed.'],
+    repaired: [`Nemotron's repair: correlation ${r2(D.clouds.repaired.r)}, exactly on the input`,
+               'The patch Nemotron wrote for this bug in the recorded evaluation run, applied to the same scan. Every slice lands exactly on the input. The model never saw this scan: it was checked only against synthetic phantoms.']};
+  const cv = document.getElementById('brc'), ctx = cv.getContext('2d');
+  const W = 600, Hh = 440;
+  function draw(){
+    const dpr = Math.min(2, window.devicePixelRatio || 1);
+    if(cv.width !== W * dpr){ cv.width = W * dpr; cv.height = Hh * dpr; }
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0); ctx.clearRect(0, 0, W, Hh);
+    const s = Math.min(W, Hh) / 2.3 / R, cx = W / 2 + 10, cy = Hh / 2 + 6;
+    const cyw = Math.cos(V.yaw), syw = Math.sin(V.yaw), cp = Math.cos(V.pitch), sp = Math.sin(V.pitch);
+    const rot = (x, y, z) => { const x1 = x*cyw - y*syw, y1 = x*syw + y*cyw; return [x1, z*cp + y1*sp, y1*cp - z*sp]; };   // right, up, depth
+    // z-buffered splats: each 2 mm voxel becomes a small square, so the three slices hide each other correctly as the view turns
+    const bw = W * dpr, bh = Hh * dpr, img = ctx.createImageData(bw, bh), px = img.data, zb = new Float32Array(bw * bh).fill(Infinity);
+    const bg = [11, 14, 19], inkC = [236, 239, 243],                       // a fixed dark viewer in both themes, so MRI intensities read as they do in a scanner viewer
+           tint = V.show === 'buggy' ? [255, 138, 76] : V.show === 'repaired' ? [76, 195, 138] : inkC;
+    const half = Math.max(1, Math.ceil(s * dpr * 1.05));                // half the splat size in device pixels (voxels are 2 mm)
+    const splat = (k, ghost) => {
+      const o = C[k], xyz = o.xyz, val = o.val;
+      for(let p = 0; p < o.n; p++){
+        const r = rot(xyz[3*p] - c[0], xyz[3*p + 1] - c[1], xyz[3*p + 2] - c[2]);
+        const X = Math.round((cx + s*r[0]) * dpr), Y = Math.round((cy - s*r[1]) * dpr), z = r[2] + (ghost ? 0.5 : 0);
+        const t = val[p] / 255, col = [0, 1, 2].map(q => ghost ? bg[q] + (inkC[q] - bg[q]) * 0.22 * t
+                                                                : bg[q] + ((V.show === 'input' ? inkC[q] : 0.62 * inkC[q] + 0.38 * tint[q]) - bg[q]) * t);
+        for(let yy = Math.max(0, Y - half); yy < Math.min(bh, Y + half); yy++)
+          for(let xx = Math.max(0, X - half); xx < Math.min(bw, X + half); xx++){
+            const q = yy * bw + xx; if(z >= zb[q]) continue; zb[q] = z;
+            px[4*q] = col[0]; px[4*q + 1] = col[1]; px[4*q + 2] = col[2]; px[4*q + 3] = 255;
+          }
+      }
+    };
+    splat(V.show, false);
+    if(V.show !== 'input') splat('input', true);                         // the input, faint, wherever the output does not cover it
+    ctx.setTransform(1, 0, 0, 1, 0, 0); ctx.putImageData(img, 0, 0); ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    // axis triad (RAS) and a scale bar; orthographic, so a length parallel to the screen is a true length
+    const ink = '#e8ebf0', mut = '#98a2b3', ox = 56, oy = Hh - 58, len = 34;
+    ctx.lineCap = 'round';
+    ['R', 'A', 'S'].forEach((lt, k) => {
+      const v = [0, 0, 0]; v[k] = 1; const r = rot(v[0], v[1], v[2]);
+      ctx.strokeStyle = ink; ctx.lineWidth = 2.4; ctx.beginPath(); ctx.moveTo(ox, oy); ctx.lineTo(ox + len*r[0], oy - len*r[1]); ctx.stroke();
+      ctx.fillStyle = ink; ctx.font = '800 15px system-ui, sans-serif'; ctx.textAlign = 'center'; ctx.fillText(lt, ox + (len + 13)*r[0], oy - (len + 13)*r[1] + 5);
+    });
+    const bar = 50 * s, bx = W - 22, by = Hh - 20;
+    ctx.strokeStyle = ink; ctx.lineWidth = 2; ctx.beginPath(); ctx.moveTo(bx - bar, by - 5); ctx.lineTo(bx - bar, by); ctx.lineTo(bx, by); ctx.lineTo(bx, by - 5); ctx.stroke();
+    ctx.fillStyle = ink; ctx.font = '700 12px system-ui, sans-serif'; ctx.textAlign = 'center'; ctx.fillText('50 mm', bx - bar/2, by - 9);
+    ctx.fillStyle = mut; ctx.font = '12px system-ui, sans-serif'; ctx.textAlign = 'left';
+    ctx.fillText('world mm · RAS · ' + (V.show === 'input' ? 'input' : V.show === 'buggy' ? 'buggy output over the input (faint)' : 'repaired output over the input (faint)'), 14, 22);
+  }
+  function setShow(k){
+    V.show = k;
+    sec.querySelectorAll('[data-br]').forEach(b => { const on = b.dataset.br === k; b.classList.toggle('primary', on); b.setAttribute('aria-pressed', on); });
+    document.getElementById('brhead').textContent = TXT[k][0];
+    document.getElementById('brtext').textContent = TXT[k][1];
+    cv.setAttribute('aria-label', '3D view of a real brain scan: ' + TXT[k][0]);
+    draw();
+  }
+  document.getElementById('brsrc').innerHTML = 'Scan: the Colin27 MNI single-subject T1, one of the real scans the repairs are validated on, stored PIR at 2 mm. '
+    + 'Correlation is with the input at the same physical points. Bug: <code>' + D.code.buggy + '</code>; repair: <code>' + D.code.repaired + '</code>. Rebuilt by <code>scripts/export_brain3d.py</code>, no tokens.';
+  sec.querySelectorAll('[data-br]').forEach(b => b.onclick = () => setShow(b.dataset.br));
+  const stop = () => { if(V.spin) cancelAnimationFrame(V.spin); V.spin = 0; const b = document.getElementById('brspin'); b.textContent = 'Auto-rotate'; b.setAttribute('aria-pressed', 'false'); };
+  const spinBtn = document.getElementById('brspin');
+  if(RMb) spinBtn.hidden = true;
+  spinBtn.onclick = () => {
+    if(V.spin) return stop();
+    const step = () => { V.yaw += 0.008; draw(); V.spin = requestAnimationFrame(step); };
+    V.spin = requestAnimationFrame(step); spinBtn.textContent = 'Stop rotating'; spinBtn.setAttribute('aria-pressed', 'true');
+  };
+  document.getElementById('brreset').onclick = () => { stop(); V.yaw = HOME.yaw; V.pitch = HOME.pitch; draw(); };
+  let drag = null;
+  cv.addEventListener('pointerdown', e => { if(e.button !== 0) return; stop(); drag = {x:e.clientX, y:e.clientY, yaw:V.yaw, pitch:V.pitch}; cv.classList.add('drag'); try { cv.setPointerCapture(e.pointerId); } catch (_) {} });
+  cv.addEventListener('pointermove', e => {
+    if(!drag) return;
+    const k = W / Math.max(200, cv.getBoundingClientRect().width) * 0.009;
+    V.yaw = drag.yaw + (e.clientX - drag.x) * k; V.pitch = Math.max(-1.4, Math.min(1.4, drag.pitch + (e.clientY - drag.y) * k)); draw();
+  });
+  const end = () => { drag = null; cv.classList.remove('drag'); };
+  cv.addEventListener('pointerup', end); cv.addEventListener('pointercancel', end);
+  cv.addEventListener('keydown', e => {
+    const d = {ArrowLeft:[-.15, 0], ArrowRight:[.15, 0], ArrowUp:[0, -.12], ArrowDown:[0, .12]}[e.key];
+    if(d){ e.preventDefault(); stop(); V.yaw += d[0]; V.pitch = Math.max(-1.4, Math.min(1.4, V.pitch + d[1])); draw(); }
+  });
+  setShow('buggy');
 })();
 </script>
 </body>

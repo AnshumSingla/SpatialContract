@@ -17,8 +17,9 @@ def _html_with_data() -> str:
     html = (ROOT / "demo" / "index.html").read_text(encoding="utf-8")
     data = json.dumps(json.loads((ROOT / "demo" / "recordings.json").read_text(encoding="utf-8")), separators=(",", ":"))
     data = data.replace("</", "<\\/")                     # keep the JSON from closing the script tag
-    assert "/*__DATA__*/null" in html
-    return html.replace("/*__DATA__*/null", data)
+    assert "/*__DATA__*/null" in html and "/*__BRAIN__*/null" in html
+    brain = ROOT / "demo" / "brain3d.json"              # scripts/export_brain3d.py; without it the real-scan 3D view stays hidden
+    return html.replace("/*__DATA__*/null", data).replace("/*__BRAIN__*/null", brain.read_text(encoding="utf-8") if brain.exists() else "null")
 
 
 def build() -> Path:
