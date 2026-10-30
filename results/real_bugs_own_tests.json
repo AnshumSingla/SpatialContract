@@ -1,0 +1,433 @@
+[
+ {
+  "id": "torchio_crop",
+  "repo": "torchio",
+  "env": "legacy",
+  "test_files": [
+   "tests/transforms/preprocessing/test_crop.py"
+  ],
+  "fix_edited_tests": false,
+  "pre_tests_on_pre": {
+   "status": "PASS",
+   "counts": {
+    "passed": 2
+   },
+   "exit": 0,
+   "failed": [],
+   "tail": "..                                                                       [100%]\n2 passed in 1.82s"
+  },
+  "post_tests_on_pre": {
+   "status": "PASS",
+   "counts": {
+    "passed": 2
+   },
+   "exit": 0,
+   "failed": [],
+   "tail": "..                                                                       [100%]\n2 passed in 1.76s"
+  },
+  "post_tests_on_post": {
+   "status": "PASS",
+   "counts": {
+    "passed": 2
+   },
+   "exit": 0,
+   "failed": [],
+   "tail": "..                                                                       [100%]\n2 passed in 1.78s"
+  },
+  "environment_failures": [],
+  "pre_tests_bug_failures": [],
+  "catching_tests": [],
+  "missed_by_existing_tests": true,
+  "regression_test_catches_it": false
+ },
+ {
+  "id": "nilearn_reorder",
+  "repo": "nilearn",
+  "env": "legacy",
+  "test_files": [
+   "nilearn/image/tests/test_resampling.py"
+  ],
+  "fix_edited_tests": true,
+  "pre_tests_on_pre": {
+   "status": "FAIL",
+   "counts": {
+    "failed": 2,
+    "passed": 16
+   },
+   "exit": 1,
+   "failed": [
+    "nilearn\\image\\tests\\test_resampling.py::test_resampling_nan",
+    "nilearn\\image\\tests\\test_resampling.py::test_resampling_result_axis_permutation"
+   ],
+   "tail": "\n-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html\n=========================== short test summary info ===========================\nFAILED nilearn\\image\\tests\\test_resampling.py::test_resampling_result_axis_permutation\nFAILED nilearn\\image\\tests\\test_resampling.py::test_resampling_nan - IndexErr...\n2 failed, 16 passed, 7762 warnings in 9.00s"
+  },
+  "post_tests_on_pre": {
+   "status": "FAIL",
+   "counts": {
+    "failed": 3,
+    "passed": 16
+   },
+   "exit": 1,
+   "failed": [
+    "nilearn\\image\\tests\\test_resampling_scpost.py::test_reorder_img_mirror",
+    "nilearn\\image\\tests\\test_resampling_scpost.py::test_resampling_nan",
+    "nilearn\\image\\tests\\test_resampling_scpost.py::test_resampling_result_axis_permutation"
+   ],
+   "tail": "-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html\n=========================== short test summary info ===========================\nFAILED nilearn\\image\\tests\\test_resampling_scpost.py::test_resampling_result_axis_permutation\nFAILED nilearn\\image\\tests\\test_resampling_scpost.py::test_resampling_nan - I...\nFAILED nilearn\\image\\tests\\test_resampling_scpost.py::test_reorder_img_mirror\n3 failed, 16 passed, 7770 warnings in 9.37s"
+  },
+  "post_tests_on_post": {
+   "status": "FAIL",
+   "counts": {
+    "failed": 2,
+    "passed": 17
+   },
+   "exit": 1,
+   "failed": [
+    "nilearn\\image\\tests\\test_resampling.py::test_resampling_nan",
+    "nilearn\\image\\tests\\test_resampling.py::test_resampling_result_axis_permutation"
+   ],
+   "tail": "\n-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html\n=========================== short test summary info ===========================\nFAILED nilearn\\image\\tests\\test_resampling.py::test_resampling_result_axis_permutation\nFAILED nilearn\\image\\tests\\test_resampling.py::test_resampling_nan - IndexErr...\n2 failed, 17 passed, 7766 warnings in 7.76s"
+  },
+  "environment_failures": [
+   "test_resampling::test_resampling_nan",
+   "test_resampling::test_resampling_result_axis_permutation"
+  ],
+  "pre_tests_bug_failures": [],
+  "catching_tests": [
+   "test_resampling::test_reorder_img_mirror"
+  ],
+  "missed_by_existing_tests": true,
+  "regression_test_catches_it": true
+ },
+ {
+  "id": "nibabel_conform",
+  "repo": "nibabel",
+  "env": "legacy",
+  "test_files": [
+   "nibabel/tests/test_processing.py"
+  ],
+  "fix_edited_tests": false,
+  "pre_tests_on_pre": {
+   "status": "PASS",
+   "counts": {
+    "passed": 8
+   },
+   "exit": 0,
+   "failed": [],
+   "tail": "  D:\\VS\\Nebius\\SpatialContract\\_work\\wt\\nibabel_conform_pre\\nibabel\\minc1.py:140: DeprecationWarning: `np.float` is a deprecated alias for the builtin `float`. To silence this warning, use `float` by itself. Doing this will not modify any behavior and is safe. If you specifically wanted the numpy scalar type, use `np.float64` here.\n  Deprecated in NumPy 1.20; for more details and guidance: https://numpy.org/devdocs/release/1.20.0-notes.html#deprecations\n    return np.asarray(valid_range, dtype=np.float)\n\n-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html\n8 passed, 13 warnings in 2.24s"
+  },
+  "post_tests_on_pre": {
+   "status": "PASS",
+   "counts": {
+    "passed": 8
+   },
+   "exit": 0,
+   "failed": [],
+   "tail": "  D:\\VS\\Nebius\\SpatialContract\\_work\\wt\\nibabel_conform_pre\\nibabel\\minc1.py:140: DeprecationWarning: `np.float` is a deprecated alias for the builtin `float`. To silence this warning, use `float` by itself. Doing this will not modify any behavior and is safe. If you specifically wanted the numpy scalar type, use `np.float64` here.\n  Deprecated in NumPy 1.20; for more details and guidance: https://numpy.org/devdocs/release/1.20.0-notes.html#deprecations\n    return np.asarray(valid_range, dtype=np.float)\n\n-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html\n8 passed, 13 warnings in 2.18s"
+  },
+  "post_tests_on_post": {
+   "status": "PASS",
+   "counts": {
+    "passed": 8
+   },
+   "exit": 0,
+   "failed": [],
+   "tail": "  D:\\VS\\Nebius\\SpatialContract\\_work\\wt\\nibabel_conform_post\\nibabel\\minc1.py:140: DeprecationWarning: `np.float` is a deprecated alias for the builtin `float`. To silence this warning, use `float` by itself. Doing this will not modify any behavior and is safe. If you specifically wanted the numpy scalar type, use `np.float64` here.\n  Deprecated in NumPy 1.20; for more details and guidance: https://numpy.org/devdocs/release/1.20.0-notes.html#deprecations\n    return np.asarray(valid_range, dtype=np.float)\n\n-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html\n8 passed, 13 warnings in 2.20s"
+  },
+  "environment_failures": [],
+  "pre_tests_bug_failures": [],
+  "catching_tests": [],
+  "missed_by_existing_tests": true,
+  "regression_test_catches_it": false
+ },
+ {
+  "id": "monai_spacing_offset",
+  "repo": "MONAI",
+  "env": "legacy",
+  "test_files": [
+   "tests/test_spacing.py"
+  ],
+  "fix_edited_tests": true,
+  "pre_tests_on_pre": {
+   "status": "PASS",
+   "counts": {
+    "passed": 38
+   },
+   "exit": 0,
+   "failed": [],
+   "tail": "_work/wt/monai_spacing_offset_pre/tests/test_spacing.py::TestSpacingCase::test_spacing_torch_4\n  D:\\VS\\Nebius\\SpatialContract\\_work\\wt\\monai_spacing_offset_pre\\monai\\transforms\\spatial\\array.py:570: UserWarning: `data_array` is not of type MetaTensor, assuming affine to be identity.\n    warnings.warn(\"`data_array` is not of type MetaTensor, assuming affine to be identity.\")\n\n-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html\n38 passed, 124 warnings in 4.96s"
+  },
+  "post_tests_on_pre": {
+   "status": "FAIL",
+   "counts": {
+    "failed": 1,
+    "passed": 38
+   },
+   "exit": 1,
+   "failed": [
+    "tests\\test_spacing_scpost.py::TestSpacingCase::test_spacing_16"
+   ],
+   "tail": "    warnings.warn(\"`data_array` is not of type MetaTensor, assuming affine to be identity.\")\n\n-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html\n=========================== short test summary info ===========================\nFAILED tests\\test_spacing_scpost.py::TestSpacingCase::test_spacing_16 - Asser...\n1 failed, 38 passed, 124 warnings in 3.37s"
+  },
+  "post_tests_on_post": {
+   "status": "FAIL",
+   "counts": {
+    "failed": 1,
+    "passed": 38
+   },
+   "exit": 1,
+   "failed": [
+    "tests\\test_spacing.py::TestSpacingCase::test_spacing_16"
+   ],
+   "tail": "    warnings.warn(\"`data_array` is not of type MetaTensor, assuming affine to be identity.\")\n\n-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html\n=========================== short test summary info ===========================\nFAILED tests\\test_spacing.py::TestSpacingCase::test_spacing_16 - AssertionErr...\n1 failed, 38 passed, 124 warnings in 3.61s"
+  },
+  "environment_failures": [
+   "test_spacing::TestSpacingCase::test_spacing_16"
+  ],
+  "pre_tests_bug_failures": [],
+  "catching_tests": [],
+  "missed_by_existing_tests": true,
+  "regression_test_catches_it": false
+ },
+ {
+  "id": "nibabel_ioorient",
+  "repo": "nibabel",
+  "env": "modern",
+  "test_files": [
+   "nibabel/tests/test_orientations.py"
+  ],
+  "fix_edited_tests": true,
+  "pre_tests_on_pre": {
+   "status": "PASS",
+   "counts": {
+    "passed": 8
+   },
+   "exit": 0,
+   "failed": [],
+   "tail": "........                                                                 [100%]\n8 passed in 0.26s"
+  },
+  "post_tests_on_pre": {
+   "status": "FAIL",
+   "counts": {
+    "failed": 1,
+    "passed": 8
+   },
+   "exit": 1,
+   "failed": [
+    "nibabel\\tests\\test_orientations_scpost.py::test_io_orientation_column_strength_regression"
+   ],
+   "tail": "---------------------------- Captured stdout call -----------------------------\n('I', 'A', 'R')\nD:\\VS\\Nebius\\SpatialContract\\_work\\wt\\nibabel_ioorient_pre\\nibabel\\tests\\test_orientations_scpost.py:326: assert (2, 3, 4) == (4, 3, 2)\n=========================== short test summary info ===========================\nFAILED nibabel\\tests\\test_orientations_scpost.py::test_io_orientation_column_strength_regression\n1 failed, 8 passed in 0.19s"
+  },
+  "post_tests_on_post": {
+   "status": "FAIL",
+   "counts": {
+    "failed": 1,
+    "passed": 8
+   },
+   "exit": 1,
+   "failed": [
+    "nibabel\\tests\\test_orientations.py::test_io_orientation"
+   ],
+   "tail": "           [ 2.,  1.],\n           [nan, nan]])\nD:\\VS\\Nebius\\SpatialContract\\_work\\wt\\nibabel_ioorient_post\\nibabel\\tests\\test_orientations.py:272: AssertionError:\n=========================== short test summary info ===========================\nFAILED nibabel\\tests\\test_orientations.py::test_io_orientation - AssertionErr...\n1 failed, 8 passed in 0.19s"
+  },
+  "environment_failures": [
+   "test_orientations::test_io_orientation"
+  ],
+  "pre_tests_bug_failures": [],
+  "catching_tests": [
+   "test_orientations::test_io_orientation_column_strength_regression"
+  ],
+  "missed_by_existing_tests": true,
+  "regression_test_catches_it": true
+ },
+ {
+  "id": "torchio_reorient",
+  "repo": "torchio",
+  "env": "modern",
+  "test_files": [
+   "tests/test_reorient.py"
+  ],
+  "fix_edited_tests": true,
+  "pre_tests_on_pre": {
+   "status": "PASS",
+   "counts": {
+    "passed": 18
+   },
+   "exit": 0,
+   "failed": [],
+   "tail": "..................                                                       [100%]\n18 passed in 2.50s"
+  },
+  "post_tests_on_pre": {
+   "status": "FAIL",
+   "counts": {
+    "failed": 4,
+    "passed": 20
+   },
+   "exit": 1,
+   "failed": [
+    "tests/test_reorient_scpost.py::TestWorldCoordinates::test_bbox_preserved_anisotropic_spacing",
+    "tests/test_reorient_scpost.py::TestWorldCoordinates::test_bbox_preserved_identity_spacing[AIR]",
+    "tests/test_reorient_scpost.py::TestWorldCoordinates::test_bbox_preserved_identity_spacing[PSR]",
+    "tests/test_reorient_scpost.py::TestWorldCoordinates::test_bbox_preserved_identity_spacing[SLA]"
+   ],
+   "tail": "=========================== short test summary info ===========================\nFAILED tests/test_reorient_scpost.py::TestWorldCoordinates::test_bbox_preserved_identity_spacing[PSR]\nFAILED tests/test_reorient_scpost.py::TestWorldCoordinates::test_bbox_preserved_identity_spacing[SLA]\nFAILED tests/test_reorient_scpost.py::TestWorldCoordinates::test_bbox_preserved_identity_spacing[AIR]\nFAILED tests/test_reorient_scpost.py::TestWorldCoordinates::test_bbox_preserved_anisotropic_spacing\n4 failed, 20 passed in 1.69s"
+  },
+  "post_tests_on_post": {
+   "status": "PASS",
+   "counts": {
+    "passed": 24
+   },
+   "exit": 0,
+   "failed": [],
+   "tail": "........................                                                 [100%]\n24 passed in 1.70s"
+  },
+  "environment_failures": [],
+  "pre_tests_bug_failures": [],
+  "catching_tests": [
+   "test_reorient::TestWorldCoordinates::test_bbox_preserved_anisotropic_spacing",
+   "test_reorient::TestWorldCoordinates::test_bbox_preserved_identity_spacing[AIR]",
+   "test_reorient::TestWorldCoordinates::test_bbox_preserved_identity_spacing[PSR]",
+   "test_reorient::TestWorldCoordinates::test_bbox_preserved_identity_spacing[SLA]"
+  ],
+  "missed_by_existing_tests": true,
+  "regression_test_catches_it": true
+ },
+ {
+  "id": "torchio_sitk_ras_lps",
+  "repo": "torchio",
+  "env": "modern",
+  "test_files": [
+   "tests/test_image.py"
+  ],
+  "fix_edited_tests": true,
+  "pre_tests_on_pre": {
+   "status": "FAIL",
+   "counts": {
+    "failed": 2,
+    "passed": 87
+   },
+   "exit": 1,
+   "failed": [
+    "tests/test_image.py::TestImageIO::test_save_nii_zarr",
+    "tests/test_image.py::TestImageIO::test_save_nii_zarr_multichannel"
+   ],
+   "tail": "E   ImportError: The `nifti-zarr` package is required for this. Install TorchIO with the `zarr` extra: `pip install torchio[zarr]`.\nD:\\VS\\Nebius\\SpatialContract\\_work\\wt\\torchio_sitk_ras_lps_pre\\src\\torchio\\external\\imports.py:19: ImportError: The `nifti-zarr` package is required for this. Install TorchIO with the `zarr` extra: `pip install torchio[zarr]`.\n=========================== short test summary info ===========================\nFAILED tests/test_image.py::TestImageIO::test_save_nii_zarr - ImportError: Th...\nFAILED tests/test_image.py::TestImageIO::test_save_nii_zarr_multichannel - Im...\n2 failed, 87 passed in 2.14s"
+  },
+  "post_tests_on_pre": {
+   "status": "FAIL",
+   "counts": {
+    "failed": 4,
+    "passed": 88
+   },
+   "exit": 1,
+   "failed": [
+    "tests/test_image_scpost.py::TestImageIO::test_save_nii_zarr",
+    "tests/test_image_scpost.py::TestImageIO::test_save_nii_zarr_multichannel",
+    "tests/test_image_scpost.py::TestImageIO::test_save_preserves_affine[.nii.gz]",
+    "tests/test_image_scpost.py::TestImageIO::test_save_preserves_lps_orientation"
+   ],
+   "tail": "=========================== short test summary info ===========================\nFAILED tests/test_image_scpost.py::TestImageIO::test_save_preserves_affine[.nii.gz]\nFAILED tests/test_image_scpost.py::TestImageIO::test_save_preserves_lps_orientation\nFAILED tests/test_image_scpost.py::TestImageIO::test_save_nii_zarr - ImportEr...\nFAILED tests/test_image_scpost.py::TestImageIO::test_save_nii_zarr_multichannel\n4 failed, 88 passed in 2.06s"
+  },
+  "post_tests_on_post": {
+   "status": "FAIL",
+   "counts": {
+    "failed": 2,
+    "passed": 90
+   },
+   "exit": 1,
+   "failed": [
+    "tests/test_image.py::TestImageIO::test_save_nii_zarr",
+    "tests/test_image.py::TestImageIO::test_save_nii_zarr_multichannel"
+   ],
+   "tail": "E   ImportError: The `nifti-zarr` package is required for this. Install TorchIO with the `zarr` extra: `pip install torchio[zarr]`.\nD:\\VS\\Nebius\\SpatialContract\\_work\\wt\\torchio_sitk_ras_lps_post\\src\\torchio\\external\\imports.py:19: ImportError: The `nifti-zarr` package is required for this. Install TorchIO with the `zarr` extra: `pip install torchio[zarr]`.\n=========================== short test summary info ===========================\nFAILED tests/test_image.py::TestImageIO::test_save_nii_zarr - ImportError: Th...\nFAILED tests/test_image.py::TestImageIO::test_save_nii_zarr_multichannel - Im...\n2 failed, 90 passed in 2.14s"
+  },
+  "environment_failures": [
+   "test_image::TestImageIO::test_save_nii_zarr",
+   "test_image::TestImageIO::test_save_nii_zarr_multichannel"
+  ],
+  "pre_tests_bug_failures": [],
+  "catching_tests": [
+   "test_image::TestImageIO::test_save_preserves_affine[.nii.gz]",
+   "test_image::TestImageIO::test_save_preserves_lps_orientation"
+  ],
+  "missed_by_existing_tests": true,
+  "regression_test_catches_it": true
+ },
+ {
+  "id": "monai_orientation_lps",
+  "repo": "MONAI",
+  "env": "modern",
+  "test_files": [
+   "tests/transforms/test_orientation.py",
+   "tests/transforms/test_orientationd.py"
+  ],
+  "fix_edited_tests": true,
+  "pre_tests_on_pre": {
+   "status": "FAIL",
+   "counts": {
+    "passed": 24,
+    "errors": 2
+   },
+   "exit": 1,
+   "failed": [
+    "tests\\transforms\\test_orientation.py::test_resampler_lazy",
+    "tests\\transforms\\test_orientationd.py::test_resampler_lazy"
+   ],
+   "tail": "\n-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html\n=========================== short test summary info ===========================\nERROR tests\\transforms\\test_orientation.py::test_resampler_lazy\nERROR tests\\transforms\\test_orientationd.py::test_resampler_lazy\n24 passed, 11 warnings, 2 errors in 3.08s"
+  },
+  "post_tests_on_pre": {
+   "status": "FAIL",
+   "counts": {
+    "failed": 9,
+    "passed": 25,
+    "errors": 2
+   },
+   "exit": 1,
+   "failed": [
+    "tests\\transforms\\test_orientation_scpost.py::TestOrientationCase::test_ornt_meta_01",
+    "tests\\transforms\\test_orientation_scpost.py::TestOrientationCase::test_ornt_meta_03",
+    "tests\\transforms\\test_orientation_scpost.py::TestOrientationCase::test_ornt_meta_05",
+    "tests\\transforms\\test_orientation_scpost.py::TestOrientationCase::test_ornt_meta_07",
+    "tests\\transforms\\test_orientation_scpost.py::TestOrientationCase::test_ornt_meta_09",
+    "tests\\transforms\\test_orientation_scpost.py::test_resampler_lazy",
+    "tests\\transforms\\test_orientationd_scpost.py::TestOrientationdCase::test_orntd_1",
+    "tests\\transforms\\test_orientationd_scpost.py::TestOrientationdCase::test_orntd_3",
+    "tests\\transforms\\test_orientationd_scpost.py::TestOrientationdCase::test_orntd_5",
+    "tests\\transforms\\test_orientationd_scpost.py::TestOrientationdCase::test_orntd_7",
+    "tests\\transforms\\test_orientationd_scpost.py::test_resampler_lazy"
+   ],
+   "tail": "FAILED tests\\transforms\\test_orientationd_scpost.py::TestOrientationdCase::test_orntd_3\nFAILED tests\\transforms\\test_orientationd_scpost.py::TestOrientationdCase::test_orntd_5\nFAILED tests\\transforms\\test_orientationd_scpost.py::TestOrientationdCase::test_orntd_7\nERROR tests\\transforms\\test_orientation_scpost.py::test_resampler_lazy\nERROR tests\\transforms\\test_orientationd_scpost.py::test_resampler_lazy\n9 failed, 25 passed, 13 warnings, 2 errors in 2.41s"
+  },
+  "post_tests_on_post": {
+   "status": "FAIL",
+   "counts": {
+    "passed": 34,
+    "errors": 2
+   },
+   "exit": 1,
+   "failed": [
+    "tests\\transforms\\test_orientation.py::test_resampler_lazy",
+    "tests\\transforms\\test_orientationd.py::test_resampler_lazy"
+   ],
+   "tail": "\n-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html\n=========================== short test summary info ===========================\nERROR tests\\transforms\\test_orientation.py::test_resampler_lazy\nERROR tests\\transforms\\test_orientationd.py::test_resampler_lazy\n34 passed, 45 warnings, 2 errors in 2.40s"
+  },
+  "environment_failures": [
+   "test_orientation::test_resampler_lazy",
+   "test_orientationd::test_resampler_lazy"
+  ],
+  "pre_tests_bug_failures": [],
+  "catching_tests": [
+   "test_orientation::TestOrientationCase::test_ornt_meta_01",
+   "test_orientation::TestOrientationCase::test_ornt_meta_03",
+   "test_orientation::TestOrientationCase::test_ornt_meta_05",
+   "test_orientation::TestOrientationCase::test_ornt_meta_07",
+   "test_orientation::TestOrientationCase::test_ornt_meta_09",
+   "test_orientationd::TestOrientationdCase::test_orntd_1",
+   "test_orientationd::TestOrientationdCase::test_orntd_3",
+   "test_orientationd::TestOrientationdCase::test_orntd_5",
+   "test_orientationd::TestOrientationdCase::test_orntd_7"
+  ],
+  "missed_by_existing_tests": true,
+  "regression_test_catches_it": true
+ }
+]

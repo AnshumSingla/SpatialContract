@@ -1,3 +1,7 @@
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
 [project]
 name = "spatialcontract"
 version = "0.0.1"
@@ -5,6 +9,14 @@ description = "Contract-verified repair of spatial/orientation bugs in medical-i
 requires-python = ">=3.10"
 license = { text = "MIT" }
 dependencies = ["numpy", "nibabel", "scipy", "SimpleITK", "openai", "python-dotenv"]
+
+[project.scripts]
+spatialcontract = "spatialcontract.cli:main"
+
+# The entry-point name equals the module path so that an explicit `-p spatialcontract.pytest_plugin` (or a
+# pytest_plugins list) next to the installed entry point is a no-op instead of a double registration.
+[project.entry-points.pytest11]
+"spatialcontract.pytest_plugin" = "spatialcontract.pytest_plugin"
 
 [project.optional-dependencies]
 dev = ["pytest"]

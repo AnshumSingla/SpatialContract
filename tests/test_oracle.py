@@ -103,3 +103,37 @@ def test_degenerate_output_affine_is_an_error_verdict_not_a_crash(write):
         src = CORRECT.replace("nib.Nifti1Image(new, new_aff)", f"nib.Nifti1Image(new, {bad})")
         rep = oracle.check(write(src), None)
         assert rep.verdict in ("ERROR", "FAIL"), (bad, rep.feedback())
+
+
+# ---- correct pipelines whose output values are not the phantom's labels (interpolation, intensity normalisation) must pass;
+# the same pipelines with a real geometric bug must still fail
+_HEAD = '''SPATIAL_CONTRACT = {"world_frame": "RAS", "units": "mm", "affine_convention": "voxel_center_to_world"}
+import nibabel as nib, numpy as np
+from nibabel.processing import resample_to_output
+'''
+VALUE_CHANGING = {
+    "trilinear": "def process(i, o):\n    nib.save(resample_to_output(nib.load(i), voxel_sizes=(1.5,) * 3, order=1), o)\n",
+    "cubic": "def process(i, o):\n    nib.save(resample_to_output(nib.load(i), voxel_sizes=(2.5,) * 3, order=3), o)\n",
+    "zscore": ("def process(i, o):\n    img = nib.load(i); d = np.asarray(img.dataobj, float)\n"
+               "    nib.save(nib.Nifti1Image(((d - d.mean()) / d.std()).astype(np.float32), img.affine), o)\n"),
+}
+VALUE_CHANGING_BUGS = {
+    "trilinear_flipped": ("def process(i, o):\n    r = resample_to_output(nib.load(i), voxel_sizes=(1.5,) * 3, order=1)\n"
+                          "    nib.save(nib.Nifti1Image(np.asarray(r.dataobj)[::-1].copy(), r.affine), o)\n"),
+    "cubic_stale_affine": ("def process(i, o):\n    src = nib.load(i); r = resample_to_output(src, voxel_sizes=(1.5,) * 3, order=3)\n"
+                           "    nib.save(nib.Nifti1Image(np.asarray(r.dataobj), src.affine), o)\n"),
+    "zscore_flipped": ("def process(i, o):\n    img = nib.load(i); d = np.asarray(img.dataobj, float)\n"
+                       "    nib.save(nib.Nifti1Image(((d - d.mean()) / d.std())[:, ::-1].astype(np.float32).copy(), img.affine), o)\n"),
+}
+
+
+@pytest.mark.parametrize("name", sorted(VALUE_CHANGING))
+def test_value_changing_correct_pipelines_pass(write, name):
+    rep = oracle.check(write(_HEAD + VALUE_CHANGING[name]), None)
+    assert rep.verdict == "PASS", rep.feedback()
+    assert rep.worst()[0] < 1.0
+
+
+@pytest.mark.parametrize("name", sorted(VALUE_CHANGING_BUGS))
+def test_value_changing_buggy_pipelines_fail(write, name):
+    assert oracle.check(write(_HEAD + VALUE_CHANGING_BUGS[name]), None).verdict == "FAIL"

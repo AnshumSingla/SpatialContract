@@ -50,7 +50,7 @@ Things the corpus exposed, fixed after the fact (so the numbers above are NOT a 
    (smallest detected bug error: 3.2 mm for `C02`; a sub-voxel shift would pass).
 
 ## Real-bug corpus (implemented, step 5; oracle only, no LLM involved)
-Seven fixed spatial bugs from public libraries, each reproduced by running the library at the **parent of the fix commit (PRE)** and at the
+Eight fixed spatial bugs from public libraries (seven from the first pass, one added on 2026-10-29), each reproduced by running the library at the **parent of the fix commit (PRE)** and at the
 **fix commit (POST)** through the same `process(in, out)` script and contract (`corpus/real/*.py`, pinned SHAs in
 `src/spatialcontract/realbugs.py`, raw results in `results/real_bugs_oracle.json`). Reproduced = oracle FAILs PRE and PASSes POST.
 
@@ -63,10 +63,22 @@ Seven fixed spatial bugs from public libraries, each reproduced by running the l
 | nibabel_ioorient | nibabel 5.4 | 2025-12-19 | `io_orientation` labelled competing axes in input order | axis swap | orientation contract violated (0 mm world error) | yes |
 | torchio_reorient | TorchIO 2.0a | 2026-04-14 | `Reorient` permuted before flipping, affine built from wrong shape | axis swap | 43.2 mm | yes |
 | torchio_sitk_ras_lps | TorchIO 2.0a | 2026-04-05 | affine written to SimpleITK without RAS->LPS, double flip on save | flipped axis | 123.3 mm | yes |
+| monai_orientation_lps | MONAI 1.5 | 2025-09-01 | `Orientation` ignored `meta["space"]="LPS"` and read LPS affines as RAS, so `axcodes="RAS"` gave an LPS array (#8467, PR #8473) | flipped axis | orientation contract violated (got `LPS`, wanted `RAS`; 0 mm world error) | yes |
 
-**7/7 reproduced, so the real corpus is not labelled synthetic-only. The target of >=10 was not met: 7.** dipy, ANTsPy and SimpleITK contribute
+**8/8 reproduced (7/7 in the first pass), so the real corpus is not labelled synthetic-only. The target of >=10 was not met: 8.** dipy, ANTsPy and SimpleITK contribute
 zero cases (candidates I found were streamline/diffusion/plotting code, or ITK-internal fixes with no checkable file-in/file-out behaviour).
-Repo coverage: TorchIO 3, nibabel 2, nilearn 1, MONAI 1.
+Repo coverage: TorchIO 3, nibabel 2, MONAI 2, nilearn 1.
+
+**Added on 2026-10-29, and one candidate rejected.** Two more candidates were tried. **MONAI #8473** became the eighth case: the driver builds an LPS
+`MetaTensor` (`meta["space"]="LPS"`, affine converted with MONAI's own `orientation_ras_lps`), runs `Orientation(axcodes="RAS")` and writes the result
+back as RAS NIfTI. The oracle caught it on the first attempt with the default phantoms (seeds 0-2) and no harness change; as with `nibabel_ioorient` the
+world error is 0 mm and only the declared `array_orientation` catches it. The upstream fix passes held-out validation and PRE fails it. **TorchIO #1310**
+("make resampling symmetric around the geometric centre") was **rejected as outside the oracle's scope**. At PRE, `Resample` anchors the new grid at the
+first voxel corner and rounds the size up: the output field of view is 0.4-1.0 mm off-centre and the PR's flip-consistency test fails (max difference
+0.885 vs 0.0 at POST). But the output affine describes that same grid and SimpleITK samples the input at its physical points, so every landmark is in
+the right place in world space: on 24 phantoms (default, strong-oblique and hidden seeds) PRE passes (worst 0.64 mm) and POST passes (worst 0.84 mm).
+A world-coordinate oracle cannot see a bug that only changes which consistent grid is chosen; catching it would need a new contract property (output
+grid centred on the input field of view, or flip-equivariance). First-attempt detection is now 5/8.
 
 How much to trust this (read before quoting the 7/7):
 - **First-attempt oracle detection was 4/7, not 7/7.** Three cases first passed or did not trigger, and I changed the harness or the repro afterwards:
@@ -79,9 +91,8 @@ How much to trust this (read before quoting the 7/7):
   myself, and knew the fix when I did. Bugs needing other inputs (NRRD/DICOM readers, augmentation transforms, streamlines) were skipped.
 - PRE/POST are commits (library source imported from git worktrees), not releases. Old libraries run in a legacy virtualenv (numpy 1.23, nibabel 4.0.2, torch 2.2).
   Environment shims (not in any library under test): `sklearn.externals.joblib` + `Memory(cachedir=)` for nilearn 0.4, and a fake `torchio` dist-info for TorchIO 2.0a worktrees.
-- "Fix commit touched a test" is read from `git show --name-only`. I did **not** run the pre-fix test suites, so "the repo's own tests missed it" is only supported
-  as "the covering test was added together with the fix (5 of 7) or not in that commit (2 of 7)".
-- 7 cases: any rate computed from them has a wide interval (7/7 has a 95% Clopper-Pearson lower bound of about 0.59).
+- "Fix commit touched a test" is read from `git show --name-only`. The pre-fix test suites were run later (2026-10-29, next section).
+- 8 cases: any rate computed from them has a wide interval (8/8 has a 95% Clopper-Pearson lower bound of about 0.63).
 - Reproduce: `python scripts/setup_real_bugs.py` (needs network), create `_work/env_legacy` and `_work/env_modern` with the pins in the table above, then `python scripts/run_real_bugs.py`.
 
 ## Repair agent (implemented, step 6; preliminary runs only, NOT the evaluation)
@@ -259,3 +270,235 @@ The tool set changed four times after I looked at failures on these same seven b
 - **No unit-test baseline for the real bugs.** I did not run the libraries' own pre-fix test suites as feedback (they need the libraries' test data and old test tooling), so there is no real-bug equivalent of the arm 2 comparison.
 - **Cost.** `real1` to `real3` plus the pilots used about 6.4M tokens (ledger 0.87M before this step, 7.3M after), roughly $2-3 at the listed Super prices (under $6 if every token were billed at the output price).
 - **Tool calling in long loops.** In `real3`, 442 of 442 model calls returned a tool call, none ended on the length limit, none had malformed arguments, and 3 edits were rejected (no match or syntax). One call used a tool that does not exist (`edit_file`).
+
+## Last-day additions (2026-10-29): diagnosis, localisation, an API, a third library run
+Everything in this section was built after all the results above, with those results (and the seven real bugs) known. It is reported the same way: what was measured, on what, and what was changed after looking.
+
+**Misplacement diagnosis (`diagnose.py`, in every oracle report).** Six landmarks determine the affine map `got = M @ expected + t` that the code effectively applied to physical space. The oracle now fits it by least squares and states it in one line: a uniform translation (and whether it is a whole number of output voxels), a signed axis permutation ("x and y negated", "axes permuted"), a uniform scale ("scaled by 1000"), a rotation/stretch, or "not a single affine map" when the fit residual exceeds max(1 mm, the phantom's tolerance). On the seeded corpus it gives the expected description for every class: `L03` "x and y negated", `M03` "scaled by 1000", `M04`/`R09` "scaled by 0.001", `S05` "axes permuted (y, x, z)", `C01` "shifted by a whole number of output voxels", `S06` (Fortran-order reshape) "not moved by any single affine map". Stale-affine bugs on oblique phantoms come out as a rotation plus stretch, which is correct but less readable. The diagnosis is measurement only (it names no line and no fix), and `Report(diagnose=False)` reproduces the original feedback text exactly. The earlier evaluation and `real3` ran without it. Re-run on the two seeded bugs the script agent had failed (`results/eval/diag`, arm 3, 3 repetitions each, about 83k tokens): S06 repaired 1 of 3 and S01 1 of 3, against 2 of 3 each in the main evaluation without the diagnosis, so there is no evidence it helps on these (6 runs). One S06 run is the second real overfit caught: its first patch passed the visible oracle and failed the hidden bank (`hidden_bank: FAIL`, the other three held-out checks passed).
+
+**Oracle-guided localisation (`locate.py`, `scripts/localise_real.py`, `results/localisation.json`, no tokens).** For a bug inside a library, the driver runs under `sys.setprofile` restricted to the library's files, on the visible bank plus six extra phantoms (seeds 3-8, never the held-out seeds). Every library function that ran in a wrong-output run is scored: Ochiai over wrong vs right runs (weight 1.0), returned a 4x4 affine in a wrong run (0.5), returned exactly the affine written to the output file (0.3), and a capped count of affine-related words in its own source (0.3). **The weights were set before the first measurement and were not changed afterwards.** Ground truth is every pre-fix function that contains a line the upstream fix changed (from `git diff -U0`), used only for scoring.
+
+| bug | wrong / right phantoms | functions ranked | rank of first fixed function | rank of first fixed file |
+|---|---|---|---|---|
+| torchio_crop | 9 / 0 | 101 | 6 | 6 |
+| nilearn_reorder | 4 / 5 | 13 | 3 | 1 |
+| nibabel_conform | 9 / 0 | 350 | 2 | 2 |
+| monai_spacing_offset | 4 / 5 | 918 | 20 | 4 |
+| nibabel_ioorient | 3 / 11 | 335 | 14 | 7 |
+| torchio_reorient | 5 / 4 | 157 | 12 | 9 |
+| torchio_sitk_ras_lps | 9 / 0 | 73 | 5 | 3 |
+| monai_orientation_lps | 9 / 0 | 1251 | 2 | 2 |
+
+File in the top 10: **8 of 8**; fixed function in the top 5: 4 of 8, in the top 10: 5 of 8; top 1: 0 of 8. When every phantom fails (4 of 8 cases) the spectrum term cannot discriminate and the ranking rests on affine provenance and the static prior. `monai_orientation_lps` was added to the corpus by a separate pass the same day and was not looked at before the weights were fixed, so it is the one case that is close to held out. A unit test (`tests/test_locate.py`) checks the ranking on a tiny fake library where only some input orientations reach the buggy helper.
+
+**Third library run (`real4`).** `python scripts/repair_real.py --localize --reps 2 --run-id real4`: the `real3` configuration plus the trace ranking in the
+first message, the `get_suspects` tool, and the diagnosis line in every oracle report. Same model, caps (40 steps, 8 oracle runs, 300k tokens per run) and
+held-out validation. The run was stopped once by the host for low memory after 7 runs and resumed with 2 workers (rows already in `raw.jsonl` are skipped);
+all 16 runs (8 bugs x 2) completed.
+
+| bug | rep 0 | rep 1 | trace rank of fixed function | real3 (rep 0 / rep 1) |
+|---|---|---|---|---|
+| nilearn_reorder | repaired (8 steps, 41k) | repaired (9 steps, 43k) | 3 | repaired / repaired |
+| torchio_sitk_ras_lps | failed (no edit) | repaired (29 steps, 228k) | 5 | failed / repaired |
+| monai_orientation_lps | failed | repaired (29 steps, 234k; edited `monai/data/utils.py`, upstream edited `transforms/spatial/array.py`) | 2 | not in real3 |
+| torchio_crop | failed (right file) | failed (right file) | 6 | failed / failed |
+| torchio_reorient | failed (right file) | failed (right file) | 12 | failed / failed |
+| nibabel_conform | failed (right file) | failed (right file) | 2 | failed / failed |
+| nibabel_ioorient | failed (no edit) | failed (no edit) | 14 | failed / failed |
+| monai_spacing_offset | failed (wrong file) | failed (wrong file) | 20 | failed / failed |
+
+**Result: 4 of 16 runs repaired (3 of the 8 bugs), 0 overfit; 9 of 16 runs edited a file the upstream fix edited (real3: 6 of 14). On the original seven
+bugs, 3 of 14 runs repaired, exactly real3's count.** All 12 failures ended on the token cap. The MONAI repair is in a different file from upstream and
+passed every held-out check, like the earlier TorchIO repair. The trace raised how often the agent works in the right file but not how often it repairs.
+Two logs show why: in `nibabel_conform` the trace ranked `conform` second and the agent went straight to the right line, then made four one-line edits
+that never computed the transform from the image's current orientation (the upstream fix does); in `torchio_crop` (rank 6) the agent read code for 28
+steps before its first edit, so most of the budget went to reading. The bottleneck has moved from finding the function to writing the fix, at least for
+the bugs that need an understanding of the algorithm. 2 repetitions of 8 bugs cannot show a small effect either way. About 4.2M tokens (roughly $1.3); 489 of 489 model calls returned a tool call.
+
+**Adoption path (`api.py`, `cli.py`, `pytest_plugin.py`, `examples/`).** `@spatial_contract(...)` and `check_function(fn)` check an in-memory function (`image -> image` or `(array, affine) -> (array, affine)`) by generating a tiny driver that imports it and calling the unchanged oracle in a subprocess; `isolate=False` runs it in-process through an `oracle.check(run=...)` hook. A `spatial_oracle` pytest fixture fails a test with the oracle's mm feedback. `spatialcontract check FILE[::FUNC]` exits 0 PASS, 1 FAIL, 3 ERROR, 4 ABSTAIN; `examples/ci/spatialcontract.yml` runs it in GitHub Actions. No model is involved in any of these.
+
+## Outside review and what it changed (2026-10-29)
+An independent reviewer read the submission as a judge would (Devpost text, video script, README, demo, then the code and results) with no knowledge of
+our own assessment. The findings that changed code or claims:
+
+**False alarms on correct pipelines (fixed).** The oracle found each landmark as the voxels equal to its label (`|value - label| < 0.25`). A correct
+pipeline that resamples with linear or cubic interpolation blends labels with the background (nibabel keeps the int16 dtype, so the blended edges are
+rounded into other labels), and an intensity normalisation changes every value; both FAILed with 25-32 mm "errors". Every pipeline in our corpora was
+nearest-neighbour or lossless, so nothing we had exercised it. The oracle now has a second reading for outputs whose values are not the phantom's labels
+(`_values_changed`, `_soft_landmarks`): each ball is a blob standing out from the background (the median), its intensity-weighted centroid is its centre,
+and it is named either by its plateau value or by its intensity mass over the one physical volume all balls share (values kept their meaning), or by
+mass order when there is exactly one blob per landmark (values remapped monotonically). **This reading can only turn a FAIL into a PASS, and only when
+every landmark is within tolerance;** otherwise every number of the exact reading stands. Re-running the oracle on all 49 seeded cases and on PRE and
+POST of all 8 real bugs gives identical verdicts and worst errors. Correct pipelines now pass (nibabel `resample_to_output` order 1 and 3 at 1.0/1.5/2.5 mm,
+SimpleITK linear resampling, z-score, rescaling to [0, 1], reorientation plus z-score: worst error 0.00-0.93 mm), and the same pipelines with a flipped
+array or a stale affine still fail; `tests/test_oracle.py` covers six of these.
+
+**Unequal gating (claim corrected).** The gated agent skips the model when the oracle already passes, but the unit-test arms called the model on every
+script, so "no test suite gave the gate" compared unequal setups. `scripts/analyze_gating.py` recomputes every arm from the same rows with the same rule
+(if the arm's own check passes on the original script, no model call and no change; no new runs, `results/eval/gated.json`):
+
+| arm | repaired (31 bugs) | controls modified (33 runs) | must-abstain cases patched (21 runs) | its check passes on |
+|---|---|---|---|---|
+| no feedback (no check, no gate) | 86% | 16 (broke 10) | 9 | - |
+| original unit tests, gated | 58% | 0 | 6 | 12 bugs, 11 controls |
+| stronger unit tests, gated | 97% | 0 | 12 | 0 bugs, 11 controls |
+| oracle, gated (as run) | 98% | 0 | 0 | 0 bugs, 11 controls |
+
+Any check that passes correct code protects it when gated on. The ordinary tests make a safe but weak gate; the strong suite, a hand-written miniature
+oracle, matches the oracle on repair and on controls. What remains specific to the contract is the cost (one dict per pipeline rather than a suite per
+pipeline family) and abstention: only the contract can say the convention is unknown (0 of 21 vs 6 and 12 of 21). The README and Devpost text now say this.
+
+**Localisation without a baseline (baselines added).** `scripts/localise_real.py` now ranks the same executed functions three more ways. Hit counts over the 8
+real bugs (function level / file level):
+
+| ranking | @1 | @3 | @5 | @10 |
+|---|---|---|---|---|
+| trace (ours) | 0 / 1 | 3 / 4 | 4 / 5 | 5 / 8 |
+| functions the driver names first, then execution order | 1 / 2 | 2 / 6 | 2 / 6 | 4 / 6 |
+| spectrum (Ochiai) alone | 0 / 1 | 0 / 1 | 0 / 1 | 1 / 1 |
+| random order (expected) | 0.1 / 0.7 | 0.4 / 1.6 | 0.6 / 2.3 | 1.2 / 3.2 |
+
+The "driver names it" heuristic is strong at file level near the top, because a three-line repro names the API it exercises. The trace is better at
+function level and when the bug is away from the called API: MONAI's offset bug (fixed in `data/utils.py`) is rank 20 with the trace and 899 by name,
+`nibabel_ioorient` 14 vs 274, TorchIO's SimpleITK bug 5 vs 60. Pure spectrum ranking is weak here because 4 of 8 cases have no passing phantom; affine
+provenance carries the trace.
+
+**Wording and framing.** "Proves every fix" became "checks every fix"; the README states the scope of the API (one 3D image in, one out); the Glen et al.
+citation is now attributed to header errors in data rather than to code; the video opens on the real TorchIO bug instead of a seeded one; the
+documents use one voice. The reviewer also noted that writing LPS world coordinates into a NIfTI affine (the L-family seeded contracts) is not standard
+NIfTI practice: those contracts model a pipeline that hands coordinates to an ITK-convention consumer, and NIfTI is only the oracle's transport; we
+kept them and say so here.
+
+**Token use.** After this review the client stops for good on the first out-of-credits error (`results/api_stopped.json`) and honours a dollar cap
+(`SC_USD_CAP`, estimated at listed prices); the ledger now records an estimated spend (about $4.5 for everything so far).
+
+## The libraries' own tests on the real bugs (2026-10-29, no tokens)
+`scripts/run_prefix_tests.py`, results in `results/real_bugs_own_tests.json` and `.log`. For each real bug, the library's test files that cover the fixed code
+(the test files the fix commit edited; for the two fixes that edited none, the existing test file of the fixed module: TorchIO `test_crop.py`, nibabel
+`test_processing.py`) were run three ways with pytest in the case's environment: the pre-fix tests on the pre-fix library, the post-fix tests on the pre-fix
+library (the post-fix file is written next to the original under a temporary name and removed afterwards), and the post-fix tests on the fixed library.
+Old library code on today's numpy, torch and scikit-learn fails some tests for reasons unrelated to the bug, so a test counts as detecting the bug only if it
+fails on the pre-fix library and passes on the fixed one with the same test file; failures on the fixed library are listed as environment failures.
+
+| bug | pre-fix tests on pre-fix code | test(s) the fix added, on pre-fix / fixed code | environment failures |
+|---|---|---|---|
+| torchio_crop | 2 passed: missed | none added | none |
+| nilearn_reorder | 16 passed, 2 env failures: missed | `test_reorder_img_mirror` fails / passes: catches | `test_resampling_nan`, `test_resampling_result_axis_permutation` |
+| nibabel_conform | 8 passed: missed | none added | none |
+| monai_spacing_offset | 38 passed: missed | `test_spacing_16` fails on both: **inconclusive** | the new case's type assertion fails on the fixed code too |
+| nibabel_ioorient | 8 passed: missed | `test_io_orientation_column_strength_regression` fails / passes: catches | `test_io_orientation` fails on the fixed code |
+| torchio_reorient | 18 passed: missed | 4 `TestWorldCoordinates` tests fail / pass: catch | none |
+| torchio_sitk_ras_lps | 87 passed, 2 env failures (zarr): missed | `test_save_preserves_affine[.nii.gz]`, `test_save_preserves_lps_orientation` fail / pass: catch | 2 zarr tests |
+| monai_orientation_lps | 24 passed, 2 env errors: missed | 9 `test_ornt_meta_*` cases fail / pass: catch | `test_resampler_lazy` errors in both test files, on both versions |
+
+**The existing covering tests missed 8 of 8 bugs; the oracle detects 8 of 8. The regression tests written with the fixes catch 5 of 8; 2 fixes added no
+test; 1 is inconclusive here.** What this does and does not show: only the covering test files were run, not whole suites (another test elsewhere could
+have failed); an environment failure could in principle hide a test that would also have detected the bug. The 5 regression tests are the kind of check our
+stronger seeded suite is: written after someone knew the bug and checking physical positions or orientation. Running 2018-2026 test files on Python 3.11
+needed environment shims, none of which changes library source: pytest 7 in the legacy environment (nose-style tests) and pytest 9 in the modern one
+(TorchIO 2.0a requires it), a `nose` stand-in mapping its assertion helpers onto `unittest` (`_work/shims/nose`), `sklearn.utils.testing.assert_warns` and
+`sklearn.datasets.base.Bunch` re-exports in the legacy environment, and a pytest plugin restoring the `collections` ABC aliases removed in Python 3.10
+(`_work/shims/sc_py311_compat.py`).
+
+## Real scans (2026-10-29, no tokens)
+`src/spatialcontract/realscan.py`, `scripts/validate_real_scans.py` (results `results/real_scans.json`) and `scripts/validate_real_scans_lib.py`
+(`results/real_scans_lib.json`). Phantoms give exact landmark positions; real scans do not, so on real scans the input is the ground truth: a pipeline that
+only moves, crops, re-orients, resamples or re-expresses an image must put the anatomy found at each physical point back at that point. The output (affine
+read in the contract's frame and units) is resampled onto the input grid with SimpleITK (linear) and compared with the input over the covered region:
+Pearson correlation, covered fraction, and the contract's output orientation.
+
+Scans: nibabel's bundled `anatomical.nii` (real T1, LAS, 2 mm, 33x41x25) and the first volume of `example4d.nii.gz` (real EPI, LAS, 9.3 degrees oblique,
+2x2x2.2 mm), both shipped with every nibabel install; and, when the ANTsPy checkout under `_work/` is present, the Colin27 single-subject brain
+(`ch2.nii.gz`) resampled by us to 2 mm and stored twice, as RAS and in a sagittal-style PIR layout (same anatomy and world positions). Colin27 is not
+redistributed in this repository.
+
+Threshold: calibrated on the 11 correct controls only (lowest control correlation on each scan minus 0.01: {'t1_nibabel_LAS_2mm': 0.8508, 'epi_nibabel_LAS_oblique': 0.9717, 'colin27_RAS_2mm': 0.9719, 'colin27_PIR_2mm': 0.9719}; covered fraction at least
+half the input, or the family's lowest control for crops). The controls therefore pass by construction. The low threshold on the small T1 comes from the
+3 mm resampling control on a 2 mm, 33x41x25 image.
+
+| subjects (4 scans each) | result |
+|---|---|
+| 11 correct controls | 11 pass on every scan (by construction) |
+| 31 buggy originals | **31 fail on at least one scan**; 7 of 124 runs pass, all where the bug cannot show (a stale affine after a reorientation of an input that is already RAS; crops whose bounding box is the whole scan; one index-order crop that cuts a different region of the PIR scan but keeps it in the right place) |
+| 91 repaired seeded patches (arm 3) | **91 pass on every scan (364 of 364 runs)**; reorient, crop, frame and units pipelines reproduce the input exactly, correlation 1.000 in 288 of 288 runs; resampling pipelines are at or above the correct resampling controls (lowest 0.870 on the T1, 0.981 on Colin27) |
+| 7 library repairs (real3, real4), agent diff applied to the pre-fix library | **output identical to the upstream fix on every scan, 28 of 28** (same grid, same affine, voxelwise equal), including the TorchIO SimpleITK and MONAI repairs whose code differs from upstream. Pre-fix on the same scans: TorchIO correlation 0.44-0.47 (and -0.04 on the T1), MONAI wrong output orientation on all 4, nilearn 0.983 on the PIR layout only |
+
+What this does and does not show. It shows that the repairs validated on phantoms also put real anatomy, in real scanner geometries, in the right place,
+and that the library repairs are behaviourally the upstream fix on these scans. It is three real acquisitions (one stored in two layouts), all brain MRI, and a reference-free
+check: on near-symmetric anatomy a pure left-right mirror keeps a high correlation (R03, which mirrors one axis: 0.94-0.96 on the Colin27 and EPI scans,
+against 0.98 for a correct 3 mm resampler; R04: 0.70-0.94; both much lower on the small T1), so the real-scan check alone would be a thin net for flips. That is the reason the oracle uses asymmetric phantoms;
+the real scans confirm the repairs, they do not replace the oracle.
+
+## More repair algorithms, and gates for library repairs (2026-10-29)
+Everything here was designed after the agent's library runs, on the same bugs; it is a post-hoc comparison with 1-2 repetitions.
+
+**Deterministic fix first (`autofix.py`, `scripts/evaluate_autofix.py`, `results/eval/autofix.json`, no tokens).** When the misplacement map fitted by
+the diagnosis is identical on every visible phantom (to 1e-3 in the linear part and 0.05 mm in translation), a generated wrapper composes the output
+affine with its inverse; when only the declared output orientation is wrong (every landmark in place) it re-orients the array. On the seeded corpus it
+repairs 8 of 31 bugs (L01, L03, M02, M03, M04, R02, R09, R10), all passing held-out validation, 0 overfit, 0 controls and 0 must-abstain cases touched.
+The other 23 bugs have a different map per phantom, so no single correction exists. Run first, with arm 3 for the rest, the repair rate stays 98% and
+model tokens on bugs drop from 298,814 to 245,414 (18%). It corrects the output, not the faulty line; `agent.repair(..., autofix=True)` and
+`scripts/repair.py` use it (the evaluation code keeps it off so recorded runs stay reproducible).
+
+**Staged library repair (`staged.py`).** Localise with the trace, show the top k=6 suspect functions with full source, ask for N=3 independent
+whole-function rewrites per round at temperature 0.7, apply each to a fresh copy, keep the first that passes the visible oracle, otherwise feed the two
+closest (fewest landmarks off) back, at most 3 rounds and 150k tokens. A two-case pilot exposed a harness bug (an edit list returned as a JSON string)
+and was discarded; one `staged1` run crashed on the same bug in a second place (prompt history) and was re-run after the fix
+(`results/real_repair/staged1/harness_errors_removed.jsonl`). `staged1` recorded `localized` after resetting the workspace; it is recounted from the logs.
+`staged2` is a variant that shows the best function of each of the top files first (k=8), after `staged1`'s logs showed the fixed function of two bugs
+(TorchIO `Reorient`, nibabel `io_orientation`) ranked 12th and 14th and never shown. It did show them (6 of 8 runs edited an upstream-fixed file) but
+repaired no additional bug.
+
+**Mutation search (`libmutate.py`, `mut1`).** Model-free, over the trace's top 6 suspects, at most 300 candidates per bug, screened on one failing
+phantom. It ran on 3 of 8 bugs (TorchIO `Crop`, nilearn, nibabel `conform`) before the host stopped it for low memory. `Crop`: the first survivor
+deletes the crop statement; every landmark stays in place, so the oracle and held-out validation passed it. nilearn: a `-1` mutant passed the visible
+oracle and failed the hidden bank (OVERFIT). `conform`: no survivor in 120 candidates.
+
+**No-op check (`heldout.is_noop`, `heldout.changes_extent`).** Held-out validation now fails a patch that returns its input unchanged on every visible
+phantom when the original code changed the array's extent. A first version compared with "the original's output is not its input", which wrongly
+flagged 4 correct repairs of TorchIO's load/save round trip (whose correct output IS its input); it was replaced before anything was reported. Applied
+retroactively (`scripts/check_noop.py`, `results/noop_check.json`): 0 of 91 seeded repairs and 1 of 17 library repairs flagged, the mutation `Crop`.
+
+**Library gates (`libverify.py`, in `Workspace.validate`).** The oracle sees only the driver's path. Two generic probes judge the rest:
+(1) regression: the library's covering test files (as in the own-tests analysis) must not gain a failure relative to the pre-fix library
+(`scripts/check_regressions.py`); (2) reader: the library's loader (one line per library: `tio.ScalarImage`, `monai.transforms.LoadImage`,
+`nibabel.load`, `nilearn.image.load_img`) must report the same affine for three phantom files as the pre-fix library (`scripts/check_reader.py`); the
+upstream fixes change it by 0.0 mm in every case. Results on the 17 library repairs that passed held-out validation: regression flags staged2
+`monai_orientation_lps` (18 orientation tests newly fail) and the mutation `Crop` (2 crop tests); reader flags both staged `torchio_sitk_ras_lps`
+repairs (`image.affine` changes by 134.2 mm: they flipped axes in the nibabel backend's reader, which kept the load/save round trip right). The reader
+change was found by hand first, when the patch's file (`data/backends.py`) looked wrong for a writer bug; TorchIO's own `test_image.py` (87 tests)
+does not notice it. The agent's repairs pass both gates.
+
+| run | approach | verified runs | bugs verified | passed oracle + held-out | tokens | cost | per verified repair |
+|---|---|---|---|---|---|---|---|
+| real3 | tool-calling agent, no trace | 3 of 14 | nilearn_reorder, torchio_sitk_ras_lps | 3 | 3,690,088 | $1.23 | $0.411 |
+| real4 | tool-calling agent + trace ranking | 4 of 16 | monai_orientation_lps, nilearn_reorder, torchio_sitk_ras_lps | 4 | 4,211,671 | $1.45 | $0.363 |
+| staged1 | staged: trace top-6 functions, 3 candidates x 3 rounds | 5 of 16 | monai_orientation_lps, nilearn_reorder, torchio_crop | 6 | 784,913 | $0.32 | $0.064 |
+| staged2 | staged, file-diverse suspects (top function of each file first, k=8) | 1 of 8 | nilearn_reorder | 3 | 351,045 | $0.14 | $0.141 |
+| mut1 | mutation search over the trace's top suspects, no model | 0 of 3 | - | 0 | 0 | $0.00 | - |
+
+Cascade (`results/repair_cascade.json`): staged first, the agent (real4, same repetition) only where staged has no verified repair: bugs verified
+2 and 4 in the two repetitions at $0.78 and $0.64, against
+1 and 3 for the agent alone at $0.75 and $0.70. Over every method, 4 of 8 bugs have a verified repair:
+monai_orientation_lps, nilearn_reorder, torchio_crop, torchio_sitk_ras_lps. The four that never did (MONAI `Spacing` offset, nibabel `conform`, nibabel `io_orientation`, TorchIO `Reorient`) are
+the ones whose fix needs an understanding of the algorithm; no method here gets there.
+
+Real scans (`scripts/validate_real_scans_lib.py`): all 16 library repairs that passed held-out validation, from the agent and staged runs, produce
+output identical to the upstream fix on all four scans (64 of 64), including the three the gates reject: the real-scan check runs the same driver.
+
+## Contract suggester (`suggest.py`, `spatialcontract init`, 2026-10-29)
+Nemotron proposes each contract field with a quoted piece of source and a basis: "stated" (a docstring, comment, name or argument states the intended
+convention), "inferred" (only what the code does), or "unknown". Values outside the supported set become "unknown"; the command prints a block to
+paste and never edits the file, so the gate keeps abstaining until a person adds the contract. Evaluation (`scripts/evaluate_suggest.py`,
+`results/suggest_eval.json`): every one of the 49 seeded cases with its contract removed, one call each, 83,647 tokens.
+
+| cases | usable suggestion | exactly the declared contract | other |
+|---|---|---|---|
+| 11 correct controls | 3 | 3 | - |
+| 31 seeded bugs | 6 | 4 | in 1, the buggy code PASSES the oracle under the suggested contract: the draft described the bug |
+| 7 must-abstain cases | 3 (all fields "inferred") | - | - |
+
+11 of 196 fields were marked "stated": the corpus scripts carry no docstrings or comments (they were removed so that the repair
+model could not read the bug), so there is little intent to read. On code that states its intent the suggester uses it: on `examples/needs_contract.py`
+it quotes the docstring for RAS, mm and RAS orientation and leaves the affine convention unknown. This supports the design, a draft for a person to
+confirm, and not a way to skip the contract.

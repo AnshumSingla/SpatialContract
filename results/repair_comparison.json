@@ -1,0 +1,127 @@
+{
+ "real3": {
+  "approach": "tool-calling agent, no trace",
+  "runs": 14,
+  "bugs": 7,
+  "repaired_runs": 3,
+  "bugs_repaired": [
+   "nilearn_reorder",
+   "torchio_sitk_ras_lps"
+  ],
+  "overfit": 0,
+  "localized_runs": 6,
+  "tokens": 3690088,
+  "usd": 1.234,
+  "usd_per_repair": 0.411,
+  "verified_runs": 3,
+  "bugs_verified": [
+   "nilearn_reorder",
+   "torchio_sitk_ras_lps"
+  ],
+  "failed_library_gates": {},
+  "usd_per_verified_repair": 0.411,
+  "harness_errors": []
+ },
+ "real4": {
+  "approach": "tool-calling agent + trace ranking",
+  "runs": 16,
+  "bugs": 8,
+  "repaired_runs": 4,
+  "bugs_repaired": [
+   "monai_orientation_lps",
+   "nilearn_reorder",
+   "torchio_sitk_ras_lps"
+  ],
+  "overfit": 0,
+  "localized_runs": 9,
+  "tokens": 4211671,
+  "usd": 1.452,
+  "usd_per_repair": 0.363,
+  "verified_runs": 4,
+  "bugs_verified": [
+   "monai_orientation_lps",
+   "nilearn_reorder",
+   "torchio_sitk_ras_lps"
+  ],
+  "failed_library_gates": {},
+  "usd_per_verified_repair": 0.363,
+  "harness_errors": []
+ },
+ "staged1": {
+  "approach": "staged: trace top-6 functions, 3 candidates x 3 rounds",
+  "runs": 16,
+  "bugs": 8,
+  "repaired_runs": 6,
+  "bugs_repaired": [
+   "monai_orientation_lps",
+   "nilearn_reorder",
+   "torchio_crop",
+   "torchio_sitk_ras_lps"
+  ],
+  "overfit": 0,
+  "localized_runs": 10,
+  "tokens": 784913,
+  "usd": 0.322,
+  "usd_per_repair": 0.054,
+  "verified_runs": 5,
+  "bugs_verified": [
+   "monai_orientation_lps",
+   "nilearn_reorder",
+   "torchio_crop"
+  ],
+  "failed_library_gates": {
+   "torchio_sitk_ras_lps#r1": [
+    "reader_changed"
+   ]
+  },
+  "usd_per_verified_repair": 0.064,
+  "harness_errors": []
+ },
+ "staged2": {
+  "approach": "staged, file-diverse suspects (top function of each file first, k=8)",
+  "runs": 8,
+  "bugs": 8,
+  "repaired_runs": 3,
+  "bugs_repaired": [
+   "monai_orientation_lps",
+   "nilearn_reorder",
+   "torchio_sitk_ras_lps"
+  ],
+  "overfit": 0,
+  "localized_runs": 6,
+  "tokens": 351045,
+  "usd": 0.141,
+  "usd_per_repair": 0.047,
+  "verified_runs": 1,
+  "bugs_verified": [
+   "nilearn_reorder"
+  ],
+  "failed_library_gates": {
+   "torchio_sitk_ras_lps#r0": [
+    "reader_changed"
+   ],
+   "monai_orientation_lps#r0": [
+    "regression"
+   ]
+  },
+  "usd_per_verified_repair": 0.141,
+  "harness_errors": []
+ },
+ "mut1": {
+  "approach": "mutation search over the trace's top suspects, no model",
+  "runs": 3,
+  "bugs": 3,
+  "repaired_runs": 0,
+  "bugs_repaired": [],
+  "overfit": 2,
+  "localized_runs": 2,
+  "tokens": 0,
+  "usd": 0.0,
+  "usd_per_repair": null,
+  "verified_runs": 0,
+  "bugs_verified": [],
+  "failed_library_gates": {},
+  "usd_per_verified_repair": null,
+  "harness_errors": []
+ }
+}

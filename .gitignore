@@ -10,3 +10,4 @@ __pycache__/
 results/token_ledger.json
 _work/
 results/demo_server*.log
+results/api_stopped.json

@@ -1,0 +1,15 @@
+--- a/monai/transforms/spatial/array.py
++++ b/monai/transforms/spatial/array.py
+@@ -614,4 +614,5 @@
+ 
+         """
++        from monai.data.utils import orientation_ras_lps
+         spatial_shape = data_array.peek_pending_shape() if isinstance(data_array, MetaTensor) else data_array.shape[1:]
+         sr = len(spatial_shape)
+@@ -622,4 +623,6 @@
+         if isinstance(data_array, MetaTensor):
+             affine_np, *_ = convert_data_type(data_array.peek_pending_affine(), np.ndarray)
++            # convert from LPS to RAS for nibabel orientation functions
++            affine_np = orientation_ras_lps(affine_np)
+             affine_ = to_affine_nd(sr, affine_np)
+         else:

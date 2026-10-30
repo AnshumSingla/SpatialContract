@@ -90,7 +90,46 @@ def ramp_differential(code_path, contract: SpatialContract, python=None, pythonp
             "valid_fraction": round(frac, 3), "lossless": lossless}
 
 
-def validate(code_path, contract: SpatialContract, run_seed: int = 0, python=None, pythonpath=None, hidden_seeds=None) -> dict:
+def is_noop(code_path, python=None, pythonpath=None, seeds=PAIRED_BASE_SEEDS, script=None) -> bool:
+    """True when the code's output equals its input (same array and affine) on every given phantom. ``script`` runs a different
+    driver file with the same interpreter and import roots (a library repair is judged through its fixed driver)."""
+    with tempfile.TemporaryDirectory(prefix="sc_noop_") as d:
+        d = Path(d)
+        for s in seeds:
+            ph = make_phantom(s)
+            i, o = d / f"in{s}.nii.gz", d / f"out{s}.nii.gz"
+            ph.save(i)
+            ok, _ = oracle._run_code(Path(script or code_path).resolve(), i, o, d, python, pythonpath)
+            if not ok:
+                return False
+            out = nib.load(str(o))
+            data = np.asarray(out.dataobj)
+            if data.shape != ph.data.shape or not np.allclose(out.affine, ph.affine, atol=1e-4) or not np.array_equal(data, ph.data):
+                return False
+    return True
+
+
+def changes_extent(code_path, python=None, pythonpath=None, seeds=PAIRED_BASE_SEEDS) -> bool:
+    """True when the code's output array shape differs from its input's on some phantom (it crops, pads, resamples or re-orients)."""
+    with tempfile.TemporaryDirectory(prefix="sc_extent_") as d:
+        d = Path(d)
+        for s in seeds:
+            ph = make_phantom(s)
+            i, o = d / f"in{s}.nii.gz", d / f"out{s}.nii.gz"
+            ph.save(i)
+            ok, _ = oracle._run_code(Path(code_path).resolve(), i, o, d, python, pythonpath)
+            if ok and tuple(nib.load(str(o)).shape) != ph.data.shape:
+                return True
+    return False
+
+
+def validate(code_path, contract: SpatialContract, run_seed: int = 0, python=None, pythonpath=None, hidden_seeds=None,
+             original: dict | None = None) -> dict:
+    """Held-out validation. ``original`` = {"code_path", "python", "pythonpath"} of the code before the repair enables the no-op
+    check: when the original code changed the array's extent (crop, pad, resample, re-orient) and the patch returns its input
+    unchanged on every visible phantom, the patch removed the pipeline's work instead of fixing it (a mutation search "repaired"
+    TorchIO's Crop by deleting the crop) and fails validation. A pipeline whose correct output IS its input (a load/save round
+    trip) never changed the extent, so its correct repairs are not affected."""
     code_path = Path(code_path)
     kw = dict(python=python, pythonpath=pythonpath)
     src = code_path.read_text(encoding="utf-8")
@@ -101,6 +140,9 @@ def validate(code_path, contract: SpatialContract, run_seed: int = 0, python=Non
                                    phantoms=[make_paired(make_phantom(s), k) for s in PAIRED_BASE_SEEDS for k in (0, 1)], **kw)
     diff = ramp_differential(code_path, contract, **kw)
     summary = {name: rep.verdict for name, rep in parts.items()} | {"differential": diff["verdict"]}
+    if original is not None:
+        noop = is_noop(code_path, **kw) and changes_extent(original["code_path"], original.get("python"), original.get("pythonpath"))
+        summary["not_a_noop"] = "FAIL" if noop else "PASS"
     return {"passed": all(v == "PASS" for v in summary.values()), "summary": summary, "differential": diff,
             "per_run_seed": per_run_seed(run_seed, src),
             "failing_detail": {name: rep.feedback(max_lines=6) for name, rep in parts.items() if rep.verdict != "PASS"}}

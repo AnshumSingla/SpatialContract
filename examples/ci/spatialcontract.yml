@@ -1,0 +1,43 @@
+# Example GitHub Actions workflow: copy to .github/workflows/spatialcontract.yml in the repository whose code you want checked.
+#
+# It runs the deterministic landmark-phantom oracle (no LLM, no API key, no network after install) on
+#   - every script that declares SPATIAL_CONTRACT and defines process(in_path, out_path), and
+#   - every module with @spatial_contract-decorated functions,
+# and fails the job on FAIL (exit 1) or ERROR (exit 3). ABSTAIN (exit 4: a contract is missing or ambiguous) also fails the
+# job by default; set ALLOW_ABSTAIN to "1" while contracts are being added.
+name: spatial-contract
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+jobs:
+  oracle:
+    runs-on: ubuntu-latest
+    env:
+      ALLOW_ABSTAIN: "0"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install the code under test and SpatialContract
+        run: |
+          if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+          pip install "spatialcontract @ git+https://github.com/AnshumSingla/SpatialContract.git"
+      - name: Check declared spatial contracts
+        run: |
+          files=$(git ls-files '*.py' | xargs grep -lE '^SPATIAL_CONTRACT *=|^@([A-Za-z_]+\.)*spatial_contract' || true)
+          if [ -z "$files" ]; then echo "no declared spatial contracts found"; exit 0; fi
+          set +e
+          spatialcontract check $files --pythonpath . --report spatialcontract-report.json
+          code=$?
+          if [ "$code" = 4 ] && [ "$ALLOW_ABSTAIN" = 1 ]; then code=0; fi
+          exit $code
+      - name: Upload the oracle reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: spatialcontract-report
+          path: spatialcontract-report.json

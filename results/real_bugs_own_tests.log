@@ -1,0 +1,40 @@
+torchio_crop             files=['tests/transforms/preprocessing/test_crop.py']
+    pre tests on pre: PASS {'passed': 2}
+    post tests on pre: PASS {'passed': 2}  failing: []
+    post tests on post: PASS {'passed': 2}
+    => existing tests missed it: True; regression test catches it: False []
+nilearn_reorder          files=['nilearn/image/tests/test_resampling.py']
+    pre tests on pre: FAIL {'failed': 2, 'passed': 16}
+    post tests on pre: FAIL {'failed': 3, 'passed': 16}  failing: ['nilearn\\image\\tests\\test_resampling_scpost.py::test_reorder_img_mirror', 'nilearn\\image\\tests\\test_resampling_scpost.py::test_resampling_nan', 'nilearn\\image\\tests\\test_resampling_scpost.py::test_resampling_result_axis_permutation']
+    post tests on post: FAIL {'failed': 2, 'passed': 17}
+    => existing tests missed it: True; regression test catches it: True ['test_resampling::test_reorder_img_mirror']
+nibabel_conform          files=['nibabel/tests/test_processing.py']
+    pre tests on pre: PASS {'passed': 8}
+    post tests on pre: PASS {'passed': 8}  failing: []
+    post tests on post: PASS {'passed': 8}
+    => existing tests missed it: True; regression test catches it: False []
+monai_spacing_offset     files=['tests/test_spacing.py']
+    pre tests on pre: PASS {'passed': 38}
+    post tests on pre: FAIL {'failed': 1, 'passed': 38}  failing: ['tests\\test_spacing_scpost.py::TestSpacingCase::test_spacing_16']
+    post tests on post: FAIL {'failed': 1, 'passed': 38}
+    => existing tests missed it: True; regression test catches it: False []
+nibabel_ioorient         files=['nibabel/tests/test_orientations.py']
+    pre tests on pre: PASS {'passed': 8}
+    post tests on pre: FAIL {'failed': 1, 'passed': 8}  failing: ['nibabel\\tests\\test_orientations_scpost.py::test_io_orientation_column_strength_regression']
+    post tests on post: FAIL {'failed': 1, 'passed': 8}
+    => existing tests missed it: True; regression test catches it: True ['test_orientations::test_io_orientation_column_strength_regression']
+torchio_reorient         files=['tests/test_reorient.py']
+    pre tests on pre: PASS {'passed': 18}
+    post tests on pre: FAIL {'failed': 4, 'passed': 20}  failing: ['tests/test_reorient_scpost.py::TestWorldCoordinates::test_bbox_preserved_anisotropic_spacing', 'tests/test_reorient_scpost.py::TestWorldCoordinates::test_bbox_preserved_identity_spacing[AIR]', 'tests/test_reorient_scpost.py::TestWorldCoordinates::test_bbox_preserved_identity_spacing[PSR]', 'tests/test_reorient_scpost.py::TestWorldCoordinates::test_bbox_preserved_identity_spacing[SLA]']
+    post tests on post: PASS {'passed': 24}
+    => existing tests missed it: True; regression test catches it: True ['test_reorient::TestWorldCoordinates::test_bbox_preserved_anisotropic_spacing', 'test_reorient::TestWorldCoordinates::test_bbox_preserved_identity_spacing[AIR]', 'test_reorient::TestWorldCoordinates::test_bbox_preserved_identity_spacing[PSR]']
+torchio_sitk_ras_lps     files=['tests/test_image.py']
+    pre tests on pre: FAIL {'failed': 2, 'passed': 87}
+    post tests on pre: FAIL {'failed': 4, 'passed': 88}  failing: ['tests/test_image_scpost.py::TestImageIO::test_save_nii_zarr', 'tests/test_image_scpost.py::TestImageIO::test_save_nii_zarr_multichannel', 'tests/test_image_scpost.py::TestImageIO::test_save_preserves_affine[.nii.gz]', 'tests/test_image_scpost.py::TestImageIO::test_save_preserves_lps_orientation']
+    post tests on post: FAIL {'failed': 2, 'passed': 90}
+    => existing tests missed it: True; regression test catches it: True ['test_image::TestImageIO::test_save_preserves_affine[.nii.gz]', 'test_image::TestImageIO::test_save_preserves_lps_orientation']
+monai_orientation_lps    files=['tests/transforms/test_orientation.py', 'tests/transforms/test_orientationd.py']
+    pre tests on pre: FAIL {'passed': 24, 'errors': 2}
+    post tests on pre: FAIL {'failed': 9, 'passed': 25, 'errors': 2}  failing: ['tests\\transforms\\test_orientation_scpost.py::TestOrientationCase::test_ornt_meta_01', 'tests\\transforms\\test_orientation_scpost.py::TestOrientationCase::test_ornt_meta_03', 'tests\\transforms\\test_orientation_scpost.py::TestOrientationCase::test_ornt_meta_05', 'tests\\transforms\\test_orientation_scpost.py::TestOrientationCase::test_ornt_meta_07']
+    post tests on post: FAIL {'passed': 34, 'errors': 2}
+    => existing tests missed it: True; regression test catches it: True ['test_orientation::TestOrientationCase::test_ornt_meta_01', 'test_orientation::TestOrientationCase::test_ornt_meta_03', 'test_orientation::TestOrientationCase::test_ornt_meta_05']

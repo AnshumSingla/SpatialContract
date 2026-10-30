@@ -1,0 +1,59 @@
+model: nvidia/nemotron-3-super-120b-a12b | tasks: 8 | n=3 rounds=3 k=8 diverse=True
+[budget] +5596p +1491c => 13376633/14069546 tokens, $4.87/$5.40
+nilearn_reorder          r0 REPAIRED  rounds=1 candidates=1 localized=True tokens=7087 41.8s
+[budget] +6080p +728c => 13383441/14069546 tokens, $4.88/$5.40
+[budget] +3507p +1332c => 13388280/14069546 tokens, $4.88/$5.40
+[budget] +6080p +1282c => 13395642/14069546 tokens, $4.88/$5.40
+[budget] +6080p +1303c => 13403025/14069546 tokens, $4.88/$5.40
+[budget] +3507p +1873c => 13408405/14069546 tokens, $4.89/$5.40
+[budget] +7841p +688c => 13416934/14069546 tokens, $4.89/$5.40
+[budget] +7841p +676c => 13425451/14069546 tokens, $4.89/$5.40
+[budget] +3507p +1714c => 13430672/14069546 tokens, $4.90/$5.40
+[budget] +7841p +1120c => 13439633/14069546 tokens, $4.90/$5.40
+[budget] +7841p +1142c => 13448616/14069546 tokens, $4.90/$5.40
+[budget] +5526p +1769c => 13455911/14069546 tokens, $4.91/$5.40
+[budget] +7841p +1157c => 13464909/14069546 tokens, $4.91/$5.40
+[budget] +7841p +1171c => 13473921/14069546 tokens, $4.91/$5.40
+nibabel_conform          r0 FAILED    rounds=3 candidates=9 localized=True tokens=74553 99.8s
+[budget] +5526p +1732c => 13481179/14069546 tokens, $4.92/$5.40
+[budget] +5526p +2094c => 13488799/14069546 tokens, $4.92/$5.40
+[budget] +5526p +3067c => 13497392/14069546 tokens, $4.92/$5.40
+[budget] +5526p +2938c => 13505856/14069546 tokens, $4.93/$5.40
+[budget] +5526p +2248c => 13513630/14069546 tokens, $4.93/$5.40
+[budget] +5033p +843c => 13519506/14069546 tokens, $4.93/$5.40
+torchio_crop             r0 FAILED    rounds=3 candidates=9 localized=True tokens=62444 242.0s
+[budget] +5033p +866c => 13525405/14069546 tokens, $4.94/$5.40
+[budget] +5344p +1371c => 13532120/14069546 tokens, $4.94/$5.40
+[budget] +5344p +1066c => 13538530/14069546 tokens, $4.94/$5.40
+[budget] +5344p +1000c => 13544874/14069546 tokens, $4.94/$5.40
+[budget] +5033p +959c => 13550866/14069546 tokens, $4.95/$5.40
+[budget] +8361p +1054c => 13560281/14069546 tokens, $4.95/$5.40
+[budget] +8361p +1202c => 13569844/14069546 tokens, $4.95/$5.40
+[budget] +7095p +1030c => 13577969/14069546 tokens, $4.96/$5.40
+[budget] +8361p +1300c => 13587630/14069546 tokens, $4.96/$5.40
+[budget] +7095p +810c => 13595535/14069546 tokens, $4.96/$5.40
+[budget] +7095p +850c => 13603480/14069546 tokens, $4.97/$5.40
+[budget] +7969p +1323c => 13612772/14069546 tokens, $4.97/$5.40
+[budget] +7969p +1118c => 13621859/14069546 tokens, $4.97/$5.40
+[budget] +7969p +1051c => 13630879/14069546 tokens, $4.98/$5.40
+nibabel_ioorient         r0 FAILED    rounds=3 candidates=9 localized=True tokens=75507 98.0s
+[budget] +7095p +1126c => 13639100/14069546 tokens, $4.98/$5.40
+[budget] +7095p +968c => 13647163/14069546 tokens, $4.98/$5.40
+[budget] +7095p +1196c => 13655454/14069546 tokens, $4.99/$5.40
+monai_spacing_offset     r0 FAILED    rounds=3 candidates=9 localized=False tokens=66317 219.0s
+[budget] +3263p +514c => 13659231/14069546 tokens, $4.99/$5.40
+[budget] +3263p +1464c => 13663958/14069546 tokens, $4.99/$5.40
+[budget] +3298p +480c => 13667736/14069546 tokens, $4.99/$5.40
+[budget] +3263p +839c => 13671838/14069546 tokens, $4.99/$5.40
+[budget] +5318p +520c => 13677676/14069546 tokens, $4.99/$5.40
+torchio_sitk_ras_lps     r0 REPAIRED  rounds=1 candidates=1 localized=False tokens=3778 67.2s
+[budget] +5318p +1042c => 13684036/14069546 tokens, $5.00/$5.40
+[budget] +5318p +1003c => 13690357/14069546 tokens, $5.00/$5.40
+[budget] +4956p +861c => 13696174/14069546 tokens, $5.00/$5.40
+[budget] +4956p +841c => 13701971/14069546 tokens, $5.00/$5.40
+[budget] +4956p +1707c => 13708634/14069546 tokens, $5.01/$5.40
+torchio_reorient         r0 FAILED    rounds=3 candidates=9 localized=True tokens=49402 143.5s
+[budget] +4847p +570c => 13714051/14069546 tokens, $5.01/$5.40
+[budget] +4847p +1693c => 13720591/14069546 tokens, $5.01/$5.40
+monai_orientation_lps    r0 REPAIRED  rounds=1 candidates=2 localized=True tokens=11957 152.2s
+ledger total: 13720591 | about $5.01 spent

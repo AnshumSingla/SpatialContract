@@ -1,0 +1,2 @@
+{"t": 1793231653.52, "event": "start", "case": "nibabel_conform", "suspects": [["nibabel/nifti1.py", "Nifti1Pair.as_reoriented"], ["nibabel/processing.py", "conform"], ["nibabel/spatialimages.py", "SpatialImage.as_reoriented"], ["nibabel/nifti1.py", "Nifti1Header.get_sform"], ["nibabel/nifti1.py", "Nifti1Header.get_best_affine"], ["nibabel/analyze.py", "AnalyzeImage.from_file_map"]], "candidates": 120}
+{"t": 1793231700.85, "event": "end", "outcome": "FAILED", "winner": null, "candidates": 120, "seconds": 65.7}

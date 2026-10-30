@@ -1,0 +1,451 @@
+{
+ "summary": {
+  "bugs": 31,
+  "auto_repaired": 8,
+  "auto_overfit": 0,
+  "auto_ids": [
+   "L01_one_axis_only",
+   "L03_no_conversion",
+   "M02_centimetres",
+   "M03_not_converted",
+   "M04_converted_twice",
+   "R02_swap_target_codes",
+   "R09_units_milli",
+   "R10_units_cm"
+  ],
+  "not_applicable": 23,
+  "controls_touched": 0,
+  "abstain_touched": 0,
+  "hybrid_repaired_pct": 98,
+  "arm3_repaired_pct": 98,
+  "arm3_tokens_on_bugs": 298814,
+  "hybrid_tokens_on_bugs": 245414
+ },
+ "rows": [
+  {
+   "id": "R01_swap_transpose",
+   "kind": "bug",
+   "bug_class": "axis_swap",
+   "outcome": "NOT_APPLICABLE",
+   "patterns": [
+    "general_affine"
+   ]
+  },
+  {
+   "id": "R02_swap_target_codes",
+   "kind": "bug",
+   "bug_class": "axis_swap",
+   "outcome": "REPAIRED",
+   "heldout": {
+    "hidden_bank": "PASS",
+    "per_run": "PASS",
+    "paired": "PASS",
+    "differential": "PASS"
+   },
+   "correction": "orient"
+  },
+  {
+   "id": "R03_flip_post",
+   "kind": "bug",
+   "bug_class": "flipped_axis",
+   "outcome": "NOT_APPLICABLE",
+   "patterns": [
+    "general_affine",
+    "signed_permutation"
+   ]
+  },
+  {
+   "id": "R04_flip_pre",
+   "kind": "bug",
+   "bug_class": "flipped_axis",
+   "outcome": "NOT_APPLICABLE",
+   "patterns": [
+    "general_affine",
+    "signed_permutation"
+   ]
+  },
+  {
+   "id": "R05_stale_affine",
+   "kind": "bug",
+   "bug_class": "stale_affine",
+   "outcome": "NOT_APPLICABLE",
+   "patterns": [
+    "general_affine"
+   ]
+  },
+  {
+   "id": "R06_stale_header",
+   "kind": "bug",
+   "bug_class": "stale_affine",
+   "outcome": "NOT_APPLICABLE",
+   "patterns": [
+    "general_affine"
+   ]
+  },
+  {
+   "id": "R07_voxel_identity",
+   "kind": "bug",
+   "bug_class": "voxel_vs_world",
+   "outcome": "NOT_APPLICABLE",
+   "patterns": [
+    "general_affine"
+   ]
+  },
+  {
+   "id": "R08_voxel_spacing_only",
+   "kind": "bug",
+   "bug_class": "voxel_vs_world",
+   "outcome": "NOT_APPLICABLE",
+   "patterns": [
+    "general_affine"
+   ]
+  },
+  {
+   "id": "R09_units_milli",
+   "kind": "bug",
+   "bug_class": "wrong_units",
+   "outcome": "REPAIRED",
+   "heldout": {
+    "hidden_bank": "PASS",
+    "per_run": "PASS",
+    "paired": "PASS",
+    "differential": "PASS"
+   },
+   "correction": "affine"
+  },
+  {
+   "id": "R10_units_cm",
+   "kind": "bug",
+   "bug_class": "wrong_units",
+   "outcome": "REPAIRED",
+   "heldout": {
+    "hidden_bank": "PASS",
+    "per_run": "PASS",
+    "paired": "PASS",
+    "differential": "PASS"
+   },
+   "correction": "affine"
+  },
+  {
+   "id": "R11_affine_transposed",
+   "kind": "bug",
+   "bug_class": "transposed_affine",
+   "outcome": "NOT_APPLICABLE",
+   "patterns": [
+    "general_affine",
+    "translation"
+   ]
+  },
+  {
+   "id": "R12_affine_inverted",
+   "kind": "bug",
+   "bug_class": "transposed_affine",
+   "outcome": "NOT_APPLICABLE",
+   "patterns": [
+    "general_affine"
+   ]
+  },
+  {
+   "id": "S01_voxel_skips_inverse",
+   "kind": "bug",
+   "bug_class": "voxel_vs_world",
+   "outcome": "NOT_APPLICABLE",
+   "patterns": [
+    "-",
+    "general_affine"
+   ]
+  },
+  {
+   "id": "S02_stale_affine",
+   "kind": "bug",
+   "bug_class": "stale_affine",
+   "outcome": "NOT_APPLICABLE",
+   "patterns": [
+    "general_affine"
+   ]
+  },
+  {
+   "id": "S03_flip_output",
+   "kind": "bug",
+   "bug_class": "flipped_axis",
+   "outcome": "NOT_APPLICABLE",
+   "patterns": [
+    "signed_permutation"
+   ]
+  },
+  {
+   "id": "S04_units_cm_voxel",
+   "kind": "bug",
+   "bug_class": "wrong_units",
+   "outcome": "NOT_APPLICABLE",
+   "patterns": [
+    "scaled"
+   ]
+  },
+  {
+   "id": "S05_swap_transpose",
+   "kind": "bug",
+   "bug_class": "axis_swap",
+   "outcome": "NOT_APPLICABLE",
+   "patterns": [
+    "signed_permutation"
+   ]
+  },
+  {
+   "id": "S06_reshape_order",
+   "kind": "bug",
+   "bug_class": "axis_swap",
+   "outcome": "NOT_APPLICABLE",
+   "patterns": [
+    "not_affine"
+   ]
+  },
+  {
+   "id": "S07_affine_transposed",
+   "kind": "bug",
+   "bug_class": "transposed_affine",
+   "outcome": "NOT_APPLICABLE",
+   "patterns": [
+    "translation"
+   ]
+  },
+  {
+   "id": "C01_stale_affine",
+   "kind": "bug",
+   "bug_class": "stale_affine",
+   "outcome": "NOT_APPLICABLE",
+   "patterns": [
+    "translation"
+   ]
+  },
+  {
+   "id": "C02_index_order",
+   "kind": "bug",
+   "bug_class": "axis_swap",
+   "outcome": "NOT_APPLICABLE",
+   "patterns": [
+    "translation"
+   ]
+  },
+  {
+   "id": "C03_voxel_added_to_world",
+   "kind": "bug",
+   "bug_class": "voxel_vs_world",
+   "outcome": "NOT_APPLICABLE",
+   "patterns": [
+    "translation"
+   ]
+  },
+  {
+   "id": "C04_flip_cropped",
+   "kind": "bug",
+   "bug_class": "flipped_axis",
+   "outcome": "NOT_APPLICABLE",
+   "patterns": [
+    "general_affine",
+    "signed_permutation"
+   ]
+  },
+  {
+   "id": "L01_one_axis_only",
+   "kind": "bug",
+   "bug_class": "flipped_axis",
+   "outcome": "REPAIRED",
+   "heldout": {
+    "hidden_bank": "PASS",
+    "per_run": "PASS",
+    "paired": "PASS",
+    "differential": "PASS"
+   },
+   "correction": "affine"
+  },
+  {
+   "id": "L02_rotation_only",
+   "kind": "bug",
+   "bug_class": "flipped_axis",
+   "outcome": "NOT_APPLICABLE",
+   "patterns": [
+    "translation"
+   ]
+  },
+  {
+   "id": "L03_no_conversion",
+   "kind": "bug",
+   "bug_class": "stale_affine",
+   "outcome": "REPAIRED",
+   "heldout": {
+    "hidden_bank": "PASS",
+    "per_run": "PASS",
+    "paired": "PASS",
+    "differential": "PASS"
+   },
+   "correction": "affine"
+  },
+  {
+   "id": "L04_right_multiply",
+   "kind": "bug",
+   "bug_class": "voxel_vs_world",
+   "outcome": "NOT_APPLICABLE",
+   "patterns": [
+    "general_affine",
+    "signed_permutation"
+   ]
+  },
+  {
+   "id": "M01_zoom_only",
+   "kind": "bug",
+   "bug_class": "wrong_units",
+   "outcome": "NOT_APPLICABLE",
+   "patterns": [
+    "translation"
+   ]
+  },
+  {
+   "id": "M02_centimetres",
+   "kind": "bug",
+   "bug_class": "wrong_units",
+   "outcome": "REPAIRED",
+   "heldout": {
+    "hidden_bank": "PASS",
+    "per_run": "PASS",
+    "paired": "PASS",
+    "differential": "PASS"
+   },
+   "correction": "affine"
+  },
+  {
+   "id": "M03_not_converted",
+   "kind": "bug",
+   "bug_class": "wrong_units",
+   "outcome": "REPAIRED",
+   "heldout": {
+    "hidden_bank": "PASS",
+    "per_run": "PASS",
+    "paired": "PASS",
+    "differential": "PASS"
+   },
+   "correction": "affine"
+  },
+  {
+   "id": "M04_converted_twice",
+   "kind": "bug",
+   "bug_class": "wrong_units",
+   "outcome": "REPAIRED",
+   "heldout": {
+    "hidden_bank": "PASS",
+    "per_run": "PASS",
+    "paired": "PASS",
+    "differential": "PASS"
+   },
+   "correction": "affine"
+  },
+  {
+   "id": "K01_R_reference",
+   "kind": "control",
+   "bug_class": null,
+   "outcome": "NO_CHANGE_NEEDED"
+  },
+  {
+   "id": "K02_R_float32",
+   "kind": "control",
+   "bug_class": null,
+   "outcome": "NO_CHANGE_NEEDED"
+  },
+  {
+   "id": "K03_S_reference",
+   "kind": "control",
+   "bug_class": null,
+   "outcome": "NO_CHANGE_NEEDED"
+  },
+  {
+   "id": "K04_S_3mm",
+   "kind": "control",
+   "bug_class": null,
+   "outcome": "NO_CHANGE_NEEDED"
+  },
+  {
+   "id": "K05_C_reference",
+   "kind": "control",
+   "bug_class": null,
+   "outcome": "NO_CHANGE_NEEDED"
+  },
+  {
+   "id": "K06_C_margin5",
+   "kind": "control",
+   "bug_class": null,
+   "outcome": "NO_CHANGE_NEEDED"
+  },
+  {
+   "id": "K07_L_reference",
+   "kind": "control",
+   "bug_class": null,
+   "outcome": "NO_CHANGE_NEEDED"
+  },
+  {
+   "id": "K08_M_reference",
+   "kind": "control",
+   "bug_class": null,
+   "outcome": "NO_CHANGE_NEEDED"
+  },
+  {
+   "id": "K09_noop_copy",
+   "kind": "control",
+   "bug_class": null,
+   "outcome": "NO_CHANGE_NEEDED"
+  },
+  {
+   "id": "K10_R_as_closest_canonical",
+   "kind": "control",
+   "bug_class": null,
+   "outcome": "NO_CHANGE_NEEDED"
+  },
+  {
+   "id": "K11_S_nibabel_resample",
+   "kind": "control",
+   "bug_class": null,
+   "outcome": "NO_CHANGE_NEEDED"
+  },
+  {
+   "id": "A01_no_contract_clean",
+   "kind": "abstain",
+   "bug_class": null,
+   "outcome": "ABSTAIN"
+  },
+  {
+   "id": "A02_no_contract_buggy",
+   "kind": "abstain",
+   "bug_class": "stale_affine",
+   "outcome": "ABSTAIN"
+  },
+  {
+   "id": "A03_no_contract_buggy_S",
+   "kind": "abstain",
+   "bug_class": "flipped_axis",
+   "outcome": "ABSTAIN"
+  },
+  {
+   "id": "A04_units_unknown",
+   "kind": "abstain",
+   "bug_class": null,
+   "outcome": "ABSTAIN"
+  },
+  {
+   "id": "A05_corner_convention",
+   "kind": "abstain",
+   "bug_class": "stale_affine",
+   "outcome": "ABSTAIN"
+  },
+  {
+   "id": "A06_frame_missing",
+   "kind": "abstain",
+   "bug_class": null,
+   "outcome": "ABSTAIN"
+  },
+  {
+   "id": "A07_units_ambiguous",
+   "kind": "abstain",
+   "bug_class": "wrong_units",
+   "outcome": "ABSTAIN"
+  }
+ ]
+}

@@ -1,0 +1,15 @@
+--- a/torchio/transforms/reorient.py
++++ b/torchio/transforms/reorient.py
+@@ -158,11 +158,9 @@
+                 spatial_shape = img_batch.data.shape[-3:]
+                 inv_aff = orientations.inv_ornt_aff(ornt, spatial_shape)
+-                new_matrix = affine.numpy() @ inv_aff
++                new_matrix = inv_aff @ affine.numpy()
+                 affine._matrix = torch.as_tensor(
+                     new_matrix,
+                     dtype=torch.float64,
+                 )
+-
+-        return batch
+ 
+     @property

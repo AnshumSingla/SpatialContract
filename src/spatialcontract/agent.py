@@ -174,6 +174,34 @@ def extract_code_block(text: str | None) -> str | None:
     return blocks[-1] if blocks else None
 
 
+def _try_autofix(original, contract, work, name, evaluate, res, log, run_seed, validate) -> bool:
+    """Deterministic first (autofix.py): if every visible phantom shows the same misplacement, correct it without a model call.
+    Returns True when that settled the case (REPAIRED or OVERFIT); False hands the case to the model unchanged."""
+    from . import autofix
+    corr = autofix.consistent_map(oracle.check(work / f"{name}_iter0.py", contract), contract)
+    if corr is None:
+        return False
+    args = [a.arg for a in next(n for n in ast.parse(original).body if isinstance(n, ast.FunctionDef) and n.name == "process").args.args]
+    patched = autofix.wrapper_source(original, corr, contract, args)
+    if check_patch(original, patched):
+        return False
+    path = work / f"{name}_autofix.py"
+    path.write_text(patched, encoding="utf-8")
+    done, text, verdict = evaluate(path)
+    log.event("autofix", verdict=verdict, feedback=text)
+    if not done:
+        return False
+    res.visible_passed, res.final_source, res.reasons = True, patched, ["deterministic correction, no model call"]
+    if not validate:
+        res.outcome = "REPAIRED"
+        return True
+    held = heldout.validate(path, contract, run_seed=run_seed, original={"code_path": work / f"{name}_iter0.py"})
+    res.heldout = held
+    log.event("heldout", **{k: held[k] for k in ("passed", "summary", "per_run_seed")})
+    res.outcome = "REPAIRED" if held["passed"] else "OVERFIT"
+    return True
+
+
 # ----------------------------------------------------------------------------- the loop
 class Log:
     def __init__(self, path: Path | None):
@@ -205,7 +233,7 @@ def _usage(resp, result: RepairResult):
 
 def repair(case_path, client, *, max_iters: int = 4, run_seed: int = 0, max_tokens: int = 6000, log_dir=None,
            workdir=None, evaluate_factory: Callable = oracle_evaluator, gate: bool = True, validate: bool = True,
-           llm_kwargs: dict | None = None, arm: str = "oracle") -> RepairResult:
+           llm_kwargs: dict | None = None, arm: str = "oracle", autofix: bool = False) -> RepairResult:
     """arm="oracle": gate + oracle feedback (arm 3). arm="tests": no gate, repo-test feedback, report_no_bug/abstain tools (arm 2).
     arm="none": no gate and no feedback; the first submitted patch is final (the "just ask the model" baseline, arm 0).
     ``evaluate_factory(contract)`` must return ``evaluate(path) -> (done, text, verdict)`` for the chosen arm."""
@@ -233,6 +261,8 @@ def repair(case_path, client, *, max_iters: int = 4, run_seed: int = 0, max_toke
     log.event({"oracle": "initial_oracle", "tests": "initial_repo_tests", "none": "initial_no_feedback"}[arm], verdict=verdict, feedback=text)
     if done and arm == "oracle":
         res.outcome, res.visible_passed, res.final_source = "NO_CHANGE_NEEDED", True, original
+        return res
+    if autofix and arm == "oracle" and _try_autofix(original, contract, work, name, evaluate, res, log, run_seed, validate):
         return res
 
     if arm == "oracle":
@@ -325,7 +355,7 @@ def repair(case_path, client, *, max_iters: int = 4, run_seed: int = 0, max_toke
                     if not validate:
                         res.outcome = "REPAIRED"
                         return res
-                    held = heldout.validate(cur_path, contract, run_seed=run_seed)
+                    held = heldout.validate(cur_path, contract, run_seed=run_seed, original={"code_path": case_path})
                     res.heldout = held
                     log.event("heldout", **{k: held[k] for k in ("passed", "summary", "per_run_seed")})
                     res.outcome = "REPAIRED" if held["passed"] else "OVERFIT"

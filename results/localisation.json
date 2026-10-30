@@ -1,0 +1,979 @@
+[
+ {
+  "case": "torchio_crop",
+  "truth": [
+   [
+    "torchio/transforms/preprocessing/spatial/crop.py",
+    "<module>"
+   ],
+   [
+    "torchio/transforms/preprocessing/spatial/crop.py",
+    "Crop.apply_transform"
+   ]
+  ],
+  "rank_first_true_function": 6,
+  "rank_first_true_file": 6,
+  "func@1": false,
+  "func@3": false,
+  "func@5": false,
+  "func@10": true,
+  "file@1": false,
+  "file@3": false,
+  "file@5": false,
+  "file@10": true,
+  "n_ranked": 101,
+  "n_fail": 9,
+  "n_pass": 0,
+  "statuses": {
+   "0": "FAIL",
+   "1": "FAIL",
+   "2": "FAIL",
+   "3": "FAIL",
+   "4": "FAIL",
+   "5": "FAIL",
+   "6": "FAIL",
+   "7": "FAIL",
+   "8": "FAIL"
+  },
+  "baselines": {
+   "named_api": [
+    11,
+    3
+   ],
+   "spectrum_only": [
+    71,
+    27
+   ],
+   "random": {
+    "func@1": 0.0075,
+    "file@1": 0.014,
+    "func@3": 0.028,
+    "file@3": 0.053,
+    "func@5": 0.048,
+    "file@5": 0.0945,
+    "func@10": 0.101,
+    "file@10": 0.188
+   }
+  },
+  "top": [
+   [
+    "torchio/data/image.py",
+    362,
+    "Image._parse_affine",
+    2.1
+   ],
+   [
+    "torchio/data/image.py",
+    186,
+    "Image.affine",
+    2.1
+   ],
+   [
+    "torchio/data/image.py",
+    164,
+    "Image.__copy__",
+    1.92
+   ],
+   [
+    "torchio/data/image.py",
+    155,
+    "Image.__getitem__",
+    1.86
+   ],
+   [
+    "torchio/data/subject.py",
+    141,
+    "Subject.get_first_image",
+    1.8
+   ],
+   [
+    "torchio/transforms/preprocessing/spatial/crop.py",
+    27,
+    "Crop.apply_transform",
+    1.3
+   ],
+   [
+    "torchio/transforms/transform.py",
+    54,
+    "Transform.__call__",
+    1.3
+   ],
+   [
+    "torchio/utils.py",
+    157,
+    "get_rotation_and_spacing_from_affine",
+    1.3
+   ],
+   [
+    "torchio/utils.py",
+    167,
+    "nib_to_sitk",
+    1.3
+   ],
+   [
+    "torchio/data/image.py",
+    96,
+    "Image.__init__",
+    1.3
+   ]
+  ],
+  "summary": "Runtime trace of the driver on 9 phantoms (9 wrong, 0 right): library functions ranked by how strongly their execution is associated with wrong output and with producing affines.\n1. torchio/data/image.py:362 Image._parse_affine  [ran in 9/9 wrong and 0/0 right runs; returned the affine that was written to the output]\n     def _parse_affine(affine: np.ndarray) -> np.ndarray:\n2. torchio/data/image.py:186 Image.affine  [ran in 9/9 wrong and 0/0 right runs; returned the affine that was written to the output]\n     def affine(self) -> np.ndarray:\n3. torchio/data/image.py:164 Image.__copy__  [ran in 9/9 wrong and 0/0 right runs; returned the affine that was written to the output]\n     def __copy__(self):\n4. torchio/data/image.py:155 Image.__getitem__  [ran in 9/9 wrong and 0/0 right runs; returned the affine that was written to the output]\n     def __getitem__(self, item):\n5. torchio/data/subject.py:141 Subject.get_first_image  [ran in 9/9 wrong and 0/0 right runs; returned the affine that was written to the output]\n     def get_first_image(self):\n6. torchio/transforms/preprocessing/spatial/crop.py:27 Crop.apply_transform  [ran in 9/9 wrong and 0/0 right runs]\n     def apply_transform(self, sample) -> Subject:\n7. torchio/transforms/transform.py:54 Transform.__call__  [ran in 9/9 wrong and 0/0 right runs]\n     def __call__(self, data: TypeTransformInput) -> TypeTransformInput:\n8. torchio/utils.py:157 get_rotation_and_spacing_from_affine  [ran in 9/9 wrong and 0/0 right runs]\n     def get_rotation_and_spacing_from_affine("
+ },
+ {
+  "case": "nilearn_reorder",
+  "truth": [
+   [
+    "nilearn/image/resampling.py",
+    "reorder_img"
+   ]
+  ],
+  "rank_first_true_function": 3,
+  "rank_first_true_file": 1,
+  "func@1": false,
+  "func@3": true,
+  "func@5": true,
+  "func@10": true,
+  "file@1": true,
+  "file@3": true,
+  "file@5": true,
+  "file@10": true,
+  "n_ranked": 13,
+  "n_fail": 4,
+  "n_pass": 5,
+  "statuses": {
+   "0": "PASS",
+   "1": "PASS",
+   "2": "FAIL",
+   "3": "PASS",
+   "4": "FAIL",
+   "5": "PASS",
+   "6": "FAIL",
+   "7": "PASS",
+   "8": "FAIL"
+  },
+  "baselines": {
+   "named_api": [
+    1,
+    1
+   ],
+   "spectrum_only": [
+    7,
+    1
+   ],
+   "random": {
+    "func@1": 0.082,
+    "file@1": 0.3045,
+    "func@3": 0.2205,
+    "file@3": 0.6975,
+    "func@5": 0.361,
+    "file@5": 0.892,
+    "func@10": 0.763,
+    "file@10": 1.0
+   }
+  },
+  "top": [
+   [
+    "nilearn/image/resampling.py",
+    58,
+    "from_matrix_vector",
+    1.874
+   ],
+   [
+    "nilearn/image/image.py",
+    592,
+    "new_img_like",
+    1.767
+   ],
+   [
+    "nilearn/image/resampling.py",
+    625,
+    "reorder_img",
+    1.767
+   ],
+   [
+    "nilearn/_utils/niimg_conversions.py",
+    179,
+    "check_niimg",
+    1.467
+   ],
+   [
+    "nilearn/_utils/niimg.py",
+    86,
+    "load_niimg",
+    1.227
+   ],
+   [
+    "nilearn/image/resampling.py",
+    22,
+    "to_matrix_vector",
+    0.967
+   ],
+   [
+    "nilearn/_utils/niimg.py",
+    52,
+    "_get_target_dtype",
+    0.787
+   ],
+   [
+    "nilearn/_utils/cache_mixin.py",
+    150,
+    "_ShelvedFunc",
+    0.667
+   ],
+   [
+    "nilearn/_utils/cache_mixin.py",
+    237,
+    "CacheMixin",
+    0.667
+   ],
+   [
+    "nilearn/_utils/exceptions.py",
+    18,
+    "DimensionError",
+    0.667
+   ]
+  ],
+  "summary": "Runtime trace of the driver on 9 phantoms (4 wrong, 5 right): library functions ranked by how strongly their execution is associated with wrong output and with producing affines.\n1. nilearn/image/resampling.py:58 from_matrix_vector  [ran in 4/4 wrong and 1/5 right runs; returned the affine that was written to the output]\n     def from_matrix_vector(matrix, vector):\n2. nilearn/image/image.py:592 new_img_like  [ran in 4/4 wrong and 5/5 right runs; returned the affine that was written to the output]\n     def new_img_like(ref_niimg, data, affine=None, copy_header=False):\n3. nilearn/image/resampling.py:625 reorder_img  [ran in 4/4 wrong and 5/5 right runs; returned the affine that was written to the output]\n     def reorder_img(img, resample=None):\n4. nilearn/_utils/niimg_conversions.py:179 check_niimg  [ran in 4/4 wrong and 5/5 right runs; returned an affine]\n     def check_niimg(niimg, ensure_ndim=None, atleast_4d=False, dtype=None,\n5. nilearn/_utils/niimg.py:86 load_niimg  [ran in 4/4 wrong and 5/5 right runs; returned an affine]\n     def load_niimg(niimg, dtype=None):\n6. nilearn/image/resampling.py:22 to_matrix_vector  [ran in 4/4 wrong and 5/5 right runs]\n     def to_matrix_vector(transform):\n7. nilearn/_utils/niimg.py:52 _get_target_dtype  [ran in 4/4 wrong and 5/5 right runs]\n     def _get_target_dtype(dtype, target_dtype):\n8. nilearn/_utils/cache_mixin.py:150 _ShelvedFunc  [ran in 4/4 wrong and 5/5 right runs]\n     "
+ },
+ {
+  "case": "nibabel_conform",
+  "truth": [
+   [
+    "nibabel/processing.py",
+    "<module>"
+   ],
+   [
+    "nibabel/processing.py",
+    "conform"
+   ]
+  ],
+  "rank_first_true_function": 2,
+  "rank_first_true_file": 2,
+  "func@1": false,
+  "func@3": true,
+  "func@5": true,
+  "func@10": true,
+  "file@1": false,
+  "file@3": true,
+  "file@5": true,
+  "file@10": true,
+  "n_ranked": 350,
+  "n_fail": 9,
+  "n_pass": 0,
+  "statuses": {
+   "0": "FAIL",
+   "1": "FAIL",
+   "2": "FAIL",
+   "3": "FAIL",
+   "4": "FAIL",
+   "5": "FAIL",
+   "6": "FAIL",
+   "7": "FAIL",
+   "8": "FAIL"
+  },
+  "baselines": {
+   "named_api": [
+    2,
+    2
+   ],
+   "spectrum_only": [
+    185,
+    185
+   ],
+   "random": {
+    "func@1": 0.005,
+    "file@1": 0.0155,
+    "func@3": 0.0085,
+    "file@3": 0.03,
+    "func@5": 0.0145,
+    "file@5": 0.0435,
+    "func@10": 0.026,
+    "file@10": 0.085
+   }
+  },
+  "top": [
+   [
+    "nibabel/nifti1.py",
+    1995,
+    "Nifti1Pair.as_reoriented",
+    2.1
+   ],
+   [
+    "nibabel/processing.py",
+    316,
+    "conform",
+    2.1
+   ],
+   [
+    "nibabel/spatialimages.py",
+    609,
+    "SpatialImage.as_reoriented",
+    2.1
+   ],
+   [
+    "nibabel/nifti1.py",
+    1038,
+    "Nifti1Header.get_sform",
+    2.1
+   ],
+   [
+    "nibabel/nifti1.py",
+    728,
+    "Nifti1Header.get_best_affine",
+    2.1
+   ],
+   [
+    "nibabel/analyze.py",
+    934,
+    "AnalyzeImage.from_file_map",
+    1.8
+   ],
+   [
+    "nibabel/orientations.py",
+    176,
+    "inv_ornt_aff",
+    1.8
+   ],
+   [
+    "nibabel/processing.py",
+    115,
+    "resample_from_to",
+    1.8
+   ],
+   [
+    "nibabel/affines.py",
+    130,
+    "from_matvec",
+    1.8
+   ],
+   [
+    "nibabel/analyze.py",
+    639,
+    "AnalyzeHeader.get_base_affine",
+    1.8
+   ]
+  ],
+  "summary": "Runtime trace of the driver on 9 phantoms (9 wrong, 0 right): library functions ranked by how strongly their execution is associated with wrong output and with producing affines.\n1. nibabel/nifti1.py:1995 Nifti1Pair.as_reoriented  [ran in 9/9 wrong and 0/0 right runs; returned the affine that was written to the output]\n     def as_reoriented(self, ornt):\n2. nibabel/processing.py:316 conform  [ran in 9/9 wrong and 0/0 right runs; returned the affine that was written to the output]\n     def conform(from_img,\n3. nibabel/spatialimages.py:609 SpatialImage.as_reoriented  [ran in 9/9 wrong and 0/0 right runs; returned the affine that was written to the output]\n     def as_reoriented(self, ornt):\n4. nibabel/nifti1.py:1038 Nifti1Header.get_sform  [ran in 9/9 wrong and 0/0 right runs; returned the affine that was written to the output]\n     def get_sform(self, coded=False):\n5. nibabel/nifti1.py:728 Nifti1Header.get_best_affine  [ran in 9/9 wrong and 0/0 right runs; returned the affine that was written to the output]\n     def get_best_affine(self):\n6. nibabel/analyze.py:934 AnalyzeImage.from_file_map  [ran in 9/9 wrong and 0/0 right runs; returned an affine]\n     def from_file_map(klass, file_map, *, mmap=True, keep_file_open=None):\n7. nibabel/orientations.py:176 inv_ornt_aff  [ran in 9/9 wrong and 0/0 right runs; returned an affine]\n     def inv_ornt_aff(ornt, shape):\n8. nibabel/processing.py:115 resample_from_to  [ran in 9/9 wrong and 0/0 right runs; returned an affine]\n     def resample_from_to(from_img,"
+ },
+ {
+  "case": "monai_spacing_offset",
+  "truth": [
+   [
+    "monai/data/utils.py",
+    "compute_shape_offset"
+   ]
+  ],
+  "rank_first_true_function": 20,
+  "rank_first_true_file": 4,
+  "func@1": false,
+  "func@3": false,
+  "func@5": false,
+  "func@10": false,
+  "file@1": false,
+  "file@3": false,
+  "file@5": true,
+  "file@10": true,
+  "n_ranked": 918,
+  "n_fail": 4,
+  "n_pass": 5,
+  "statuses": {
+   "0": "PASS",
+   "1": "FAIL",
+   "2": "PASS",
+   "3": "FAIL",
+   "4": "PASS",
+   "5": "FAIL",
+   "6": "PASS",
+   "7": "FAIL",
+   "8": "PASS"
+  },
+  "baselines": {
+   "named_api": [
+    899,
+    893
+   ],
+   "spectrum_only": [
+    777,
+    776
+   ],
+   "random": {
+    "func@1": 0.0005,
+    "file@1": 0.003,
+    "func@3": 0.0035,
+    "file@3": 0.0135,
+    "func@5": 0.0045,
+    "file@5": 0.022,
+    "func@10": 0.007,
+    "file@10": 0.0385
+   }
+  },
+  "top": [
+   [
+    "monai/transforms/spatial/array.py",
+    151,
+    "SpatialResample._post_process",
+    1.767
+   ],
+   [
+    "monai/transforms/spatial/array.py",
+    188,
+    "SpatialResample.__call__",
+    1.767
+   ],
+   [
+    "monai/transforms/spatial/array.py",
+    512,
+    "Spacing.__call__",
+    1.767
+   ],
+   [
+    "monai/data/utils.py",
+    891,
+    "to_affine_nd",
+    1.767
+   ],
+   [
+    "monai/data/meta_tensor.py",
+    431,
+    "MetaTensor.affine",
+    1.707
+   ],
+   [
+    "monai/utils/type_conversion.py",
+    310,
+    "convert_to_dst_type",
+    1.527
+   ],
+   [
+    "monai/utils/type_conversion.py",
+    168,
+    "convert_to_numpy",
+    1.527
+   ],
+   [
+    "monai/utils/type_conversion.py",
+    103,
+    "convert_to_tensor",
+    1.527
+   ],
+   [
+    "monai/data/utils.py",
+    777,
+    "zoom_affine",
+    1.467
+   ],
+   [
+    "monai/networks/layers/spatial_transforms.py",
+    495,
+    "AffineTransform.forward",
+    1.467
+   ]
+  ],
+  "summary": "Runtime trace of the driver on 9 phantoms (4 wrong, 5 right): library functions ranked by how strongly their execution is associated with wrong output and with producing affines.\n1. monai/transforms/spatial/array.py:151 SpatialResample._post_process  [ran in 4/4 wrong and 5/5 right runs; returned the affine that was written to the output]\n     def _post_process(\n2. monai/transforms/spatial/array.py:188 SpatialResample.__call__  [ran in 4/4 wrong and 5/5 right runs; returned the affine that was written to the output]\n     def __call__(\n3. monai/transforms/spatial/array.py:512 Spacing.__call__  [ran in 4/4 wrong and 5/5 right runs; returned the affine that was written to the output]\n     def __call__(\n4. monai/data/utils.py:891 to_affine_nd  [ran in 4/4 wrong and 5/5 right runs; returned the affine that was written to the output]\n     def to_affine_nd(r: Union[np.ndarray, int], affine: NdarrayTensor, dtype=np.float64) -> NdarrayTensor:\n5. monai/data/meta_tensor.py:431 MetaTensor.affine  [ran in 4/4 wrong and 5/5 right runs; returned the affine that was written to the output]\n     def affine(self) -> torch.Tensor:\n6. monai/utils/type_conversion.py:310 convert_to_dst_type  [ran in 4/4 wrong and 5/5 right runs; returned the affine that was written to the output]\n     def convert_to_dst_type(\n7. monai/utils/type_conversion.py:168 convert_to_numpy  [ran in 4/4 wrong and 5/5 right runs; returned the affine that was written to the output]\n     def convert_to_numpy(data, dtype: DtypeLike = None, wrap_sequence: bool = False):\n8. monai/utils/type_conversion.py:103 convert_to_tensor  [ran in 4/4 wrong and 5/5 right runs; returned the affine that was written to the output]\n     def convert_to_tensor("
+ },
+ {
+  "case": "nibabel_ioorient",
+  "truth": [
+   [
+    "nibabel/orientations.py",
+    "io_orientation"
+   ]
+  ],
+  "rank_first_true_function": 14,
+  "rank_first_true_file": 7,
+  "func@1": false,
+  "func@3": false,
+  "func@5": false,
+  "func@10": false,
+  "file@1": false,
+  "file@3": false,
+  "file@5": false,
+  "file@10": true,
+  "n_ranked": 335,
+  "n_fail": 3,
+  "n_pass": 11,
+  "statuses": {
+   "200": "FAIL",
+   "201": "PASS",
+   "202": "PASS",
+   "203": "PASS",
+   "204": "PASS",
+   "205": "PASS",
+   "206": "FAIL",
+   "207": "FAIL",
+   "3": "PASS",
+   "4": "PASS",
+   "5": "PASS",
+   "6": "PASS",
+   "7": "PASS",
+   "8": "PASS"
+  },
+  "baselines": {
+   "named_api": [
+    274,
+    54
+   ],
+   "spectrum_only": [
+    179,
+    39
+   ],
+   "random": {
+    "func@1": 0.005,
+    "file@1": 0.0135,
+    "func@3": 0.011,
+    "file@3": 0.0405,
+    "func@5": 0.0165,
+    "file@5": 0.0645,
+    "func@10": 0.03,
+    "file@10": 0.119
+   }
+  },
+  "top": [
+   [
+    "nibabel/funcs.py",
+    180,
+    "as_closest_canonical",
+    1.563
+   ],
+   [
+    "nibabel/nifti1.py",
+    2376,
+    "Nifti1Pair.as_reoriented",
+    1.563
+   ],
+   [
+    "nibabel/spatialimages.py",
+    662,
+    "SpatialImage.as_reoriented",
+    1.563
+   ],
+   [
+    "nibabel/nifti1.py",
+    899,
+    "Nifti1Header.get_best_affine",
+    1.563
+   ],
+   [
+    "nibabel/nifti1.py",
+    1266,
+    "Nifti1Header.get_sform",
+    1.563
+   ],
+   [
+    "nibabel/analyze.py",
+    928,
+    "AnalyzeImage.from_file_map",
+    1.263
+   ],
+   [
+    "nibabel/orientations.py",
+    171,
+    "inv_ornt_aff",
+    1.263
+   ],
+   [
+    "nibabel/spatialimages.py",
+    527,
+    "SpatialImage.affine",
+    1.083
+   ],
+   [
+    "nibabel/dataobj_images.py",
+    466,
+    "DataobjImage.from_filename",
+    0.963
+   ],
+   [
+    "nibabel/loadsave.py",
+    85,
+    "load",
+    0.963
+   ]
+  ],
+  "summary": "Runtime trace of the driver on 14 phantoms (3 wrong, 11 right): library functions ranked by how strongly their execution is associated with wrong output and with producing affines.\n1. nibabel/funcs.py:180 as_closest_canonical  [ran in 3/3 wrong and 11/11 right runs; returned the affine that was written to the output]\n     def as_closest_canonical(img, enforce_diag=False):\n2. nibabel/nifti1.py:2376 Nifti1Pair.as_reoriented  [ran in 3/3 wrong and 11/11 right runs; returned the affine that was written to the output]\n     def as_reoriented(self, ornt):\n3. nibabel/spatialimages.py:662 SpatialImage.as_reoriented  [ran in 3/3 wrong and 11/11 right runs; returned the affine that was written to the output]\n     def as_reoriented(self, ornt: Sequence[Sequence[int]]) -> Self:\n4. nibabel/nifti1.py:899 Nifti1Header.get_best_affine  [ran in 3/3 wrong and 11/11 right runs; returned the affine that was written to the output]\n     def get_best_affine(self):\n5. nibabel/nifti1.py:1266 Nifti1Header.get_sform  [ran in 3/3 wrong and 11/11 right runs; returned the affine that was written to the output]\n     def get_sform(self, coded=False):\n6. nibabel/analyze.py:928 AnalyzeImage.from_file_map  [ran in 3/3 wrong and 11/11 right runs; returned an affine]\n     def from_file_map(klass, file_map, *, mmap=True, keep_file_open=None):\n7. nibabel/orientations.py:171 inv_ornt_aff  [ran in 3/3 wrong and 11/11 right runs; returned an affine]\n     def inv_ornt_aff(ornt, shape):\n8. nibabel/spatialimages.py:527 SpatialImage.affine  [ran in 3/3 wrong and 11/11 right runs; returned an affine]\n     def affine(self):"
+ },
+ {
+  "case": "torchio_reorient",
+  "truth": [
+   [
+    "torchio/transforms/reorient.py",
+    "Reorient.apply_transform"
+   ],
+   [
+    "torchio/transforms/reorient.py",
+    "_apply_reorientation"
+   ],
+   [
+    "torchio/visualization.py",
+    "_axis_name"
+   ]
+  ],
+  "rank_first_true_function": 12,
+  "rank_first_true_file": 9,
+  "func@1": false,
+  "func@3": false,
+  "func@5": false,
+  "func@10": false,
+  "file@1": false,
+  "file@3": false,
+  "file@5": false,
+  "file@10": true,
+  "n_ranked": 157,
+  "n_fail": 5,
+  "n_pass": 4,
+  "statuses": {
+   "0": "PASS",
+   "1": "FAIL",
+   "2": "FAIL",
+   "3": "FAIL",
+   "4": "FAIL",
+   "5": "PASS",
+   "6": "PASS",
+   "7": "PASS",
+   "8": "FAIL"
+  },
+  "baselines": {
+   "named_api": [
+    10,
+    3
+   ],
+   "spectrum_only": [
+    119,
+    83
+   ],
+   "random": {
+    "func@1": 0.012,
+    "file@1": 0.0485,
+    "func@3": 0.04,
+    "file@3": 0.1345,
+    "func@5": 0.0645,
+    "file@5": 0.2245,
+    "func@10": 0.127,
+    "file@10": 0.418
+   }
+  },
+  "top": [
+   [
+    "torchio/data/affine.py",
+    94,
+    "AffineMatrix.data",
+    1.545
+   ],
+   [
+    "torchio/data/affine.py",
+    207,
+    "AffineMatrix.numpy",
+    1.545
+   ],
+   [
+    "torchio/data/backends.py",
+    72,
+    "TensorBackend.__init__",
+    1.045
+   ],
+   [
+    "torchio/data/batch.py",
+    30,
+    "ImagesBatch.__init__",
+    1.045
+   ],
+   [
+    "torchio/data/image.py",
+    296,
+    "Image._init_from_tensor",
+    1.045
+   ],
+   [
+    "torchio/data/image.py",
+    586,
+    "Image.load",
+    1.045
+   ],
+   [
+    "torchio/data/image.py",
+    725,
+    "Image._save_sitk",
+    1.045
+   ],
+   [
+    "torchio/data/image.py",
+    1114,
+    "Image.__deepcopy__",
+    1.045
+   ],
+   [
+    "torchio/transforms/reorient.py",
+    17,
+    "_validate_orientation",
+    1.045
+   ],
+   [
+    "torchio/transforms/reorient.py",
+    36,
+    "_check_axis_coverage",
+    1.045
+   ]
+  ],
+  "summary": "Runtime trace of the driver on 9 phantoms (5 wrong, 4 right): library functions ranked by how strongly their execution is associated with wrong output and with producing affines.\n1. torchio/data/affine.py:94 AffineMatrix.data  [ran in 5/5 wrong and 4/4 right runs; returned the affine that was written to the output]\n     def data(self) -> Tensor:\n2. torchio/data/affine.py:207 AffineMatrix.numpy  [ran in 5/5 wrong and 4/4 right runs; returned the affine that was written to the output]\n     def numpy(self) -> npt.NDArray[np.float64]:\n3. torchio/data/backends.py:72 TensorBackend.__init__  [ran in 5/5 wrong and 4/4 right runs]\n     def __init__(\n4. torchio/data/batch.py:30 ImagesBatch.__init__  [ran in 5/5 wrong and 4/4 right runs]\n     def __init__(\n5. torchio/data/image.py:296 Image._init_from_tensor  [ran in 5/5 wrong and 4/4 right runs]\n     def _init_from_tensor(\n6. torchio/data/image.py:586 Image.load  [ran in 5/5 wrong and 4/4 right runs]\n     def load(self) -> None:\n7. torchio/data/image.py:725 Image._save_sitk  [ran in 5/5 wrong and 4/4 right runs]\n     def _save_sitk(self, path: Path, **kwargs: Any) -> None:\n8. torchio/data/image.py:1114 Image.__deepcopy__  [ran in 5/5 wrong and 4/4 right runs]\n     def __deepcopy__(self, memo: dict) -> Self:"
+ },
+ {
+  "case": "torchio_sitk_ras_lps",
+  "truth": [
+   [
+    "torchio/data/image.py",
+    "Image._save_sitk"
+   ],
+   [
+    "torchio/data/io.py",
+    "<module>"
+   ],
+   [
+    "torchio/data/io.py",
+    "read_sitk"
+   ]
+  ],
+  "rank_first_true_function": 5,
+  "rank_first_true_file": 3,
+  "func@1": false,
+  "func@3": false,
+  "func@5": true,
+  "func@10": true,
+  "file@1": false,
+  "file@3": true,
+  "file@5": true,
+  "file@10": true,
+  "n_ranked": 73,
+  "n_fail": 9,
+  "n_pass": 0,
+  "statuses": {
+   "0": "FAIL",
+   "1": "FAIL",
+   "2": "FAIL",
+   "3": "FAIL",
+   "4": "FAIL",
+   "5": "FAIL",
+   "6": "FAIL",
+   "7": "FAIL",
+   "8": "FAIL"
+  },
+  "baselines": {
+   "named_api": [
+    60,
+    1
+   ],
+   "spectrum_only": [
+    54,
+    12
+   ],
+   "random": {
+    "func@1": 0.0155,
+    "file@1": 0.2265,
+    "func@3": 0.041,
+    "file@3": 0.5345,
+    "func@5": 0.07,
+    "file@5": 0.7225,
+    "func@10": 0.143,
+    "file@10": 0.928
+   }
+  },
+  "top": [
+   [
+    "torchio/data/backends.py",
+    142,
+    "NibabelBackend.affine",
+    1.68
+   ],
+   [
+    "torchio/data/affine.py",
+    104,
+    "Affine.spacing",
+    1.3
+   ],
+   [
+    "torchio/data/image.py",
+    133,
+    "Image.__init__",
+    1.3
+   ],
+   [
+    "torchio/data/image.py",
+    456,
+    "Image.load",
+    1.3
+   ],
+   [
+    "torchio/data/image.py",
+    574,
+    "Image._save_sitk",
+    1.3
+   ],
+   [
+    "torchio/data/image.py",
+    338,
+    "Image.affine",
+    1.3
+   ],
+   [
+    "torchio/data/affine.py",
+    42,
+    "Affine.__init__",
+    1.24
+   ],
+   [
+    "torchio/data/affine.py",
+    111,
+    "Affine.origin",
+    1.24
+   ],
+   [
+    "torchio/data/affine.py",
+    117,
+    "Affine.direction",
+    1.24
+   ],
+   [
+    "torchio/data/axes.py",
+    50,
+    "validate_axes",
+    1.18
+   ]
+  ],
+  "summary": "Runtime trace of the driver on 9 phantoms (9 wrong, 0 right): library functions ranked by how strongly their execution is associated with wrong output and with producing affines.\n1. torchio/data/backends.py:142 NibabelBackend.affine  [ran in 9/9 wrong and 0/0 right runs; returned an affine]\n     def affine(self) -> TypeAffineMatrix:\n2. torchio/data/affine.py:104 Affine.spacing  [ran in 9/9 wrong and 0/0 right runs]\n     def spacing(self) -> TypeSpacing:\n3. torchio/data/image.py:133 Image.__init__  [ran in 9/9 wrong and 0/0 right runs]\n     def __init__(\n4. torchio/data/image.py:456 Image.load  [ran in 9/9 wrong and 0/0 right runs]\n     def load(self) -> None:\n5. torchio/data/image.py:574 Image._save_sitk  [ran in 9/9 wrong and 0/0 right runs]\n     def _save_sitk(self, path: Path, **kwargs: Any) -> None:\n6. torchio/data/image.py:338 Image.affine  [ran in 9/9 wrong and 0/0 right runs]\n     def affine(self) -> Affine:\n7. torchio/data/affine.py:42 Affine.__init__  [ran in 9/9 wrong and 0/0 right runs]\n     def __init__(\n8. torchio/data/affine.py:111 Affine.origin  [ran in 9/9 wrong and 0/0 right runs]\n     def origin(self) -> TypeOrigin:"
+ },
+ {
+  "case": "monai_orientation_lps",
+  "truth": [
+   [
+    "monai/transforms/spatial/array.py",
+    "<module>"
+   ],
+   [
+    "monai/transforms/spatial/array.py",
+    "Orientation.__call__"
+   ],
+   [
+    "monai/transforms/spatial/array.py",
+    "Orientation.__init__"
+   ],
+   [
+    "monai/transforms/spatial/array.py",
+    "Orientation.inverse"
+   ],
+   [
+    "monai/transforms/spatial/dictionary.py",
+    "<module>"
+   ],
+   [
+    "monai/transforms/spatial/dictionary.py",
+    "Orientationd.__init__"
+   ]
+  ],
+  "rank_first_true_function": 2,
+  "rank_first_true_file": 2,
+  "func@1": false,
+  "func@3": true,
+  "func@5": true,
+  "func@10": true,
+  "file@1": false,
+  "file@3": true,
+  "file@5": true,
+  "file@10": true,
+  "n_ranked": 1251,
+  "n_fail": 9,
+  "n_pass": 0,
+  "statuses": {
+   "0": "FAIL",
+   "1": "FAIL",
+   "2": "FAIL",
+   "3": "FAIL",
+   "4": "FAIL",
+   "5": "FAIL",
+   "6": "FAIL",
+   "7": "FAIL",
+   "8": "FAIL"
+  },
+  "baselines": {
+   "named_api": [
+    7,
+    2
+   ],
+   "spectrum_only": [
+    1077,
+    266
+   ],
+   "random": {
+    "func@1": 0.0005,
+    "file@1": 0.0525,
+    "func@3": 0.0035,
+    "file@3": 0.139,
+    "func@5": 0.006,
+    "file@5": 0.2125,
+    "func@10": 0.0115,
+    "file@10": 0.3795
+   }
+  },
+  "top": [
+   [
+    "monai/data/utils.py",
+    1510,
+    "orientation_ras_lps",
+    2.1
+   ],
+   [
+    "monai/transforms/spatial/array.py",
+    595,
+    "Orientation.__call__",
+    1.8
+   ],
+   [
+    "monai/transforms/spatial/functional.py",
+    187,
+    "orientation",
+    1.8
+   ],
+   [
+    "monai/data/meta_tensor.py",
+    491,
+    "MetaTensor.peek_pending_affine",
+    1.8
+   ],
+   [
+    "monai/data/utils.py",
+    938,
+    "to_affine_nd",
+    1.8
+   ],
+   [
+    "monai/data/meta_tensor.py",
+    463,
+    "MetaTensor.affine",
+    1.74
+   ],
+   [
+    "monai/data/meta_tensor.py",
+    106,
+    "MetaTensor.__new__",
+    1.56
+   ],
+   [
+    "monai/utils/type_conversion.py",
+    113,
+    "convert_to_tensor",
+    1.56
+   ],
+   [
+    "monai/utils/type_conversion.py",
+    343,
+    "convert_to_dst_type",
+    1.56
+   ],
+   [
+    "monai/data/meta_tensor.py",
+    345,
+    "MetaTensor.get_default_affine",
+    1.56
+   ]
+  ],
+  "summary": "Runtime trace of the driver on 9 phantoms (9 wrong, 0 right): library functions ranked by how strongly their execution is associated with wrong output and with producing affines.\n1. monai/data/utils.py:1510 orientation_ras_lps  [ran in 9/9 wrong and 0/0 right runs; returned the affine that was written to the output]\n     def orientation_ras_lps(affine: NdarrayTensor) -> NdarrayTensor:\n2. monai/transforms/spatial/array.py:595 Orientation.__call__  [ran in 9/9 wrong and 0/0 right runs; returned an affine]\n     def __call__(self, data_array: torch.Tensor, lazy: bool | None = None) -> torch.Tensor:\n3. monai/transforms/spatial/functional.py:187 orientation  [ran in 9/9 wrong and 0/0 right runs; returned an affine]\n     def orientation(img, original_affine, spatial_ornt, lazy, transform_info) -> torch.Tensor:\n4. monai/data/meta_tensor.py:491 MetaTensor.peek_pending_affine  [ran in 9/9 wrong and 0/0 right runs; returned an affine]\n     def peek_pending_affine(self):\n5. monai/data/utils.py:938 to_affine_nd  [ran in 9/9 wrong and 0/0 right runs; returned an affine]\n     def to_affine_nd(r: np.ndarray | int, affine: NdarrayTensor, dtype=np.float64) -> NdarrayTensor:\n6. monai/data/meta_tensor.py:463 MetaTensor.affine  [ran in 9/9 wrong and 0/0 right runs; returned an affine]\n     def affine(self) -> torch.Tensor:\n7. monai/data/meta_tensor.py:106 MetaTensor.__new__  [ran in 9/9 wrong and 0/0 right runs; returned an affine]\n     def __new__(\n8. monai/utils/type_conversion.py:113 convert_to_tensor  [ran in 9/9 wrong and 0/0 right runs; returned an affine]\n     def convert_to_tensor("
+ }
+]

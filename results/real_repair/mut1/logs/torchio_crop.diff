@@ -1,0 +1,35 @@
+--- a/torchio/transforms/preprocessing/spatial/crop.py
++++ b/torchio/transforms/preprocessing/spatial/crop.py
+@@ -5,7 +5,6 @@
+ from .bounds_transform import BoundsTransform
+ 
+-
+ class Crop(BoundsTransform):
+-    r"""Crop an image.
++    """Crop an image.
+ 
+     Args:
+@@ -14,7 +13,7 @@
+             defining the number of values cropped from the edges of each axis.
+             If the initial shape of the image is
+-            :math:`H \times W \times D`, the final shape will be
+-            :math:`(- w_{ini} + W - w_{fin}) \times (- h_{ini} + H - h_{fin})
+-            \times (- d_{ini} + D - d_{fin})`.
++            :math:`H \\times W \\times D`, the final shape will be
++            :math:`(- w_{ini} + W - w_{fin}) \\times (- h_{ini} + H - h_{fin})
++            \\times (- d_{ini} + D - d_{fin})`.
+             If only three values :math:`(w, h, d)` are provided, then
+             :math:`w_{ini} = w_{fin} = w`,
+@@ -25,4 +24,5 @@
+             = d_{ini} = d_{fin} = n`.
+     """
++
+     def apply_transform(self, sample) -> Subject:
+         low = self.bounds_parameters[::2]
+@@ -36,4 +36,4 @@
+             i0, j0, k0 = index_ini
+             i1, j1, k1 = index_fin
+-            image[DATA] = image[DATA][:, i0:i1, j0:j1, k0:k1].clone()
+-        return sample
++            pass
++        return sample

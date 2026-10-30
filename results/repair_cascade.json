@@ -1,0 +1,42 @@
+{
+ "cascade_staged_then_agent": [
+  {
+   "rep": 0,
+   "bugs_verified": [
+    "monai_orientation_lps",
+    "nilearn_reorder"
+   ],
+   "n": 2,
+   "usd": 0.783
+  },
+  {
+   "rep": 1,
+   "bugs_verified": [
+    "monai_orientation_lps",
+    "nilearn_reorder",
+    "torchio_crop",
+    "torchio_sitk_ras_lps"
+   ],
+   "n": 4,
+   "usd": 0.636
+  }
+ ],
+ "agent_alone": [
+  {
+   "rep": 0,
+   "n": 1,
+   "usd": 0.754
+  },
+  {
+   "rep": 1,
+   "n": 3,
+   "usd": 0.698
+  }
+ ],
+ "union_bugs_any_approach": [
+  "monai_orientation_lps",
+  "nilearn_reorder",
+  "torchio_crop",
+  "torchio_sitk_ras_lps"
+ ]
+}

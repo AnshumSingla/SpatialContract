@@ -1,0 +1,104 @@
+[
+ {
+  "run": "real3/nilearn_reorder#r0",
+  "status": "OK",
+  "upstream_changes_reader_mm": 0.0,
+  "repair_changes_reader_mm": 0.0
+ },
+ {
+  "run": "real3/nilearn_reorder#r1",
+  "status": "OK",
+  "upstream_changes_reader_mm": 0.0,
+  "repair_changes_reader_mm": 0.0
+ },
+ {
+  "run": "real3/torchio_sitk_ras_lps#r1",
+  "status": "OK",
+  "upstream_changes_reader_mm": 0.0,
+  "repair_changes_reader_mm": 0.0
+ },
+ {
+  "run": "real4/nilearn_reorder#r0",
+  "status": "OK",
+  "upstream_changes_reader_mm": 0.0,
+  "repair_changes_reader_mm": 0.0
+ },
+ {
+  "run": "real4/nilearn_reorder#r1",
+  "status": "OK",
+  "upstream_changes_reader_mm": 0.0,
+  "repair_changes_reader_mm": 0.0
+ },
+ {
+  "run": "real4/torchio_sitk_ras_lps#r1",
+  "status": "OK",
+  "upstream_changes_reader_mm": 0.0,
+  "repair_changes_reader_mm": 0.0
+ },
+ {
+  "run": "real4/monai_orientation_lps#r1",
+  "status": "OK",
+  "upstream_changes_reader_mm": 0.0,
+  "repair_changes_reader_mm": 0.0
+ },
+ {
+  "run": "staged1/nilearn_reorder#r0",
+  "status": "OK",
+  "upstream_changes_reader_mm": 0.0,
+  "repair_changes_reader_mm": 0.0
+ },
+ {
+  "run": "staged1/monai_orientation_lps#r0",
+  "status": "OK",
+  "upstream_changes_reader_mm": 0.0,
+  "repair_changes_reader_mm": 0.0
+ },
+ {
+  "run": "staged1/torchio_crop#r1",
+  "status": "OK",
+  "upstream_changes_reader_mm": 0.0,
+  "repair_changes_reader_mm": 0.0
+ },
+ {
+  "run": "staged1/torchio_sitk_ras_lps#r1",
+  "status": "READER_CHANGED",
+  "upstream_changes_reader_mm": 0.0,
+  "repair_changes_reader_mm": 134.2253
+ },
+ {
+  "run": "staged1/monai_orientation_lps#r1",
+  "status": "OK",
+  "upstream_changes_reader_mm": 0.0,
+  "repair_changes_reader_mm": 0.0
+ },
+ {
+  "run": "staged1/nilearn_reorder#r1",
+  "status": "OK",
+  "upstream_changes_reader_mm": 0.0,
+  "repair_changes_reader_mm": 0.0
+ },
+ {
+  "run": "staged2/nilearn_reorder#r0",
+  "status": "OK",
+  "upstream_changes_reader_mm": 0.0,
+  "repair_changes_reader_mm": 0.0
+ },
+ {
+  "run": "staged2/torchio_sitk_ras_lps#r0",
+  "status": "READER_CHANGED",
+  "upstream_changes_reader_mm": 0.0,
+  "repair_changes_reader_mm": 134.2253
+ },
+ {
+  "run": "staged2/monai_orientation_lps#r0",
+  "status": "OK",
+  "upstream_changes_reader_mm": 0.0,
+  "repair_changes_reader_mm": 0.0
+ },
+ {
+  "run": "mut1/torchio_crop#r0",
+  "status": "OK",
+  "upstream_changes_reader_mm": 0.0,
+  "repair_changes_reader_mm": 0.0
+ }
+]

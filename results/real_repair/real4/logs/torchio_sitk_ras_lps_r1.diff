@@ -1,0 +1,26 @@
+--- a/torchio/data/image.py
++++ b/torchio/data/image.py
+@@ -581,8 +581,20 @@
+             array = rearrange(data, "c i j k -> k j i c")
+             sitk_image = sitk.GetImageFromArray(array, isVector=True)
+-        sitk_image.SetSpacing(self.affine.spacing)
+-        sitk_image.SetOrigin(self.affine.origin)
++        # Convert RAS affine to LPS (ITK/SimpleITK) convention
++        flipxy = torch.tensor([[ -1, 0, 0, 0],
++                               [ 0, -1, 0, 0],
++                               [ 0, 0, 1, 0],
++                               [ 0, 0, 0, 1]], dtype=self.affine.data.dtype, device=self.affine.data.device)
++        affine_lps = flipxy @ self.affine.data
++        sitk_image.SetSpacing(
++            tuple(float(v) for v in torch.sqrt(torch.sum(affine_lps[:3, :3] ** 2, dim=0)))
++        )
++        sitk_image.SetOrigin(tuple(float(v) for v in affine_lps[:3, 3]))
++        # Direction cosines matrix with spacing factored out
++        rz = affine_lps[:3, :3]
++        sp = torch.sqrt(torch.sum(rz ** 2, dim=0))
++        direction = rz / sp
+         sitk_image.SetDirection(
+-            rearrange(self.affine.direction, "i j -> (i j)").tolist()
++            rearrange(direction, "i j -> (i j)").tolist()
+         )
+         sitk.WriteImage(sitk_image, str(path), **kwargs)

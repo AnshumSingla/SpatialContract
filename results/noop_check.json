@@ -1,0 +1,538 @@
+{
+ "seeded_repairs": 91,
+ "seeded_flagged": [],
+ "library_repairs": 17,
+ "library_flagged": [
+  {
+   "run": "mut1/torchio_crop",
+   "noop": true
+  }
+ ],
+ "seeded": [
+  {
+   "id": "R01_swap_transpose",
+   "rep": 0,
+   "noop": false
+  },
+  {
+   "id": "R02_swap_target_codes",
+   "rep": 0,
+   "noop": false
+  },
+  {
+   "id": "R03_flip_post",
+   "rep": 0,
+   "noop": false
+  },
+  {
+   "id": "R04_flip_pre",
+   "rep": 0,
+   "noop": false
+  },
+  {
+   "id": "R05_stale_affine",
+   "rep": 0,
+   "noop": false
+  },
+  {
+   "id": "R07_voxel_identity",
+   "rep": 0,
+   "noop": false
+  },
+  {
+   "id": "R06_stale_header",
+   "rep": 0,
+   "noop": false
+  },
+  {
+   "id": "R08_voxel_spacing_only",
+   "rep": 0,
+   "noop": false
+  },
+  {
+   "id": "R10_units_cm",
+   "rep": 0,
+   "noop": false
+  },
+  {
+   "id": "R09_units_milli",
+   "rep": 0,
+   "noop": false
+  },
+  {
+   "id": "R11_affine_transposed",
+   "rep": 0,
+   "noop": false
+  },
+  {
+   "id": "R12_affine_inverted",
+   "rep": 0,
+   "noop": false
+  },
+  {
+   "id": "S01_voxel_skips_inverse",
+   "rep": 0,
+   "noop": false
+  },
+  {
+   "id": "S02_stale_affine",
+   "rep": 0,
+   "noop": false
+  },
+  {
+   "id": "S03_flip_output",
+   "rep": 0,
+   "noop": false
+  },
+  {
+   "id": "S04_units_cm_voxel",
+   "rep": 0,
+   "noop": false
+  },
+  {
+   "id": "S05_swap_transpose",
+   "rep": 0,
+   "noop": false
+  },
+  {
+   "id": "S07_affine_transposed",
+   "rep": 0,
+   "noop": false
+  },
+  {
+   "id": "C01_stale_affine",
+   "rep": 0,
+   "noop": false
+  },
+  {
+   "id": "C03_voxel_added_to_world",
+   "rep": 0,
+   "noop": false
+  },
+  {
+   "id": "C04_flip_cropped",
+   "rep": 0,
+   "noop": false
+  },
+  {
+   "id": "C02_index_order",
+   "rep": 0,
+   "noop": false
+  },
+  {
+   "id": "L01_one_axis_only",
+   "rep": 0,
+   "noop": false
+  },
+  {
+   "id": "L02_rotation_only",
+   "rep": 0,
+   "noop": false
+  },
+  {
+   "id": "L03_no_conversion",
+   "rep": 0,
+   "noop": false
+  },
+  {
+   "id": "M01_zoom_only",
+   "rep": 0,
+   "noop": false
+  },
+  {
+   "id": "M02_centimetres",
+   "rep": 0,
+   "noop": false
+  },
+  {
+   "id": "M03_not_converted",
+   "rep": 0,
+   "noop": false
+  },
+  {
+   "id": "M04_converted_twice",
+   "rep": 0,
+   "noop": false
+  },
+  {
+   "id": "L04_right_multiply",
+   "rep": 0,
+   "noop": false
+  },
+  {
+   "id": "R01_swap_transpose",
+   "rep": 1,
+   "noop": false
+  },
+  {
+   "id": "R02_swap_target_codes",
+   "rep": 1,
+   "noop": false
+  },
+  {
+   "id": "R03_flip_post",
+   "rep": 1,
+   "noop": false
+  },
+  {
+   "id": "R04_flip_pre",
+   "rep": 1,
+   "noop": false
+  },
+  {
+   "id": "R05_stale_affine",
+   "rep": 1,
+   "noop": false
+  },
+  {
+   "id": "R06_stale_header",
+   "rep": 1,
+   "noop": false
+  },
+  {
+   "id": "R07_voxel_identity",
+   "rep": 1,
+   "noop": false
+  },
+  {
+   "id": "R08_voxel_spacing_only",
+   "rep": 1,
+   "noop": false
+  },
+  {
+   "id": "R09_units_milli",
+   "rep": 1,
+   "noop": false
+  },
+  {
+   "id": "R10_units_cm",
+   "rep": 1,
+   "noop": false
+  },
+  {
+   "id": "R11_affine_transposed",
+   "rep": 1,
+   "noop": false
+  },
+  {
+   "id": "R12_affine_inverted",
+   "rep": 1,
+   "noop": false
+  },
+  {
+   "id": "S02_stale_affine",
+   "rep": 1,
+   "noop": false
+  },
+  {
+   "id": "S03_flip_output",
+   "rep": 1,
+   "noop": false
+  },
+  {
+   "id": "S04_units_cm_voxel",
+   "rep": 1,
+   "noop": false
+  },
+  {
+   "id": "S05_swap_transpose",
+   "rep": 1,
+   "noop": false
+  },
+  {
+   "id": "C01_stale_affine",
+   "rep": 1,
+   "noop": false
+  },
+  {
+   "id": "S07_affine_transposed",
+   "rep": 1,
+   "noop": false
+  },
+  {
+   "id": "C02_index_order",
+   "rep": 1,
+   "noop": false
+  },
+  {
+   "id": "C03_voxel_added_to_world",
+   "rep": 1,
+   "noop": false
+  },
+  {
+   "id": "S06_reshape_order",
+   "rep": 1,
+   "noop": false
+  },
+  {
+   "id": "C04_flip_cropped",
+   "rep": 1,
+   "noop": false
+  },
+  {
+   "id": "L01_one_axis_only",
+   "rep": 1,
+   "noop": false
+  },
+  {
+   "id": "L02_rotation_only",
+   "rep": 1,
+   "noop": false
+  },
+  {
+   "id": "L03_no_conversion",
+   "rep": 1,
+   "noop": false
+  },
+  {
+   "id": "L04_right_multiply",
+   "rep": 1,
+   "noop": false
+  },
+  {
+   "id": "M01_zoom_only",
+   "rep": 1,
+   "noop": false
+  },
+  {
+   "id": "M02_centimetres",
+   "rep": 1,
+   "noop": false
+  },
+  {
+   "id": "M03_not_converted",
+   "rep": 1,
+   "noop": false
+  },
+  {
+   "id": "M04_converted_twice",
+   "rep": 1,
+   "noop": false
+  },
+  {
+   "id": "R01_swap_transpose",
+   "rep": 2,
+   "noop": false
+  },
+  {
+   "id": "R02_swap_target_codes",
+   "rep": 2,
+   "noop": false
+  },
+  {
+   "id": "R03_flip_post",
+   "rep": 2,
+   "noop": false
+  },
+  {
+   "id": "R04_flip_pre",
+   "rep": 2,
+   "noop": false
+  },
+  {
+   "id": "R05_stale_affine",
+   "rep": 2,
+   "noop": false
+  },
+  {
+   "id": "R06_stale_header",
+   "rep": 2,
+   "noop": false
+  },
+  {
+   "id": "R07_voxel_identity",
+   "rep": 2,
+   "noop": false
+  },
+  {
+   "id": "R08_voxel_spacing_only",
+   "rep": 2,
+   "noop": false
+  },
+  {
+   "id": "R09_units_milli",
+   "rep": 2,
+   "noop": false
+  },
+  {
+   "id": "R11_affine_transposed",
+   "rep": 2,
+   "noop": false
+  },
+  {
+   "id": "R10_units_cm",
+   "rep": 2,
+   "noop": false
+  },
+  {
+   "id": "R12_affine_inverted",
+   "rep": 2,
+   "noop": false
+  },
+  {
+   "id": "S01_voxel_skips_inverse",
+   "rep": 2,
+   "noop": false
+  },
+  {
+   "id": "S02_stale_affine",
+   "rep": 2,
+   "noop": false
+  },
+  {
+   "id": "S03_flip_output",
+   "rep": 2,
+   "noop": false
+  },
+  {
+   "id": "S04_units_cm_voxel",
+   "rep": 2,
+   "noop": false
+  },
+  {
+   "id": "S05_swap_transpose",
+   "rep": 2,
+   "noop": false
+  },
+  {
+   "id": "S06_reshape_order",
+   "rep": 2,
+   "noop": false
+  },
+  {
+   "id": "S07_affine_transposed",
+   "rep": 2,
+   "noop": false
+  },
+  {
+   "id": "C01_stale_affine",
+   "rep": 2,
+   "noop": false
+  },
+  {
+   "id": "C03_voxel_added_to_world",
+   "rep": 2,
+   "noop": false
+  },
+  {
+   "id": "C02_index_order",
+   "rep": 2,
+   "noop": false
+  },
+  {
+   "id": "C04_flip_cropped",
+   "rep": 2,
+   "noop": false
+  },
+  {
+   "id": "L01_one_axis_only",
+   "rep": 2,
+   "noop": false
+  },
+  {
+   "id": "L02_rotation_only",
+   "rep": 2,
+   "noop": false
+  },
+  {
+   "id": "L03_no_conversion",
+   "rep": 2,
+   "noop": false
+  },
+  {
+   "id": "L04_right_multiply",
+   "rep": 2,
+   "noop": false
+  },
+  {
+   "id": "M01_zoom_only",
+   "rep": 2,
+   "noop": false
+  },
+  {
+   "id": "M03_not_converted",
+   "rep": 2,
+   "noop": false
+  },
+  {
+   "id": "M02_centimetres",
+   "rep": 2,
+   "noop": false
+  },
+  {
+   "id": "M04_converted_twice",
+   "rep": 2,
+   "noop": false
+  }
+ ],
+ "library": [
+  {
+   "run": "real3/nilearn_reorder_r0",
+   "noop": false
+  },
+  {
+   "run": "real3/nilearn_reorder_r1",
+   "noop": false
+  },
+  {
+   "run": "real3/torchio_sitk_ras_lps_r1",
+   "noop": false
+  },
+  {
+   "run": "real4/nilearn_reorder_r0",
+   "noop": false
+  },
+  {
+   "run": "real4/nilearn_reorder_r1",
+   "noop": false
+  },
+  {
+   "run": "real4/torchio_sitk_ras_lps_r1",
+   "noop": false
+  },
+  {
+   "run": "real4/monai_orientation_lps_r1",
+   "noop": false
+  },
+  {
+   "run": "staged1/nilearn_reorder_r0",
+   "noop": false
+  },
+  {
+   "run": "staged1/monai_orientation_lps_r0",
+   "noop": false
+  },
+  {
+   "run": "staged1/torchio_crop_r1",
+   "noop": false
+  },
+  {
+   "run": "staged1/torchio_sitk_ras_lps_r1",
+   "noop": false
+  },
+  {
+   "run": "staged1/monai_orientation_lps_r1",
+   "noop": false
+  },
+  {
+   "run": "staged1/nilearn_reorder_r1",
+   "noop": false
+  },
+  {
+   "run": "staged2/nilearn_reorder_r0",
+   "noop": false
+  },
+  {
+   "run": "staged2/torchio_sitk_ras_lps_r0",
+   "noop": false
+  },
+  {
+   "run": "staged2/monai_orientation_lps_r0",
+   "noop": false
+  },
+  {
+   "run": "mut1/torchio_crop",
+   "noop": true
+  }
+ ]
+}

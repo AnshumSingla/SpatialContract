@@ -1,0 +1,168 @@
+[
+ {
+  "run": "real3/nilearn_reorder#r0",
+  "status": "OK",
+  "tests": {
+   "failed": 2,
+   "passed": 16
+  },
+  "newly_failing": []
+ },
+ {
+  "run": "real3/nilearn_reorder#r1",
+  "status": "OK",
+  "tests": {
+   "failed": 2,
+   "passed": 16
+  },
+  "newly_failing": []
+ },
+ {
+  "run": "real3/torchio_sitk_ras_lps#r1",
+  "status": "OK",
+  "tests": {
+   "failed": 2,
+   "passed": 87
+  },
+  "newly_failing": []
+ },
+ {
+  "run": "real4/nilearn_reorder#r0",
+  "status": "OK",
+  "tests": {
+   "failed": 2,
+   "passed": 16
+  },
+  "newly_failing": []
+ },
+ {
+  "run": "real4/nilearn_reorder#r1",
+  "status": "OK",
+  "tests": {
+   "failed": 2,
+   "passed": 16
+  },
+  "newly_failing": []
+ },
+ {
+  "run": "real4/torchio_sitk_ras_lps#r1",
+  "status": "OK",
+  "tests": {
+   "failed": 2,
+   "passed": 87
+  },
+  "newly_failing": []
+ },
+ {
+  "run": "real4/monai_orientation_lps#r1",
+  "status": "OK",
+  "tests": {
+   "passed": 24,
+   "errors": 2
+  },
+  "newly_failing": []
+ },
+ {
+  "run": "staged1/nilearn_reorder#r0",
+  "status": "OK",
+  "tests": {
+   "failed": 2,
+   "passed": 16
+  },
+  "newly_failing": []
+ },
+ {
+  "run": "staged1/monai_orientation_lps#r0",
+  "status": "OK",
+  "tests": {
+   "passed": 24,
+   "errors": 2
+  },
+  "newly_failing": []
+ },
+ {
+  "run": "staged1/torchio_crop#r1",
+  "status": "OK",
+  "tests": {
+   "passed": 2
+  },
+  "newly_failing": []
+ },
+ {
+  "run": "staged1/torchio_sitk_ras_lps#r1",
+  "status": "OK",
+  "tests": {
+   "failed": 2,
+   "passed": 87
+  },
+  "newly_failing": []
+ },
+ {
+  "run": "staged1/monai_orientation_lps#r1",
+  "status": "OK",
+  "tests": {
+   "passed": 24,
+   "errors": 2
+  },
+  "newly_failing": []
+ },
+ {
+  "run": "staged1/nilearn_reorder#r1",
+  "status": "OK",
+  "tests": {
+   "failed": 2,
+   "passed": 16
+  },
+  "newly_failing": []
+ },
+ {
+  "run": "staged2/nilearn_reorder#r0",
+  "status": "OK",
+  "tests": {
+   "failed": 2,
+   "passed": 16
+  },
+  "newly_failing": []
+ },
+ {
+  "run": "staged2/torchio_sitk_ras_lps#r0",
+  "status": "OK",
+  "tests": {
+   "failed": 2,
+   "passed": 87
+  },
+  "newly_failing": []
+ },
+ {
+  "run": "staged2/monai_orientation_lps#r0",
+  "status": "REGRESSION",
+  "tests": {
+   "failed": 18,
+   "passed": 6,
+   "errors": 2
+  },
+  "newly_failing": [
+   "test_orientation::TestOrientationCase::test_ornt_meta_00",
+   "test_orientation::TestOrientationCase::test_ornt_meta_01",
+   "test_orientation::TestOrientationCase::test_ornt_meta_02",
+   "test_orientation::TestOrientationCase::test_ornt_meta_03",
+   "test_orientation::TestOrientationCase::test_ornt_meta_04",
+   "test_orientation::TestOrientationCase::test_ornt_meta_05",
+   "test_orientation::TestOrientationCase::test_ornt_meta_06",
+   "test_orientation::TestOrientationCase::test_ornt_meta_07",
+   "test_orientation::TestOrientationCase::test_ornt_meta_08",
+   "test_orientation::TestOrientationCase::test_ornt_meta_09"
+  ]
+ },
+ {
+  "run": "mut1/torchio_crop#r0",
+  "status": "REGRESSION",
+  "tests": {
+   "failed": 2
+  },
+  "newly_failing": [
+   "test_crop::TestCrop::test_tensor_multi_channel",
+   "test_crop::TestCrop::test_tensor_single_channel"
+  ]
+ }
+]

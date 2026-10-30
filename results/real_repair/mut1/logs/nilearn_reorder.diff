@@ -1,0 +1,479 @@
+--- a/nilearn/image/resampling.py
++++ b/nilearn/image/resampling.py
+@@ -3,20 +3,12 @@
+ See http://nilearn.github.io/manipulating_images/input_output.html
+ """
+-# Author: Gael Varoquaux, Alexandre Abraham, Michael Eickenberg
+-# License: simplified BSD
+-
+ import warnings
+ from distutils.version import LooseVersion
+ import numbers
+-
+ import numpy as np
+ import scipy
+ from scipy import ndimage, linalg
+-
+ from .. import _utils
+ from .._utils.compat import _basestring
+-
+-###############################################################################
+-# Affine utils
+ 
+ def to_matrix_vector(transform):
+@@ -48,11 +40,9 @@
+     from_matrix_vector
+     """
+-
+     ndimin = transform.shape[0] - 1
+     ndimout = transform.shape[1] - 1
+     matrix = transform[0:ndimin, 0:ndimout]
+     vector = transform[0:ndimin, ndimout]
+-    return matrix, vector
+-
++    return (matrix, vector)
+ 
+ def from_matrix_vector(matrix, vector):
+@@ -79,12 +69,10 @@
+     nilearn.resampling.to_matrix_vector
+     """
+-
+     nin, nout = matrix.shape
+     t = np.zeros((nin + 1, nout + 1), matrix.dtype)
+     t[0:nin, 0:nout] = matrix
+-    t[nin,   nout] = 1.
++    t[nin, nout] = 1.0
+     t[0:nin, nout] = vector
+     return t
+-
+ 
+ def coord_transform(x, y, z, affine):
+@@ -128,19 +116,15 @@
+ 
+     """
+-    squeeze = (not hasattr(x, '__iter__'))
++    squeeze = not hasattr(x, '__iter__')
+     return_number = isinstance(x, numbers.Number)
+     x = np.asanyarray(x)
+     shape = x.shape
+-    coords = np.c_[np.atleast_1d(x).flat,
+-                   np.atleast_1d(y).flat,
+-                   np.atleast_1d(z).flat,
+-                   np.ones_like(np.atleast_1d(z).flat)].T
++    coords = np.c_[np.atleast_1d(x).flat, np.atleast_1d(y).flat, np.atleast_1d(z).flat, np.ones_like(np.atleast_1d(z).flat)].T
+     x, y, z, _ = np.dot(affine, coords)
+     if return_number:
+-        return x.item(), y.item(), z.item()
++        return (x.item(), y.item(), z.item())
+     if squeeze:
+-        return x.squeeze(), y.squeeze(), z.squeeze()
+-    return np.reshape(x, shape), np.reshape(y, shape), np.reshape(z, shape)
+-
++        return (x.squeeze(), y.squeeze(), z.squeeze())
++    return (np.reshape(x, shape), np.reshape(y, shape), np.reshape(z, shape))
+ 
+ def get_bounds(shape, affine):
+@@ -168,16 +152,7 @@
+     bdim -= 1
+     cdim -= 1
+-    # form a collection of vectors for each 8 corners of the box
+-    box = np.array([[0.,   0,    0,    1],
+-                    [adim, 0,    0,    1],
+-                    [0,    bdim, 0,    1],
+-                    [0,    0,    cdim, 1],
+-                    [adim, bdim, 0,    1],
+-                    [adim, 0,    cdim, 1],
+-                    [0,    bdim, cdim, 1],
+-                    [adim, bdim, cdim, 1]]).T
++    box = np.array([[0.0, 0, 0, 1], [adim, 0, 0, 1], [0, bdim, 0, 1], [0, 0, cdim, 1], [adim, bdim, 0, 1], [adim, 0, cdim, 1], [0, bdim, cdim, 1], [adim, bdim, cdim, 1]]).T
+     box = np.dot(affine, box)[:3]
+     return list(zip(box.min(axis=-1), box.max(axis=-1)))
+-
+ 
+ def get_mask_bounds(img):
+@@ -212,17 +187,12 @@
+     slices = ndimage.find_objects(mask)
+     if len(slices) == 0:
+-        warnings.warn("empty mask", stacklevel=2)
++        warnings.warn('empty mask', stacklevel=2)
+     else:
+         x_slice, y_slice, z_slice = slices[0]
+         x_width, y_width, z_width = mask.shape
+-        xmin, xmax = (xmin + x_slice.start*(xmax - xmin)/x_width,
+-                    xmin + x_slice.stop *(xmax - xmin)/x_width)
+-        ymin, ymax = (ymin + y_slice.start*(ymax - ymin)/y_width,
+-                    ymin + y_slice.stop *(ymax - ymin)/y_width)
+-        zmin, zmax = (zmin + z_slice.start*(zmax - zmin)/z_width,
+-                    zmin + z_slice.stop *(zmax - zmin)/z_width)
+-
+-    return xmin, xmax, ymin, ymax, zmin, zmax
+-
++        xmin, xmax = (xmin + x_slice.start * (xmax - xmin) / x_width, xmin + x_slice.stop * (xmax - xmin) / x_width)
++        ymin, ymax = (ymin + y_slice.start * (ymax - ymin) / y_width, ymin + y_slice.stop * (ymax - ymin) / y_width)
++        zmin, zmax = (zmin + z_slice.start * (zmax - zmin) / z_width, zmin + z_slice.stop * (zmax - zmin) / z_width)
++    return (xmin, xmax, ymin, ymax, zmin, zmax)
+ 
+ class BoundingBoxError(ValueError):
+@@ -234,13 +204,7 @@
+     pass
+ 
+-
+-###############################################################################
+-# Resampling
+-
+-def _resample_one_img(data, A, b, target_shape,
+-                      interpolation_order, out, copy=True):
+-    "Internal function for resample_img, do not use"
++def _resample_one_img(data, A, b, target_shape, interpolation_order, out, copy=True):
++    """Internal function for resample_img, do not use"""
+     if data.dtype.kind in ('i', 'u'):
+-        # Integers are always finite
+         has_not_finite = False
+     else:
+@@ -248,58 +212,26 @@
+         has_not_finite = np.any(not_finite)
+     if has_not_finite:
+-        warnings.warn("NaNs or infinite values are present in the data "
+-                        "passed to resample. This is a bad thing as they "
+-                        "make resampling ill-defined and much slower.",
+-                        RuntimeWarning, stacklevel=2)
++        warnings.warn('NaNs or infinite values are present in the data passed to resample. This is a bad thing as they make resampling ill-defined and much slower.', RuntimeWarning, stacklevel=2)
+         if copy:
+-            # We need to do a copy to avoid modifying the input
+-            # array
+             data = data.copy()
+-        #data[not_finite] = 0
+         from ..masking import _extrapolate_out_mask
+-        data = _extrapolate_out_mask(data, np.logical_not(not_finite),
+-                                     iterations=2)[0]
+-
+-    # See https://github.com/nilearn/nilearn/issues/346 Copying the
+-    # array makes it C continuous and as such the int32 index in the C
+-    # code is a lot less likely to overflow
+-    if (LooseVersion(scipy.__version__) < LooseVersion('0.14.1')):
++        data = _extrapolate_out_mask(data, np.logical_not(not_finite), iterations=2)[0]
++    if LooseVersion(scipy.__version__) < LooseVersion('0.14.1'):
+         data = data.copy()
+-
+-    # Suppresses warnings in https://github.com/nilearn/nilearn/issues/1363
+     with warnings.catch_warnings():
+         if LooseVersion(scipy.__version__) >= LooseVersion('0.18'):
+-            warnings.simplefilter("ignore", UserWarning)
+-        # The resampling itself
+-        ndimage.affine_transform(data, A,
+-                                 offset=b,
+-                                 output_shape=target_shape,
+-                                 output=out,
+-                                 order=interpolation_order)
+-
+-    # Bug in ndimage.affine_transform when out does not have native endianness
+-    # see https://github.com/nilearn/nilearn/issues/275
+-    # Bug was fixed in scipy 0.15
+-    if (LooseVersion(scipy.__version__) < LooseVersion('0.15') and
+-        not out.dtype.isnative):
++            warnings.simplefilter('ignore', UserWarning)
++        ndimage.affine_transform(data, A, offset=b, output_shape=target_shape, output=out, order=interpolation_order)
++    if LooseVersion(scipy.__version__) < LooseVersion('0.15') and (not out.dtype.isnative):
+         out.byteswap(True)
+-
+     if has_not_finite:
+-        # Suppresses warnings in https://github.com/nilearn/nilearn/issues/1363
+         with warnings.catch_warnings():
+             if LooseVersion(scipy.__version__) >= LooseVersion('0.18'):
+-                warnings.simplefilter("ignore", UserWarning)
+-            # We need to resample the mask of not_finite values
+-            not_finite = ndimage.affine_transform(not_finite, A,
+-                                                offset=b,
+-                                                output_shape=target_shape,
+-                                                order=0)
++                warnings.simplefilter('ignore', UserWarning)
++            not_finite = ndimage.affine_transform(not_finite, A, offset=b, output_shape=target_shape, order=0)
+         out[not_finite] = np.nan
+     return out
+ 
+-
+-def resample_img(img, target_affine=None, target_shape=None,
+-                 interpolation='continuous', copy=True, order="F",
+-                 clip=True):
++def resample_img(img, target_affine=None, target_shape=None, interpolation='continuous', copy=True, order='F', clip=True):
+     """Resample a Niimg-like object
+ 
+@@ -392,21 +324,11 @@
+ 
+     """
+-    from .image import new_img_like  # avoid circular imports
+-
+-    # Do as many checks as possible before loading data, to avoid potentially
+-    # costly calls before raising an exception.
++    from .image import new_img_like
+     if target_shape is not None and target_affine is None:
+-        raise ValueError("If target_shape is specified, target_affine should"
+-                         " be specified too.")
+-
+-    if target_shape is not None and not len(target_shape) == 3:
+-        raise ValueError('The shape specified should be the shape of '
+-                         'the 3D grid, and thus of length 3. %s was specified'
+-                         % str(target_shape))
+-
++        raise ValueError('If target_shape is specified, target_affine should be specified too.')
++    if target_shape is not None and (not len(target_shape) == 3):
++        raise ValueError('The shape specified should be the shape of the 3D grid, and thus of length 3. %s was specified' % str(target_shape))
+     if target_shape is not None and target_affine.shape == (3, 3):
+-        raise ValueError("Given target shape without anchor vector: "
+-                         "Affine shape should be (4, 4) and not (3, 3)")
+-
++        raise ValueError('Given target shape without anchor vector: Affine shape should be (4, 4) and not (3, 3)')
+     if interpolation == 'continuous':
+         interpolation_order = 3
+@@ -416,40 +338,24 @@
+         interpolation_order = 0
+     else:
+-        message = ("interpolation must be either 'continuous', 'linear' "
+-                   "or 'nearest' but it was set to '{0}'").format(interpolation)
++        message = "interpolation must be either 'continuous', 'linear' or 'nearest' but it was set to '{0}'".format(interpolation)
+         raise ValueError(message)
+-
+     if isinstance(img, _basestring):
+-        # Avoid a useless copy
+         input_img_is_string = True
+     else:
+         input_img_is_string = False
+-
+     img = _utils.check_niimg(img)
+-
+-    # noop cases
+     if target_affine is None and target_shape is None:
+-        if copy and not input_img_is_string:
++        if copy and (not input_img_is_string):
+             img = _utils.copy_img(img)
+         return img
+     if target_affine is not None:
+         target_affine = np.asarray(target_affine)
+-
+     shape = img.shape
+     affine = img.affine
+-
+-    if (np.all(np.array(target_shape) == shape[:3]) and
+-            np.allclose(target_affine, affine)):
+-        if copy and not input_img_is_string:
++    if np.all(np.array(target_shape) == shape[:3]) and np.allclose(target_affine, affine):
++        if copy and (not input_img_is_string):
+             img = _utils.copy_img(img)
+         return img
+-
+-    # We now know that some resampling must be done.
+-    # The value of "copy" is of no importance: output is always a separate
+-    # array.
+     data = img.get_data()
+-
+-    # Get a bounding box for the transformed data
+-    # Embed target_affine in 4x4 shape if necessary
+     if target_affine.shape == (3, 3):
+         missing_offset = True
+@@ -461,108 +367,50 @@
+         target_affine = target_affine.copy()
+     transform_affine = np.linalg.inv(target_affine).dot(affine)
+-    (xmin, xmax), (ymin, ymax), (zmin, zmax) = get_bounds(
+-        data.shape[:3], transform_affine)
+-
+-    # if target_affine is (3, 3), then calculate
+-    # offset from bounding box and update bounding box
+-    # to be in the voxel coordinates of the calculated 4x4 affine
++    (xmin, xmax), (ymin, ymax), (zmin, zmax) = get_bounds(data.shape[:3], transform_affine)
+     if missing_offset:
+         offset = target_affine[:3, :3].dot([xmin, ymin, zmin])
+         target_affine[:3, 3] = offset
+-        (xmin, xmax), (ymin, ymax), (zmin, zmax) = (
+-            (0, xmax - xmin), (0, ymax - ymin), (0, zmax - zmin))
+-
+-    # if target_shape is not given (always the case with 3x3
+-    # transformation matrix and sometimes the case with 4x4
+-    # transformation matrix), then set it to contain the bounding
+-    # box by a margin of 1 voxel
++        (xmin, xmax), (ymin, ymax), (zmin, zmax) = ((0, xmax - xmin), (0, ymax - ymin), (0, zmax - zmin))
+     if target_shape is None:
+-        target_shape = (int(np.ceil(xmax)) + 1,
+-                        int(np.ceil(ymax)) + 1,
+-                        int(np.ceil(zmax)) + 1)
+-
+-    # Check whether transformed data is actually within the FOV
+-    # of the target affine
++        target_shape = (int(np.ceil(xmax)) + 1, int(np.ceil(ymax)) + 1, int(np.ceil(zmax)) + 1)
+     if xmax < 0 or ymax < 0 or zmax < 0:
+-        raise BoundingBoxError("The field of view given "
+-                               "by the target affine does "
+-                               "not contain any of the data")
+-
++        raise BoundingBoxError('The field of view given by the target affine does not contain any of the data')
+     if np.all(target_affine == affine):
+-        # Small trick to be more numerically stable
+         transform_affine = np.eye(4)
+     else:
+         transform_affine = np.dot(linalg.inv(affine), target_affine)
+     A, b = to_matrix_vector(transform_affine)
+-    # If A is diagonal, ndimage.affine_transform is clever enough to use a
+-    # better algorithm.
+     if np.all(np.diag(np.diag(A)) == A):
+         if LooseVersion(scipy.__version__) < LooseVersion('0.18'):
+-            # Before scipy 0.18, ndimage.affine_transform was applying a
+-            # different logic to the offset for diagonal affine
+             b = np.dot(linalg.inv(A), b)
+         A = np.diag(A)
+-
+     data_shape = list(data.shape)
+-    # Make sure that we have a list here
+     if isinstance(target_shape, np.ndarray):
+         target_shape = target_shape.tolist()
+     target_shape = tuple(target_shape)
+-
+     if interpolation == 'continuous' and data.dtype.kind == 'i':
+-        # cast unsupported data types to closest support dtype
+         aux = data.dtype.name.replace('int', 'float')
+-        aux = aux.replace("ufloat", "float").replace("floatc", "float")
+-        if aux in ["float8", "float16"]:
+-            aux = "float32"
+-        warnings.warn("Casting data from %s to %s" % (data.dtype.name, aux))
++        aux = aux.replace('ufloat', 'float').replace('floatc', 'float')
++        if aux in ['float8', 'float16']:
++            aux = 'float32'
++        warnings.warn('Casting data from %s to %s' % (data.dtype.name, aux))
+         resampled_data_dtype = np.dtype(aux)
+     else:
+         resampled_data_dtype = data.dtype
+-
+     if LooseVersion(scipy.__version__) >= LooseVersion('0.17'):
+-        # Since the release of 0.17, resampling nifti images have some issues
+-        # when affine is passed as 1D array and if data is of non-native
+-        # endianess.
+-        # See issue https://github.com/nilearn/nilearn/issues/1445.
+-        # If affine is passed as 1D, scipy uses _nd_image.zoom_shift rather
+-        # than _geometric_transform (2D) where _geometric_transform is able
+-        # to swap byte order in scipy later than 0.15 for nonnative endianess.
+-
+-        # We convert to 'native' order to not have any issues either with
+-        # 'little' or 'big' endian data dtypes (non-native endians).
+-        if len(A.shape) == 1 and not resampled_data_dtype.isnative:
++        if len(A.shape) == 1 and (not resampled_data_dtype.isnative):
+             resampled_data_dtype = resampled_data_dtype.newbyteorder('N')
+-
+-    # Code is generic enough to work for both 3D and 4D images
+     other_shape = data_shape[3:]
+-    resampled_data = np.empty(list(target_shape) + other_shape,
+-                              order=order, dtype=resampled_data_dtype)
+-
+-    all_img = (slice(None), ) * 3
+-
+-    # Iterate over a set of 3D volumes, as the interpolation problem is
+-    # separable in the extra dimensions. This reduces the
+-    # computational cost
++    resampled_data = np.empty(list(target_shape) + other_shape, order=order, dtype=resampled_data_dtype)
++    all_img = (slice(None),) * 3
+     for ind in np.ndindex(*other_shape):
+-        _resample_one_img(data[all_img + ind], A, b, target_shape,
+-                          interpolation_order,
+-                          out=resampled_data[all_img + ind],
+-                          copy=not input_img_is_string)
+-
++        _resample_one_img(data[all_img + ind], A, b, target_shape, interpolation_order, out=resampled_data[all_img + ind], copy=not input_img_is_string)
+     if clip:
+-        # force resampled data to have a range contained in the original data
+-        # preventing ringing artefact
+-        # We need to add zero as a value considered for clipping, as it
+-        # appears in padding images.
+         vmin = min(data.min(), 0)
+         vmax = max(data.max(), 0)
+         resampled_data.clip(vmin, vmax, out=resampled_data)
+-
+     return new_img_like(img, resampled_data, target_affine)
+ 
+-
+-def resample_to_img(source_img, target_img,
+-                    interpolation='continuous', copy=True, order='F', clip=False):
++def resample_to_img(source_img, target_img, interpolation='continuous', copy=True, order='F', clip=False):
+     """Resample a Niimg-like source image on a target Niimg-like image
+     (no registration is performed: the image should already be aligned).
+@@ -608,18 +456,9 @@
+     nilearn.image.resample_img
+     """
+-
+     target = _utils.check_niimg(target_img)
+     target_shape = target.shape
+-
+-    # When target shape is greater than 3, we reduce to 3, ti be compatible
+-    # with uniderlying call to resample_img
+     if len(target_shape) > 3:
+         target_shape = target.shape[:3]
+-
+-    return resample_img(source_img,
+-                        target_affine=target.affine,
+-                        target_shape=target_shape,
+-                        interpolation=interpolation, copy=copy, order=order, clip=clip)
+-
++    return resample_img(source_img, target_affine=target.affine, target_shape=target_shape, interpolation=interpolation, copy=copy, order=order, clip=clip)
+ 
+ def reorder_img(img, resample=None):
+@@ -644,29 +483,18 @@
+     """
+     from .image import new_img_like
+-
+     img = _utils.check_niimg(img)
+-    # The copy is needed in order not to modify the input img affine
+-    # see https://github.com/nilearn/nilearn/issues/325 for a concrete bug
+     affine = img.affine.copy()
+     A, b = to_matrix_vector(affine)
+-
+     if not np.all((np.abs(A) > 0.001).sum(axis=0) == 1):
+-        # The affine is not nearly diagonal
+         if resample is None:
+-            raise ValueError('Cannot reorder the axes: '
+-                             'the image affine contains rotations')
++            raise ValueError('Cannot reorder the axes: the image affine contains rotations')
+         else:
+-            # Identify the voxel size using a QR decomposition of the
+-            # affine
+             Q, R = np.linalg.qr(affine[:3, :3])
+-            target_affine = np.diag(np.abs(np.diag(R))[
+-                                                np.abs(Q).argmax(axis=1)])
+-            return resample_img(img, target_affine=target_affine,
+-                                interpolation=resample)
+-
++            target_affine = np.diag(np.abs(np.diag(R))[np.abs(Q).argmax(axis=1)])
++            return resample_img(img, target_affine=target_affine, interpolation=resample)
+     axis_numbers = np.argmax(np.abs(A), axis=0)
+     data = img.get_data()
+     while not np.all(np.sort(axis_numbers) == axis_numbers):
+-        first_inversion = np.argmax(np.diff(axis_numbers)<0)
++        first_inversion = np.argmax(np.diff(axis_numbers) < 0)
+         axis1 = first_inversion + 1
+         axis2 = first_inversion
+@@ -678,9 +506,7 @@
+         A, b = to_matrix_vector(affine)
+         axis_numbers = np.argmax(np.abs(A), axis=0)
+-
+-    # Now make sure the affine is positive
+     pixdim = np.diag(A).copy()
+     if pixdim[0] < 0:
+-        b[0] = b[0] + pixdim[0]*(data.shape[0] - 1)
++        b[0] = b[0] + pixdim[0] * (data.shape[0] - 1)
+         pixdim[0] = -pixdim[0]
+         slice1 = slice(None, None, -1)
+@@ -688,5 +514,5 @@
+         slice1 = slice(None, None, None)
+     if pixdim[1] < 0:
+-        b[1] = b[1] + 1 + pixdim[1]*(data.shape[1] - 1)
++        b[1] = b[1] + 1 + pixdim[1] * (data.shape[1] - 1)
+         pixdim[1] = -pixdim[1]
+         slice2 = slice(None, None, -1)
+@@ -694,5 +520,5 @@
+         slice2 = slice(None, None, None)
+     if pixdim[2] < 0:
+-        b[2] = b[2] + 1 + pixdim[2]*(data.shape[2] - 1)
++        b[2] = b[2] + 1 + pixdim[2] * (data.shape[2] - 1) - 1
+         pixdim[2] = -pixdim[2]
+         slice3 = slice(None, None, -1)
+@@ -701,4 +527,3 @@
+     data = data[slice1, slice2, slice3]
+     affine = from_matrix_vector(np.diag(pixdim), b)
+-
+-    return new_img_like(img, data, affine)
++    return new_img_like(img, data, affine)

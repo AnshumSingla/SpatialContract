@@ -1,0 +1,2 @@
+{"t": 1793231203.32, "event": "start", "case": "nilearn_reorder", "suspects": [["nilearn/image/resampling.py", "from_matrix_vector"], ["nilearn/image/image.py", "new_img_like"], ["nilearn/image/resampling.py", "reorder_img"], ["nilearn/_utils/niimg_conversions.py", "check_niimg"], ["nilearn/_utils/niimg.py", "load_niimg"], ["nilearn/image/resampling.py", "to_matrix_vector"]], "candidates": 300}
+{"t": 1793231635.13, "event": "end", "outcome": "OVERFIT", "winner": "nilearn/image/resampling.py::reorder_img -1@696", "candidates": 300, "seconds": 457.9}

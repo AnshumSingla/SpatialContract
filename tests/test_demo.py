@@ -92,3 +92,34 @@ def test_cli_replay_prints_the_story(cid, capsys):
     assert demo.replay(cid) == 0
     out = capsys.readouterr().out
     assert "OUTCOME:" in out and "SPATIAL_CONTRACT" in out
+
+
+def _after_report(rec):
+    """Mirror of afterReport() in demo/index.html: the last measured patch (library runs: the re-measured final edit)."""
+    if rec.get("kind") == "library":
+        f = rec.get("final")
+        return f if f and any(p["landmarks"] for p in f["phantoms"]) else None
+    for s in reversed(rec["steps"]):
+        o = s.get("oracle")
+        if o and any(p["landmarks"] for p in o["phantoms"]):
+            return o
+    return None
+
+
+def test_spatial_view_compares_the_same_landmarks_before_and_after():
+    """The 3D view overlays expected, before and after per phantom; that is only honest if both reports measure the same phantoms."""
+    shown = 0
+    for r in REC["recordings"]:
+        before, after = r.get("initial"), _after_report(r)
+        if not before or not after:
+            continue
+        shown += 1
+        for pb, pa in zip(before["phantoms"], after["phantoms"], strict=True):
+            assert pb["seed"] == pa["seed"]
+            assert [(l["label"], l["expected"]) for l in pb["landmarks"]] == [(l["label"], l["expected"]) for l in pa["landmarks"]]
+    assert shown >= 8
+    hero = REC["recordings"][0]
+    worst = max(l["error_mm"] for p in hero["initial"]["phantoms"] for l in p["landmarks"])
+    assert worst > 200 and all(l["ok"] for p in _after_report(hero)["phantoms"] for l in p["landmarks"])
+    html = (ROOT / "demo" / "index.html").read_text(encoding="utf-8")
+    assert 'id="space"' in html and "function afterReport" in html and "prefers-reduced-motion" in html

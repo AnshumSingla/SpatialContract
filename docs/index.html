@@ -9,18 +9,21 @@
   --bg:#f7f8fa; --panel:#ffffff; --ink:#15181e; --muted:#5b6472; --line:#dde1e8;
   --ok:#0b7a4b; --okbg:#e3f4ec; --bad:#b3261e; --badbg:#fbe9e7; --warn:#8a5a00; --warnbg:#fff3d6;
   --exp:#1f5fbf; --got:#d9480f; --code:#f1f3f6; --add:#e2f5e9; --del:#fdeaea; --accent:#1f5fbf;
+  --sx-exp:#1f5fbf; --sx-pre:#d9480f; --sx-post:#0f9670;
 }
 @media (prefers-color-scheme: dark){
   :root:not([data-theme="light"]){
     --bg:#0f1218; --panel:#171b23; --ink:#e8ebf0; --muted:#98a2b3; --line:#2a303b;
     --ok:#4cc38a; --okbg:#12301f; --bad:#ff7b72; --badbg:#3a1714; --warn:#f0b429; --warnbg:#3a2d0a;
     --exp:#6ea8ff; --got:#ff8a4c; --code:#1d222c; --add:#12301f; --del:#3a1714; --accent:#6ea8ff;
+    --sx-exp:#4a8ae6; --sx-pre:#e0682a; --sx-post:#1fa078;
   }
 }
 :root[data-theme="dark"]{
   --bg:#0f1218; --panel:#171b23; --ink:#e8ebf0; --muted:#98a2b3; --line:#2a303b;
   --ok:#4cc38a; --okbg:#12301f; --bad:#ff7b72; --badbg:#3a1714; --warn:#f0b429; --warnbg:#3a2d0a;
   --exp:#6ea8ff; --got:#ff8a4c; --code:#1d222c; --add:#12301f; --del:#3a1714; --accent:#6ea8ff;
+  --sx-exp:#4a8ae6; --sx-pre:#e0682a; --sx-post:#1fa078;
 }
 *{box-sizing:border-box}
 html,body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.5 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
@@ -72,6 +75,34 @@ textarea{width:100%;min-height:220px;font:12.5px/1.45 ui-monospace,Consolas,mono
 .grid>div,.card,.pill,.step,.check{min-width:0}
 .chip{max-width:100%;text-align:left;flex-wrap:wrap}
 table{display:block;max-width:100%;overflow-x:auto}
+/* ---- landmarks in space ---- */
+.space{margin-bottom:14px}
+.space .top{display:flex;flex-wrap:wrap;gap:6px 16px;align-items:center;justify-content:space-between}
+.space .top h2{margin:0}
+.space .head{display:flex;flex-wrap:wrap;gap:4px 26px;font-size:19px;font-weight:650;line-height:1.3;margin:8px 0 10px}
+.space .head span{display:inline-flex;gap:8px;align-items:center;min-width:0}
+.space .head small{font-size:13px;font-weight:500;color:var(--muted)}
+.space .body{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(0,1fr);gap:14px;align-items:start}
+.space .body>div{min-width:0}
+.space svg{display:block;width:100%;height:auto;background:var(--code);border-radius:8px}
+.space .v3{cursor:grab;touch-action:pan-y}
+.space .v3.drag{cursor:grabbing}
+.space .v3:focus-visible,.space tr:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.space .proj{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;margin-top:10px}
+.space .proj figure{margin:0;min-width:0}
+.space .proj figcaption{font-size:11.5px;color:var(--muted);text-align:center;margin-top:2px}
+.space .lg{display:flex;flex-direction:column;gap:6px;margin-bottom:10px}
+.space .lgb{display:flex;gap:10px;align-items:center;text-align:left;border:1px solid var(--line);background:var(--panel);color:var(--ink);border-radius:8px;padding:6px 10px;font:inherit;font-size:13px;cursor:pointer;width:100%}
+.space .lgb b{font-size:14px}
+.space .lgb .note{display:block}
+.space .lgb[aria-pressed="false"]{opacity:.45}
+.space .lgb[aria-pressed="false"] b{text-decoration:line-through}
+.space .lgb:disabled{cursor:default}
+.space .lgb svg,.space .head svg{flex:none;width:22px;height:22px;background:none;border-radius:0}
+.space .readout{font-size:14px;margin-top:8px;min-height:2.6em}
+.space .ctl{margin:8px 0 0}
+.space tr.hl td{background:var(--code)}
+@media (max-width:900px){.space .body{grid-template-columns:minmax(0,1fr)}.space .head{font-size:16px}}
 </style>
 </head>
 <body>
@@ -80,6 +111,8 @@ table{display:block;max-width:100%;overflow-x:auto}
   <p class="tag">An agent that repairs orientation and affine bugs in medical-imaging code. The judge is a physical-coordinate oracle with known landmarks, not the model's opinion.</p>
   <div id="mode" class="note"></div>
   <div class="chips" id="chips" role="group" aria-label="Recorded runs"></div>
+  <div id="strip"></div>
+  <div id="space"></div>
   <div id="app"></div>
   <p class="foot" id="foot"></p>
 </div>
@@ -147,6 +180,217 @@ function pictureHtml(rep, note){
   return h;
 }
 
+/* ---- landmarks in space: expected vs before the patch vs after it (world mm, contract frame) ------------------------------ */
+const SX = {yaw:-0.55, pitch:0.38, seed:null, hl:null, layers:{exp:true, pre:true, post:true}, spin:0, key:null, sc:null, aft:null, rep:null};
+const SX_HOME = {yaw:-0.55, pitch:0.38};
+const RM = !!(window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches);
+const LAYER = {exp:['Expected', 'where the contract says the landmark must be', 'var(--sx-exp)'],
+               pre:['Before the patch', 'where the original script put it', 'var(--sx-pre)'],
+               post:['After the patch', '', 'var(--sx-post)']};
+const fmtMM = v => v == null ? 'lost' : Math.abs(v) >= 1000 ? (v/1000).toFixed(1) + ' m' : v.toFixed(1) + ' mm';
+const fmtP = p => p ? '(' + p.map(v => (Math.abs(v) >= 10000 ? v.toExponential(2) : v.toFixed(1)).replace('-', '−')).join(', ') + ')' : 'nowhere (lost)';
+const hasLm = r => !!(r && r.phantoms && r.phantoms.some(p => p.landmarks && p.landmarks.length));
+const frameLetters = f => f === 'LPS' ? ['L','P','S'] : ['R','A','S'];
+
+function afterReport(rec){
+  if(rec.kind === 'library'){
+    if(!rec.final) return {why:'the agent made no edit, so nothing moved'};
+    if(!hasLm(rec.final)) return {why:"with the agent's edit the driver crashes: nothing lands anywhere"};
+    return {rep:rec.final, label:"with the agent's edit to the library"};
+  }
+  for(let j = rec.steps.length - 1; j >= 0; j--){
+    const o = rec.steps[j].oracle;
+    if(hasLm(o)) return {rep:o, label:`after the patch (iteration ${rec.steps[j].iteration}${rec.outcome === 'REPAIRED' ? ', final' : ', last attempt'})`};
+  }
+  if(rec.outcome === 'NO_CHANGE_NEEDED') return {why:'no patch: the original already lands every landmark'};
+  return {why: rec.steps.length ? 'no patch produced a measurement' : 'no patch yet'};
+}
+function worstSeed(rep){
+  let best = null, w = -1;
+  rep.phantoms.forEach(p => { if(!p.landmarks.length) return; const e = Math.max(...p.landmarks.map(l => l.error_mm == null ? 1e12 : l.error_mm)); if(e > w){ w = e; best = p.seed; } });
+  return best;
+}
+function sceneFor(before, after, seed){
+  const pb = before.phantoms.find(p => p.seed === seed), pa = after ? after.phantoms.find(p => p.seed === seed) : null;
+  const lms = pb.landmarks.filter(l => l.expected).map(l => {
+    const a = pa && pa.landmarks.find(m => m.label === l.label);
+    return {label:l.label, e:l.expected, b:l.got, be:l.error_mm, bok:l.ok, a:a ? a.got : null, ae:a ? a.error_mm : null, aok:a ? a.ok : null, hasA:!!a};
+  });
+  const c = [0,1,2].map(k => lms.reduce((s, l) => s + l.e[k], 0) / lms.length);
+  const dist = p => Math.hypot(p[0]-c[0], p[1]-c[1], p[2]-c[2]);
+  const rE = Math.max(10, ...lms.map(l => dist(l.e)));
+  const lim = Math.max(300, 4 * rE);              // anything farther is drawn at the edge of the box (true distance in the table)
+  const clamp = p => { if(!p) return null; const r = dist(p); return r <= lim ? {p, far:false} : {p:c.map((ck, k) => ck + (p[k]-ck) * lim / r), far:true}; };
+  const lo = [Infinity, Infinity, Infinity], hi = [-Infinity, -Infinity, -Infinity];
+  lms.forEach(l => { l.B = clamp(l.b); l.A = clamp(l.a); [l.e, l.B && l.B.p, l.A && l.A.p].forEach(p => { if(p) for(let k = 0; k < 3; k++){ lo[k] = Math.min(lo[k], p[k]); hi[k] = Math.max(hi[k], p[k]); } }); });
+  const mid = [0, 1, 2].map(k => (lo[k] + hi[k]) / 2);                     // center the box on everything drawn
+  const H = Math.max(Math.max(...[0, 1, 2].map(k => (hi[k] - lo[k]) / 2)) * 1.1, 25);
+  const err = l => l.be == null ? 1e12 : l.be;
+  const worst = lms.reduce((w, l) => (w == null || err(l) > err(w)) ? l : w, null);
+  return {lms, c:mid, H, ph:pb, pa, worst, anyFar:lms.some(l => (l.B && l.B.far) || (l.A && l.A.far))};
+}
+
+/* marks shared by the 3D view and the 2D projections; P maps a world point to [screen x, screen y, depth] */
+function marks(sc, P, big){
+  const L = SX.layers, items = [], rr = big ? 1 : .78;
+  const dim = l => SX.hl != null && SX.hl !== l.label ? ' opacity=".2"' : '';
+  sc.lms.forEach(l => {
+    const E = P(l.e), o = dim(l), id = ` data-l="${l.label}"`;
+    if(L.pre && l.B && !l.bok){ const B = P(l.B.p); items.push([(E[2]+B[2])/2 + 1e-3, `<line${id}${o} x1="${E[0]}" y1="${E[1]}" x2="${B[0]}" y2="${B[1]}" stroke="var(--sx-pre)" stroke-width="${big ? 2.6 : 1.8}" stroke-dasharray="${big ? '7 5' : '4 3'}" stroke-linecap="round"/>`]); }
+    if(L.post && l.A && !l.aok){ const A = P(l.A.p); items.push([(E[2]+A[2])/2 + 1e-3, `<line${id}${o} x1="${E[0]}" y1="${E[1]}" x2="${A[0]}" y2="${A[1]}" stroke="var(--sx-post)" stroke-width="${big ? 2.6 : 1.8}" stroke-linecap="round"/>`]); }
+    if(L.exp) items.push([E[2], `<g${id}${o}><circle cx="${E[0]}" cy="${E[1]}" r="${10*rr}" fill="none" stroke="var(--sx-exp)" stroke-width="${big ? 3 : 2.2}"/><circle cx="${E[0]}" cy="${E[1]}" r="${1.8*rr}" fill="var(--sx-exp)"/></g>`]);
+    if(L.pre && l.B){ const B = P(l.B.p); items.push([B[2], `<circle${id}${o} cx="${B[0]}" cy="${B[1]}" r="${7*rr}" fill="var(--sx-pre)" stroke="var(--code)" stroke-width="2"/>`]); }
+    if(L.post && l.A){ const A = P(l.A.p), d = 6.5*rr; items.push([A[2] - 1e-4, `<path${id}${o} d="M${A[0]} ${A[1]-d}L${A[0]+d} ${A[1]}L${A[0]} ${A[1]+d}L${A[0]-d} ${A[1]}Z" fill="var(--sx-post)" stroke="var(--code)" stroke-width="1.5"/>`]); }
+  });
+  items.sort((a, b) => b[0] - a[0]);            // painter's order: far to near
+  let g = items.map(x => x[1]).join('');
+  if(L.exp && big) sc.lms.forEach(l => { const E = P(l.e); g += `<text${dim(l)} x="${(E[0] + 11*rr).toFixed(1)}" y="${(E[1] - 9*rr).toFixed(1)}" font-size="${big ? 13 : 10}" font-weight="700" fill="var(--ink)" stroke="var(--code)" stroke-width="3" paint-order="stroke" pointer-events="none">${l.label}</text>`; });
+  // generous invisible hit targets for hover, on top of everything
+  sc.lms.forEach(l => [L.exp && l.e, L.pre && l.B && l.B.p, L.post && l.A && l.A.p].forEach(p => { if(p){ const Q = P(p);
+    g += `<circle data-l="${l.label}" cx="${Q[0]}" cy="${Q[1]}" r="${big ? 15 : 10}" fill="transparent"><title>Landmark ${l.label}: before ${fmtMM(l.be)} off${l.hasA ? ', after ' + fmtMM(l.ae) + ' off' : ''}</title></circle>`; } }));
+  return g;
+}
+const haloText = (x, y, t, size, anchor) => `<text x="${(+x).toFixed(1)}" y="${(+y).toFixed(1)}" font-size="${size}" font-weight="700" fill="var(--ink)" stroke="var(--code)" stroke-width="4" paint-order="stroke" text-anchor="${anchor || 'start'}" pointer-events="none">${t}</text>`;
+
+function draw3d(){
+  const sc = SX.sc, W = 600, Hh = 430, cx = W/2 + 20, cy = Hh/2 - 4;
+  const s = Math.min(W / 2.75, Hh / 3.0) / sc.H;
+  const cyw = Math.cos(SX.yaw), syw = Math.sin(SX.yaw), cp = Math.cos(SX.pitch), sp = Math.sin(SX.pitch);
+  const rot = v => { const x1 = v[0]*cyw - v[1]*syw, y1 = v[0]*syw + v[1]*cyw; return [x1, v[2]*cp + y1*sp, y1*cp - v[2]*sp]; };   // right, up, depth
+  const P = p => { const r = rot([p[0]-sc.c[0], p[1]-sc.c[1], p[2]-sc.c[2]]); return [+(cx + s*r[0]).toFixed(1), +(cy - s*r[1]).toFixed(1), r[2]]; };
+  let g = '';
+  // the cube holding the scene: equal scale on all three axes, so distances are honest
+  const Hb = sc.H, C = [-1, 1], corner = (i, j, k) => P([sc.c[0] + i*Hb, sc.c[1] + j*Hb, sc.c[2] + k*Hb]);
+  C.forEach(a => C.forEach(b => {
+    [[corner(-1,a,b), corner(1,a,b)], [corner(a,-1,b), corner(a,1,b)], [corner(a,b,-1), corner(a,b,1)]]
+      .forEach(([u, v]) => g += `<line x1="${u[0]}" y1="${u[1]}" x2="${v[0]}" y2="${v[1]}" stroke="var(--muted)" stroke-opacity=".35" stroke-width="1"/>`);
+  }));
+  g += marks(sc, P, true);
+  // the headline number, right where it happens: label the worst "before" vector with its length
+  const w = sc.worst;
+  if(SX.layers.pre && w && w.B && !w.bok && (SX.hl == null || SX.hl === w.label)){
+    const B = P(w.B.p), E = P(w.e), right = B[0] >= E[0];
+    g += haloText(B[0] + (right ? 14 : -14), B[1] + 6, fmtMM(w.be) + (w.B.far ? ' (off scale)' : ''), 18, right ? 'start' : 'end');
+  }
+  // axis triad in the contract frame
+  const lt = frameLetters(SX.rep.frame), ox = 60, oy = Hh - 62, len = 38;
+  ['x', 'y', 'z'].forEach((ax, k) => {
+    const v = [0, 0, 0]; v[k] = 1; const r = rot(v), ex = ox + len*r[0], ey = oy - len*r[1];
+    g += `<line x1="${ox}" y1="${oy}" x2="${ex.toFixed(1)}" y2="${ey.toFixed(1)}" stroke="var(--ink)" stroke-width="2.4" stroke-linecap="round"/>`
+       + `<circle cx="${ex.toFixed(1)}" cy="${ey.toFixed(1)}" r="2.8" fill="var(--ink)"/>`
+       + `<text x="${(ox + (len + 14)*r[0]).toFixed(1)}" y="${(oy - (len + 14)*r[1] + 5).toFixed(1)}" text-anchor="middle" font-size="16" font-weight="800" fill="var(--ink)">${lt[k]}<tspan font-size="10" font-weight="600" fill="var(--muted)">${ax}</tspan></text>`;
+  });
+  g += `<text x="${ox}" y="${Hh - 10}" text-anchor="middle" font-size="11" fill="var(--muted)">+x +y +z = ${esc(SX.rep.frame)}</text>`;
+  // scale bar (orthographic: a length parallel to the screen is a true length)
+  const nice = [5, 10, 20, 50, 100, 200, 500, 1000].find(n => n * s >= 70) || 1000, bx = W - 24, by = Hh - 22;
+  g += `<path d="M${(bx - nice*s).toFixed(1)} ${by - 5}V${by}H${bx}V${by - 5}" fill="none" stroke="var(--ink)" stroke-width="2"/>` + haloText(bx - nice*s/2, by - 9, nice + ' mm', 12, 'middle');
+  g += `<text x="14" y="22" font-size="12" fill="var(--muted)">world mm · ${esc(SX.rep.frame)} frame · phantom seed ${SX.seed}</text>`;
+  $('#sx3').innerHTML = g;
+}
+
+function draw2d(){
+  const sc = SX.sc, lt = frameLetters(SX.rep.frame), S = 200, m = 16, s = (S - 2*m) / (2*sc.H);
+  const views = [[0, 1, 'axial (x–y)'], [0, 2, 'coronal (x–z)'], [1, 2, 'sagittal (y–z)']];
+  $('#sxp').innerHTML = views.map(([a, b, name]) => {
+    const k = 3 - a - b;
+    const P = p => [+(S/2 + s*(p[a]-sc.c[a])).toFixed(1), +(S/2 - s*(p[b]-sc.c[b])).toFixed(1), -(p[k]-sc.c[k])];
+    const ax = `<text x="${S - 6}" y="${S - 6}" text-anchor="end" font-size="12" font-weight="700" fill="var(--muted)">${lt[a]} →</text>`
+             + `<text x="6" y="15" font-size="12" font-weight="700" fill="var(--muted)">↑ ${lt[b]}</text>`;
+    return `<figure><svg viewBox="0 0 ${S} ${S}" role="img" aria-label="${name} projection">${ax}${marks(sc, P, false)}</svg><figcaption>${name}</figcaption></figure>`;
+  }).join('');
+}
+
+function readout(){
+  const sc = SX.sc, l = SX.hl != null ? sc.lms.find(x => x.label === SX.hl) : sc.worst;
+  document.querySelectorAll('#sxt tr[data-l]').forEach(tr => tr.classList.toggle('hl', +tr.dataset.l === SX.hl));
+  if(!l){ $('#sxr').textContent = ''; return; }
+  const lab = SX.aft.label || '';
+  const aft = SX.aft.rep && l.hasA ? ` ${lab.charAt(0).toUpperCase() + lab.slice(1)}: <b style="color:${l.aok ? 'var(--ok)' : 'var(--bad)'}">${fmtMM(l.ae)}${l.aok ? ', on target' : ' away'}</b>.` : '';
+  $('#sxr').innerHTML = `<b>Landmark ${l.label}</b> belongs at ${fmtP(l.e)} mm. ${SX.who} put it at ${fmtP(l.b)}: `
+    + `<b style="color:${l.bok ? 'var(--ok)' : 'var(--bad)'}">${l.be == null ? 'lost' : fmtMM(l.be) + (l.bok ? ', on target' : ' away')}</b>.${aft}`;
+}
+function drawSpace(){ if(!SX.sc || !$('#sx3')) return; draw3d(); draw2d(); readout(); }
+
+function swatch(k){
+  const c = LAYER[k][2];
+  return `<svg viewBox="0 0 22 22" aria-hidden="true">` + (k === 'exp' ? `<circle cx="11" cy="11" r="8" fill="none" stroke="${c}" stroke-width="3"/><circle cx="11" cy="11" r="1.6" fill="${c}"/>`
+    : k === 'pre' ? `<circle cx="11" cy="11" r="7.5" fill="${c}"/>` : `<path d="M11 3L19 11L11 19L3 11Z" fill="${c}"/>`) + `</svg>`;
+}
+function summary(ph){
+  if(!ph || !ph.landmarks.length) return null;
+  const bad = ph.landmarks.filter(l => !l.ok).length, n = ph.landmarks.length;
+  const w = Math.max(...ph.landmarks.map(l => l.error_mm == null ? Infinity : l.error_mm));
+  return bad ? `${bad}/${n} landmarks off, worst ${w === Infinity ? 'lost' : fmtMM(w)}` : `all ${n} on target <small>(worst ${fmtMM(w)})</small>`;
+}
+
+function buildSpace(){
+  const rep = SX.rep, aft = SX.aft;
+  SX.sc = sceneFor(rep, aft.rep, SX.seed);
+  LAYER.post[1] = aft.rep ? aft.label : aft.why;
+  SX.who = SX.key.rec.kind === 'library' ? 'The library at the pre-fix commit' : 'The original script';
+  LAYER.pre[1] = `where ${SX.who.charAt(0).toLowerCase() + SX.who.slice(1)} put it`;
+  const sb = summary(SX.sc.ph), sa = aft.rep ? summary(SX.sc.pa) : null;
+  const phs = rep.phantoms.filter(p => p.landmarks.length).map(p => `<button class="btn ${p.seed === SX.seed ? 'primary' : ''}" data-seed="${p.seed}" aria-pressed="${p.seed === SX.seed}" title="phantom stored as ${esc(p.in_axcodes)}, written as ${esc(p.out_axcodes)}">seed ${p.seed} · ${esc(p.in_axcodes)}→${esc(p.out_axcodes)}</button>`).join('');
+  const rows = SX.sc.lms.map(l => `<tr data-l="${l.label}" tabindex="0"><td>landmark ${l.label}</td><td class="${l.bok ? 'ok' : 'bad'}">${fmtMM(l.be)}</td><td class="${!l.hasA ? '' : l.aok ? 'ok' : 'bad'}">${l.hasA ? fmtMM(l.ae) : '–'}</td></tr>`).join('');
+  $('#space').innerHTML = `<div class="card space"><div class="top"><h2>Where the landmarks landed · world mm, ${esc(rep.frame)} contract frame</h2><div class="ctl" role="group" aria-label="Phantom">${phs}</div></div>`
+    + `<div class="head"><span>${swatch('pre')}Before: ${sb}</span><span>${swatch('post')}After: ${sa || `<small>${esc(aft.why)}</small>`}</span></div>`
+    + `<div class="body"><div><svg id="sx3" class="v3" viewBox="0 0 600 430" tabindex="0" role="img" aria-label="3D view of the landmarks: expected, before and after the patch. Drag or use the arrow keys to rotate."></svg>`
+    + `<div class="ctl"><button class="btn" id="sxreset">Reset view</button>${RM ? '' : `<button class="btn" id="sxspin" aria-pressed="false">Auto-rotate</button>`}`
+    + `<span class="note">Drag to rotate, or focus the view and use the arrow keys.${SX.sc.anyFar ? ' Points beyond the box are drawn at its edge; the table has the true distance.' : ''}</span></div>`
+    + `<div class="readout" id="sxr" aria-live="polite"></div></div>`
+    + `<div><div class="lg">` + ['exp', 'pre', 'post'].map(k => `<button class="lgb" data-layer="${k}" aria-pressed="${SX.layers[k]}"${k === 'post' && !aft.rep ? ' disabled' : ''}>${swatch(k)}<span><b>${LAYER[k][0]}</b><span class="note">${esc(LAYER[k][1])}</span></span></button>`).join('') + `</div>`
+    + `<table id="sxt"><tr><th>distance from expected</th><th>before</th><th>after</th></tr>${rows}</table>`
+    + `<div class="proj" id="sxp"></div></div></div></div>`;
+  bindSpace();
+  drawSpace();
+}
+
+function bindSpace(){
+  const v = $('#sx3'), card = $('#space .space');
+  let drag = null;
+  v.addEventListener('pointerdown', e => { if(e.button !== 0) return; stopSpin(); drag = {x:e.clientX, y:e.clientY, yaw:SX.yaw, pitch:SX.pitch}; v.classList.add('drag'); try { v.setPointerCapture(e.pointerId); } catch (_) {} });
+  v.addEventListener('pointermove', e => {
+    if(!drag) return;
+    const k = 600 / Math.max(200, v.getBoundingClientRect().width) * 0.009;
+    SX.yaw = drag.yaw + (e.clientX - drag.x) * k; SX.pitch = Math.max(-1.25, Math.min(1.25, drag.pitch + (e.clientY - drag.y) * k)); draw3d();
+  });
+  const end = () => { drag = null; v.classList.remove('drag'); };
+  v.addEventListener('pointerup', end); v.addEventListener('pointercancel', end);
+  v.addEventListener('keydown', e => {
+    const d = {ArrowLeft:[-.15, 0], ArrowRight:[.15, 0], ArrowUp:[0, -.12], ArrowDown:[0, .12]}[e.key];
+    if(d){ e.preventDefault(); stopSpin(); SX.yaw += d[0]; SX.pitch = Math.max(-1.25, Math.min(1.25, SX.pitch + d[1])); draw3d(); }
+    else if(e.key === 'Home'){ e.preventDefault(); resetSpace(false); drawSpace(); }
+  });
+  card.addEventListener('pointerover', e => { if(drag) return; const t = e.target.closest && e.target.closest('[data-l]'); const l = t ? +t.dataset.l : null; if(l !== SX.hl){ SX.hl = l; drawSpace(); } });
+  card.addEventListener('pointerleave', () => { if(SX.hl != null){ SX.hl = null; drawSpace(); } });
+  card.querySelectorAll('#sxt tr[data-l]').forEach(tr => { tr.addEventListener('focus', () => { SX.hl = +tr.dataset.l; drawSpace(); }); tr.addEventListener('blur', () => { SX.hl = null; drawSpace(); }); });
+  card.querySelectorAll('[data-seed]').forEach(b => b.onclick = () => { SX.seed = +b.dataset.seed; SX.hl = null; buildSpace(); const f = $(`#space [data-seed="${SX.seed}"]`); if(f) f.focus(); });
+  card.querySelectorAll('[data-layer]').forEach(b => b.onclick = () => { const k = b.dataset.layer; SX.layers[k] = !SX.layers[k]; b.setAttribute('aria-pressed', SX.layers[k]); drawSpace(); });
+  $('#sxreset').onclick = () => { resetSpace(false); drawSpace(); };
+  const sp = $('#sxspin'); if(sp) sp.onclick = () => { SX.spin ? stopSpin() : startSpin(); };
+}
+function startSpin(){
+  if(RM) return;
+  const step = () => { if(!SX.spin || !$('#sx3')){ SX.spin = 0; return; } SX.yaw += 0.008; draw3d(); SX.spin = requestAnimationFrame(step); };
+  SX.spin = requestAnimationFrame(step);
+  const sp = $('#sxspin'); if(sp){ sp.textContent = 'Stop rotating'; sp.setAttribute('aria-pressed', 'true'); }
+}
+function stopSpin(){ if(SX.spin) cancelAnimationFrame(SX.spin); SX.spin = 0; const sp = $('#sxspin'); if(sp){ sp.textContent = 'Auto-rotate'; sp.setAttribute('aria-pressed', 'false'); } }
+function resetSpace(all){
+  stopSpin(); SX.yaw = SX_HOME.yaw; SX.pitch = SX_HOME.pitch; SX.hl = null;
+  if(all){ SX.seed = null; SX.key = null; SX.layers = {exp:true, pre:true, post:true}; }
+}
+/* called on every render; rebuilds the card only when the recording or its reports change, so step playback keeps the view */
+function updateSpace(rec){
+  const before = rec && rec.initial;
+  if(!hasLm(before)){ stopSpin(); SX.key = null; SX.sc = null; $('#space').innerHTML = ''; return; }
+  const aft = afterReport(rec);
+  if(SX.key && SX.key.rec === rec && SX.key.b === before && SX.key.a === aft.rep && $('#sx3')) return;
+  SX.key = {rec, b:before, a:aft.rep}; SX.rep = before; SX.aft = aft;
+  if(SX.seed == null || !before.phantoms.some(p => p.seed === SX.seed && p.landmarks.length)) SX.seed = worstSeed(before);
+  buildSpace();
+}
+
 /* ---- the three status pills ---------------------------------------------------------------------------------------- */
 function pill(k, v, s, cls){ return `<div class="pill ${cls||''}"><div class="k">${esc(k)}</div><div class="v">${v}</div><div class="s">${s||''}</div></div>`; }
 function reportAt(rec, i){
@@ -210,13 +454,14 @@ function renderLibrary(rec){
   } else if(rec.outcome !== 'REPAIRED') checks = `<div class="note" style="margin-top:8px">The visible oracle never passed, so held-out validation did not run. Reported as a failure.</div>`;
   const right = `<div class="card"><h2>What the oracle measured</h2><div class="ctl"><button class="btn ${libView==='before'?'primary':''}" id="vbefore">Before: library at the pre-fix commit</button><button class="btn ${libView==='after'?'primary':''}" id="vafter">After: with the agent's edit</button></div>${pic}</div>`
     + `<div class="card" style="margin-top:12px"><h2>Agent run: ${rec.n_steps} steps (${esc(tc)})</h2><div style="max-height:300px;overflow:auto">${ev}</div>${checks}</div>`;
-  $('#app').innerHTML = pills + `<div class="grid"><div>${left}</div><div>${right}</div></div>`;
+  $('#strip').innerHTML = pills; updateSpace(rec);
+  $('#app').innerHTML = `<div class="grid"><div>${left}</div><div>${right}</div></div>`;
   $('#vbefore').onclick = () => { libView = 'before'; renderLibrary(cur); };
   $('#vafter').onclick = () => { libView = 'after'; renderLibrary(cur); };
 }
 
 function render(){
-  const rec = cur; if(!rec){ $('#app').innerHTML = ''; return; }
+  const rec = cur; if(!rec){ $('#strip').innerHTML = $('#app').innerHTML = ''; updateSpace(null); return; }
   if(rec.kind === 'library'){ renderLibrary(rec); return; }
   const n = rec.steps.length, atEnd = sel >= n-1, finished = rec.status === 'done';
   const rep = reportAt(rec, sel);
@@ -261,7 +506,8 @@ function render(){
     } else right += `<div class="note">No patch passed the visible oracle, so held-out validation never ran. This run is reported as a failure.</div>`;
   }
   right += `</div>`;
-  $('#app').innerHTML = stripHtml(rec, sel) + `<div class="grid"><div>${left}</div><div>${right}</div></div>`
+  $('#strip').innerHTML = stripHtml(rec, sel); updateSpace(rec);
+  $('#app').innerHTML = `<div class="grid"><div>${left}</div><div>${right}</div></div>`
     + (LIVE ? liveControls() : '');
   bind();
 }
@@ -285,7 +531,7 @@ function start(){ if(!cur.steps.length) return; if(sel >= cur.steps.length-1) se
 function stop(){ if(timer){ clearInterval(timer); timer = null; } const p = $('#play'); if(p) p.textContent = '▶ Play'; }
 
 function pick(i, autoplay){
-  stop(); cur = recs[i]; sel = -1; libView = 'before';
+  stop(); cur = recs[i]; sel = -1; libView = 'before'; resetSpace(true);
   document.querySelectorAll('.chip').forEach((c,j) => c.setAttribute('aria-pressed', j === i));
   render();
   if(LIVE) setTimeout(liveCheck, 0);
@@ -335,7 +581,7 @@ async function liveRepair(){
     $('#mode').innerHTML = '<span class="badge b-warn">replay</span> Every run below is a real run, recorded from the project\'s own evaluation logs with <b>' + esc(RECORDED.model) + '</b> through Nebius Token Factory. Landmark positions are re-measured by the deterministic oracle. Nothing here calls an API.';
   }
   chips(); if(recs.length) pick(0, true);
-  $('#foot').innerHTML = 'Honest numbers: on 31 seeded bugs, the same model repaired 98% with oracle feedback, 86% with only my first unit tests, and 97% with a stronger unit-test suite that includes a landmark check (oracle vs stronger tests: +1 point, CI 0 to +3). What the oracle gate adds is not touching correct code and not guessing a convention. Those bugs are the oracle\'s own classes, so this is circular; of seven real library bugs, all 7 are <i>detected</i> and the agent repaired 2 of them (3 of 14 runs). The failed run above is shown on purpose. See the README for limitations.';
+  $('#foot').innerHTML = 'Honest numbers: on 31 seeded bugs, the same model repaired 98% with oracle feedback, 86% with only my first unit tests, and 97% with a stronger unit-test suite that includes a landmark check (oracle vs stronger tests: +1 point, CI 0 to +3). Gated the same way, any check that passes correct code protects it; what the contract adds is that it is written once per pipeline and is the only check that can say the convention is unknown (0 of 21 guesses). Those bugs are the oracle\'s own classes, so this is circular; of eight real library bugs, all 8 are <i>detected</i>; repairing inside a library is harder: with a runtime trace that ranks the right file in its top 10 for all 8, the agent repaired 3 of the 8 (4 of 16 runs). The failed run above is shown on purpose. See the README for limitations.';
 })();
 </script>
 </body>

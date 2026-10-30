@@ -1,0 +1,15 @@
+--- a/monai/data/utils.py
++++ b/monai/data/utils.py
+@@ -1516,10 +1516,6 @@
+         affine: a 2D affine matrix.
+     """
+-    sr = max(affine.shape[0] - 1, 1)  # spatial rank is at least 1
+-    flip_d = [[-1, 1], [-1, -1, 1], [-1, -1, 1, 1]]
+-    flip_diag = flip_d[min(sr - 1, 2)] + [1] * (sr - 3)
+-    if isinstance(affine, torch.Tensor):
+-        return torch.diag(torch.as_tensor(flip_diag).to(affine)) @ affine  # type: ignore
+-    return np.diag(flip_diag).astype(affine.dtype) @ affine  # type: ignore
++    # Temporarily disable conversion to see effect
++    return affine
+ 
+ 

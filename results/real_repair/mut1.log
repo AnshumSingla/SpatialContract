@@ -1,0 +1,3 @@
+torchio_crop             REPAIRED  candidates=58 screened_pass=1 winner=torchio/transforms/preprocessing/spatial/crop.py::Crop.apply_transform delete@38 localized=True 143.6s
+nilearn_reorder          OVERFIT   candidates=300 screened_pass=1 winner=nilearn/image/resampling.py::reorder_img -1@696 localized=True 457.9s
+nibabel_conform          FAILED    candidates=120 screened_pass=0 winner=None localized=False 65.7s

@@ -1,0 +1,42 @@
+{
+ "arm0": {
+  "repaired_pct": 86,
+  "controls_modified": 16,
+  "controls_broken": 10,
+  "controls_runs": 33,
+  "abstain_cases_patched": 9,
+  "abstain_runs": 21,
+  "check_passes_on_bugs": 0,
+  "check_passes_on_controls": 0
+ },
+ "arm2": {
+  "repaired_pct": 58,
+  "controls_modified": 0,
+  "controls_broken": 0,
+  "controls_runs": 33,
+  "abstain_cases_patched": 6,
+  "abstain_runs": 21,
+  "check_passes_on_bugs": 12,
+  "check_passes_on_controls": 11
+ },
+ "arm2s": {
+  "repaired_pct": 97,
+  "controls_modified": 0,
+  "controls_broken": 0,
+  "controls_runs": 33,
+  "abstain_cases_patched": 12,
+  "abstain_runs": 21,
+  "check_passes_on_bugs": 0,
+  "check_passes_on_controls": 11
+ },
+ "arm3": {
+  "repaired_pct": 98,
+  "controls_modified": 0,
+  "controls_broken": 0,
+  "controls_runs": 33,
+  "abstain_cases_patched": 0,
+  "abstain_runs": 21,
+  "check_passes_on_bugs": 0,
+  "check_passes_on_controls": 11
+ }
+}

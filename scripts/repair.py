@@ -24,6 +24,7 @@ def main() -> int:
     ap.add_argument("--thinking", choices=["default", "low", "off"], default="default",
                     help="Nemotron reasoning: off = chat_template_kwargs.enable_thinking=false; low = reasoning_effort=low")
     ap.add_argument("--run-seed", type=int, default=0)
+    ap.add_argument("--no-autofix", action="store_true", help="always call the model (skip the deterministic correction tried first)")
     ap.add_argument("--run-id", default=time.strftime("%Y%m%d-%H%M%S"))
     a = ap.parse_args()
 
@@ -38,7 +39,7 @@ def main() -> int:
     for case in a.cases:
         t = time.time()
         r = agent.repair(case, client, max_iters=a.max_iters, run_seed=a.run_seed, max_tokens=a.max_tokens, log_dir=out_dir,
-                         llm_kwargs=llm_kwargs)
+                         llm_kwargs=llm_kwargs, autofix=not a.no_autofix)
         d = r.to_dict() | {"seconds": round(time.time() - t, 1), "model": client.model, "thinking": a.thinking}
         summary.append(d)
         print(f"{r.case:28s} {r.outcome:16s} iters={r.iterations} calls={r.llm_calls} tokens={r.tokens} "

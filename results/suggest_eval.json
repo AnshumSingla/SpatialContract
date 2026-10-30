@@ -1,0 +1,1380 @@
+{
+ "summary": {
+  "controls": {
+   "n": 11,
+   "usable": 3,
+   "matches": 3
+  },
+  "bugs": {
+   "n": 31,
+   "usable": 6,
+   "matches": 4,
+   "hides_bug": 1
+  },
+  "must_abstain": {
+   "n": 7,
+   "claimed_usable": 3
+  },
+  "fields_stated": 11,
+  "fields": 196,
+  "tokens": 83647
+ },
+ "rows": [
+  {
+   "id": "R01_swap_transpose",
+   "kind": "bug",
+   "suggested": {
+    "world_frame": "RAS",
+    "units": "mm",
+    "affine_convention": "voxel_center_to_world",
+    "array_orientation": "ARS"
+   },
+   "basis": {
+    "world_frame": "inferred",
+    "units": "inferred",
+    "affine_convention": "inferred",
+    "array_orientation": "inferred"
+   },
+   "usable": true,
+   "declared": {
+    "world_frame": "RAS",
+    "units": "mm",
+    "affine_convention": "voxel_center_to_world",
+    "array_orientation": "RAS"
+   },
+   "tokens": {
+    "prompt": 1407,
+    "completion": 417
+   },
+   "matches": false,
+   "hides_bug": false
+  },
+  {
+   "id": "R02_swap_target_codes",
+   "kind": "bug",
+   "suggested": {
+    "world_frame": "unknown",
+    "units": "unknown",
+    "affine_convention": "unknown",
+    "array_orientation": "ARS"
+   },
+   "basis": {
+    "world_frame": "unknown",
+    "units": "unknown",
+    "affine_convention": "unknown",
+    "array_orientation": "inferred"
+   },
+   "usable": false,
+   "declared": {
+    "world_frame": "RAS",
+    "units": "mm",
+    "affine_convention": "voxel_center_to_world",
+    "array_orientation": "RAS"
+   },
+   "tokens": {
+    "prompt": 1392,
+    "completion": 271
+   },
+   "matches": false
+  },
+  {
+   "id": "R03_flip_post",
+   "kind": "bug",
+   "suggested": {
+    "world_frame": "unknown",
+    "units": "unknown",
+    "affine_convention": "voxel_center_to_world",
+    "array_orientation": "unknown"
+   },
+   "basis": {
+    "world_frame": "unknown",
+    "units": "unknown",
+    "affine_convention": "inferred",
+    "array_orientation": "unknown"
+   },
+   "usable": false,
+   "declared": {
+    "world_frame": "RAS",
+    "units": "mm",
+    "affine_convention": "voxel_center_to_world",
+    "array_orientation": "RAS"
+   },
+   "tokens": {
+    "prompt": 1401,
+    "completion": 206
+   },
+   "matches": false
+  },
+  {
+   "id": "R04_flip_pre",
+   "kind": "bug",
+   "suggested": {
+    "world_frame": "RAS",
+    "units": "mm",
+    "affine_convention": "voxel_center_to_world",
+    "array_orientation": "RAS"
+   },
+   "basis": {
+    "world_frame": "inferred",
+    "units": "inferred",
+    "affine_convention": "inferred",
+    "array_orientation": "stated"
+   },
+   "usable": true,
+   "declared": {
+    "world_frame": "RAS",
+    "units": "mm",
+    "affine_convention": "voxel_center_to_world",
+    "array_orientation": "RAS"
+   },
+   "tokens": {
+    "prompt": 1398,
+    "completion": 342
+   },
+   "matches": true,
+   "hides_bug": false
+  },
+  {
+   "id": "R05_stale_affine",
+   "kind": "bug",
+   "suggested": {
+    "world_frame": "RAS",
+    "units": "mm",
+    "affine_convention": "voxel_center_to_world",
+    "array_orientation": "RAS"
+   },
+   "basis": {
+    "world_frame": "inferred",
+    "units": "inferred",
+    "affine_convention": "inferred",
+    "array_orientation": "inferred"
+   },
+   "usable": true,
+   "declared": {
+    "world_frame": "RAS",
+    "units": "mm",
+    "affine_convention": "voxel_center_to_world",
+    "array_orientation": "RAS"
+   },
+   "tokens": {
+    "prompt": 1390,
+    "completion": 345
+   },
+   "matches": true,
+   "hides_bug": false
+  },
+  {
+   "id": "R06_stale_header",
+   "kind": "bug",
+   "suggested": {
+    "world_frame": "unknown",
+    "units": "unknown",
+    "affine_convention": "voxel_center_to_world",
+    "array_orientation": "RAS"
+   },
+   "basis": {
+    "world_frame": "unknown",
+    "units": "unknown",
+    "affine_convention": "inferred",
+    "array_orientation": "stated"
+   },
+   "usable": false,
+   "declared": {
+    "world_frame": "RAS",
+    "units": "mm",
+    "affine_convention": "voxel_center_to_world",
+    "array_orientation": "RAS"
+   },
+   "tokens": {
+    "prompt": 1395,
+    "completion": 437
+   },
+   "matches": false
+  },
+  {
+   "id": "R07_voxel_identity",
+   "kind": "bug",
+   "suggested": {
+    "world_frame": "unknown",
+    "units": "unknown",
+    "affine_convention": "unknown",
+    "array_orientation": null
+   },
+   "basis": {
+    "world_frame": "unknown",
+    "units": "unknown",
+    "affine_convention": "unknown",
+    "array_orientation": "inferred"
+   },
+   "usable": false,
+   "declared": {
+    "world_frame": "RAS",
+    "units": "mm",
+    "affine_convention": "voxel_center_to_world",
+    "array_orientation": "RAS"
+   },
+   "tokens": {
+    "prompt": 1394,
+    "completion": 224
+   },
+   "matches": false
+  },
+  {
+   "id": "R08_voxel_spacing_only",
+   "kind": "bug",
+   "suggested": {
+    "world_frame": "unknown",
+    "units": "unknown",
+    "affine_convention": "voxel_center_to_world",
+    "array_orientation": null
+   },
+   "basis": {
+    "world_frame": "unknown",
+    "units": "unknown",
+    "affine_convention": "inferred",
+    "array_orientation": "inferred"
+   },
+   "usable": false,
+   "declared": {
+    "world_frame": "RAS",
+    "units": "mm",
+    "affine_convention": "voxel_center_to_world",
+    "array_orientation": "RAS"
+   },
+   "tokens": {
+    "prompt": 1409,
+    "completion": 247
+   },
+   "matches": false
+  },
+  {
+   "id": "R09_units_milli",
+   "kind": "bug",
+   "suggested": {
+    "world_frame": "RAS",
+    "units": "m",
+    "affine_convention": "voxel_center_to_world",
+    "array_orientation": "RAS"
+   },
+   "basis": {
+    "world_frame": "stated",
+    "units": "stated",
+    "affine_convention": "stated",
+    "array_orientation": "stated"
+   },
+   "usable": true,
+   "declared": {
+    "world_frame": "RAS",
+    "units": "mm",
+    "affine_convention": "voxel_center_to_world",
+    "array_orientation": "RAS"
+   },
+   "tokens": {
+    "prompt": 1408,
+    "completion": 349
+   },
+   "matches": false,
+   "hides_bug": true
+  },
+  {
+   "id": "R10_units_cm",
+   "kind": "bug",
+   "suggested": {
+    "world_frame": "RAS",
+    "units": "unknown",
+    "affine_convention": "voxel_center_to_world",
+    "array_orientation": "RAS"
+   },
+   "basis": {
+    "world_frame": "stated",
+    "units": "unknown",
+    "affine_convention": "inferred",
+    "array_orientation": "stated"
+   },
+   "usable": false,
+   "declared": {
+    "world_frame": "RAS",
+    "units": "mm",
+    "affine_convention": "voxel_center_to_world",
+    "array_orientation": "RAS"
+   },
+   "tokens": {
+    "prompt": 1407,
+    "completion": 427
+   },
+   "matches": false
+  },
+  {
+   "id": "R11_affine_transposed",
+   "kind": "bug",
+   "suggested": {
+    "world_frame": "RAS",
+    "units": "mm",
+    "affine_convention": "voxel_center_to_world",
+    "array_orientation": "RAS"
+   },
+   "basis": {
+    "world_frame": "inferred",
+    "units": "inferred",
+    "affine_convention": "inferred",
+    "array_orientation": "inferred"
+   },
+   "usable": true,
+   "declared": {
+    "world_frame": "RAS",
+    "units": "mm",
+    "affine_convention": "voxel_center_to_world",
+    "array_orientation": "RAS"
+   },
+   "tokens": {
+    "prompt": 1393,
+    "completion": 342
+   },
+   "matches": true,
+   "hides_bug": false
+  },
+  {
+   "id": "R12_affine_inverted",
+   "kind": "bug",
+   "suggested": {
+    "world_frame": "unknown",
+    "units": "unknown",
+    "affine_convention": "unknown",
+    "array_orientation": "unknown"
+   },
+   "basis": {
+    "world_frame": "unknown",
+    "units": "unknown",
+    "affine_convention": "unknown",
+    "array_orientation": "unknown"
+   },
+   "usable": false,
+   "declared": {
+    "world_frame": "RAS",
+    "units": "mm",
+    "affine_convention": "voxel_center_to_world",
+    "array_orientation": "RAS"
+   },
+   "tokens": {
+    "prompt": 1397,
+    "completion": 233
+   },
+   "matches": false
+  },
+  {
+   "id": "S01_voxel_skips_inverse",
+   "kind": "bug",
+   "suggested": {
+    "world_frame": "unknown",
+    "units": "mm",
+    "affine_convention": "voxel_center_to_world",
+    "array_orientation": null
+   },
+   "basis": {
+    "world_frame": "unknown",
+    "units": "inferred",
+    "affine_convention": "inferred",
+    "array_orientation": "unknown"
+   },
+   "usable": false,
+   "declared": {
+    "world_frame": "RAS",
+    "units": "mm",
+    "affine_convention": "voxel_center_to_world",
+    "array_orientation": null
+   },
+   "tokens": {
+    "prompt": 1637,
+    "completion": 289
+   },
+   "matches": false
+  },
+  {
+   "id": "S02_stale_affine",
+   "kind": "bug",
+   "suggested": {
+    "world_frame": "unknown",
+    "units": "unknown",
+    "affine_convention": "unknown",
+    "array_orientation": "unknown"
+   },
+   "basis": {
+    "world_frame": "unknown",
+    "units": "unknown",
+    "affine_convention": "unknown",
+    "array_orientation": "unknown"
+   },
+   "usable": false,
+   "declared": {
+    "world_frame": "RAS",
+    "units": "mm",
+    "affine_convention": "voxel_center_to_world",
+    "array_orientation": null
+   },
+   "tokens": {
+    "prompt": 1644,
+    "completion": 209
+   },
+   "matches": false
+  },
+  {
+   "id": "S03_flip_output",
+   "kind": "bug",
+   "suggested": {
+    "world_frame": "unknown",
+    "units": "unknown",
+    "affine_convention": "unknown",
+    "array_orientation": "unknown"
+   },
+   "basis": {
+    "world_frame": "unknown",
+    "units": "unknown",
+    "affine_convention": "unknown",
+    "array_orientation": "unknown"
+   },
+   "usable": false,
+   "declared": {
+    "world_frame": "RAS",
+    "units": "mm",
+    "affine_convention": "voxel_center_to_world",
+    "array_orientation": null
+   },
+   "tokens": {
+    "prompt": 1650,
+    "completion": 174
+   },
+   "matches": false
+  },
+  {
+   "id": "S04_units_cm_voxel",
+   "kind": "bug",
+   "suggested": {
+    "world_frame": "unknown",
+    "units": "unknown",
+    "affine_convention": "unknown",
+    "array_orientation": "unknown"
+   },
+   "basis": {
+    "world_frame": "unknown",
+    "units": "unknown",
+    "affine_convention": "unknown",
+    "array_orientation": "unknown"
+   },
+   "usable": false,
+   "declared": {
+    "world_frame": "RAS",
+    "units": "mm",
+    "affine_convention": "voxel_center_to_world",
+    "array_orientation": null
+   },
+   "tokens": {
+    "prompt": 1671,
+    "completion": 173
+   },
+   "matches": false
+  },
+  {
+   "id": "S05_swap_transpose",
+   "kind": "bug",
+   "suggested": {
+    "world_frame": "unknown",
+    "units": "unknown",
+    "affine_convention": "unknown",
+    "array_orientation": "unknown"
+   },
+   "basis": {
+    "world_frame": "unknown",
+    "units": "unknown",
+    "affine_convention": "unknown",
+    "array_orientation": "unknown"
+   },
+   "usable": false,
+   "declared": {
+    "world_frame": "RAS",
+    "units": "mm",
+    "affine_convention": "voxel_center_to_world",
+    "array_orientation": null
+   },
+   "tokens": {
+    "prompt": 1657,
+    "completion": 174
+   },
+   "matches": false
+  },
+  {
+   "id": "S06_reshape_order",
+   "kind": "bug",
+   "suggested": {
+    "world_frame": "unknown",
+    "units": "mm",
+    "affine_convention": "voxel_center_to_world",
+    "array_orientation": null
+   },
+   "basis": {
+    "world_frame": "unknown",
+    "units": "inferred",
+    "affine_convention": "stated",
+    "array_orientation": "unknown"
+   },
+   "usable": false,
+   "declared": {
+    "world_frame": "RAS",
+    "units": "mm",
+    "affine_convention": "voxel_center_to_world",
+    "array_orientation": null
+   },
+   "tokens": {
+    "prompt": 1650,
+    "completion": 243
+   },
+   "matches": false
+  },
+  {
+   "id": "S07_affine_transposed",
+   "kind": "bug",
+   "suggested": {
+    "world_frame": "unknown",
+    "units": "unknown",
+    "affine_convention": "unknown",
+    "array_orientation": "unknown"
+   },
+   "basis": {
+    "world_frame": "unknown",
+    "units": "unknown",
+    "affine_convention": "unknown",
+    "array_orientation": "unknown"
+   },
+   "usable": false,
+   "declared": {
+    "world_frame": "RAS",
+    "units": "mm",
+    "affine_convention": "voxel_center_to_world",
+    "array_orientation": null
+   },
+   "tokens": {
+    "prompt": 1647,
+    "completion": 171
+   },
+   "matches": false
+  },
+  {
+   "id": "C01_stale_affine",
+   "kind": "bug",
+   "suggested": {
+    "world_frame": "unknown",
+    "units": "unknown",
+    "affine_convention": "unknown",
+    "array_orientation": "unknown"
+   },
+   "basis": {
+    "world_frame": "unknown",
+    "units": "unknown",
+    "affine_convention": "unknown",
+    "array_orientation": "unknown"
+   },
+   "usable": false,
+   "declared": {
+    "world_frame": "RAS",
+    "units": "mm",
+    "affine_convention": "voxel_center_to_world",
+    "array_orientation": null
+   },
+   "tokens": {
+    "prompt": 1439,
+    "completion": 157
+   },
+   "matches": false
+  },
+  {
+   "id": "C02_index_order",
+   "kind": "bug",
+   "suggested": {
+    "world_frame": "unknown",
+    "units": "unknown",
+    "affine_convention": "unknown",
+    "array_orientation": "unknown"
+   },
+   "basis": {
+    "world_frame": "unknown",
+    "units": "unknown",
+    "affine_convention": "unknown",
+    "array_orientation": "unknown"
+   },
+   "usable": false,
+   "declared": {
+    "world_frame": "RAS",
+    "units": "mm",
+    "affine_convention": "voxel_center_to_world",
+    "array_orientation": null
+   },
+   "tokens": {
+    "prompt": 1445,
+    "completion": 160
+   },
+   "matches": false
+  },
+  {
+   "id": "C03_voxel_added_to_world",
+   "kind": "bug",
+   "suggested": {
+    "world_frame": "unknown",
+    "units": "unknown",
+    "affine_convention": "voxel_center_to_world",
+    "array_orientation": "unknown"
+   },
+   "basis": {
+    "world_frame": "unknown",
+    "units": "unknown",
+    "affine_convention": "inferred",
+    "array_orientation": "unknown"
+   },
+   "usable": false,
+   "declared": {
+    "world_frame": "RAS",
+    "units": "mm",
+    "affine_convention": "voxel_center_to_world",
+    "array_orientation": null
+   },
+   "tokens": {
+    "prompt": 1453,
+    "completion": 237
+   },
+   "matches": false
+  },
+  {
+   "id": "C04_flip_cropped",
+   "kind": "bug",
+   "suggested": {
+    "world_frame": "unknown",
+    "units": "unknown",
+    "affine_convention": "unknown",
+    "array_orientation": "unknown"
+   },
+   "basis": {
+    "world_frame": "unknown",
+    "units": "unknown",
+    "affine_convention": "unknown",
+    "array_orientation": "unknown"
+   },
+   "usable": false,
+   "declared": {
+    "world_frame": "RAS",
+    "units": "mm",
+    "affine_convention": "voxel_center_to_world",
+    "array_orientation": null
+   },
+   "tokens": {
+    "prompt": 1446,
+    "completion": 192
+   },
+   "matches": false
+  },
+  {
+   "id": "L01_one_axis_only",
+   "kind": "bug",
+   "suggested": {
+    "world_frame": "LPS",
+    "units": "unknown",
+    "affine_convention": "unknown",
+    "array_orientation": null
+   },
+   "basis": {
+    "world_frame": "inferred",
+    "units": "unknown",
+    "affine_convention": "unknown",
+    "array_orientation": "unknown"
+   },
+   "usable": false,
+   "declared": {
+    "world_frame": "LPS",
+    "units": "mm",
+    "affine_convention": "voxel_center_to_world",
+    "array_orientation": null
+   },
+   "tokens": {
+    "prompt": 1351,
+    "completion": 397
+   },
+   "matches": false
+  },
+  {
+   "id": "L02_rotation_only",
+   "kind": "bug",
+   "suggested": {
+    "world_frame": "LPS",
+    "units": "mm",
+    "affine_convention": "voxel_center_to_world",
+    "array_orientation": null
+   },
+   "basis": {
+    "world_frame": "inferred",
+    "units": "inferred",
+    "affine_convention": "inferred",
+    "array_orientation": "inferred"
+   },
+   "usable": true,
+   "declared": {
+    "world_frame": "LPS",
+    "units": "mm",
+    "affine_convention": "voxel_center_to_world",
+    "array_orientation": null
+   },
+   "tokens": {
+    "prompt": 1379,
+    "completion": 469
+   },
+   "matches": true,
+   "hides_bug": false
+  },
+  {
+   "id": "L03_no_conversion",
+   "kind": "bug",
+   "suggested": {
+    "world_frame": "unknown",
+    "units": "unknown",
+    "affine_convention": "unknown",
+    "array_orientation": "unknown"
+   },
+   "basis": {
+    "world_frame": "unknown",
+    "units": "unknown",
+    "affine_convention": "unknown",
+    "array_orientation": "unknown"
+   },
+   "usable": false,
+   "declared": {
+    "world_frame": "LPS",
+    "units": "mm",
+    "affine_convention": "voxel_center_to_world",
+    "array_orientation": null
+   },
+   "tokens": {
+    "prompt": 1346,
+    "completion": 202
+   },
+   "matches": false
+  },
+  {
+   "id": "L04_right_multiply",
+   "kind": "bug",
+   "suggested": {
+    "world_frame": "LPS",
+    "units": "unknown",
+    "affine_convention": "unknown",
+    "array_orientation": null
+   },
+   "basis": {
+    "world_frame": "inferred",
+    "units": "unknown",
+    "affine_convention": "unknown",
+    "array_orientation": "unknown"
+   },
+   "usable": false,
+   "declared": {
+    "world_frame": "LPS",
+    "units": "mm",
+    "affine_convention": "voxel_center_to_world",
+    "array_orientation": null
+   },
+   "tokens": {
+    "prompt": 1351,
+    "completion": 474
+   },
+   "matches": false
+  },
+  {
+   "id": "M01_zoom_only",
+   "kind": "bug",
+   "suggested": {
+    "world_frame": "unknown",
+    "units": "m",
+    "affine_convention": "unknown",
+    "array_orientation": "unknown"
+   },
+   "basis": {
+    "world_frame": "unknown",
+    "units": "inferred",
+    "affine_convention": "unknown",
+    "array_orientation": "unknown"
+   },
+   "usable": false,
+   "declared": {
+    "world_frame": "RAS",
+    "units": "m",
+    "affine_convention": "voxel_center_to_world",
+    "array_orientation": null
+   },
+   "tokens": {
+    "prompt": 1337,
+    "completion": 233
+   },
+   "matches": false
+  },
+  {
+   "id": "M02_centimetres",
+   "kind": "bug",
+   "suggested": {
+    "world_frame": "unknown",
+    "units": "unknown",
+    "affine_convention": "voxel_center_to_world",
+    "array_orientation": "unknown"
+   },
+   "basis": {
+    "world_frame": "unknown",
+    "units": "unknown",
+    "affine_convention": "inferred",
+    "array_orientation": "unknown"
+   },
+   "usable": false,
+   "declared": {
+    "world_frame": "RAS",
+    "units": "m",
+    "affine_convention": "voxel_center_to_world",
+    "array_orientation": null
+   },
+   "tokens": {
+    "prompt": 1336,
+    "completion": 357
+   },
+   "matches": false
+  },
+  {
+   "id": "M03_not_converted",
+   "kind": "bug",
+   "suggested": {
+    "world_frame": "unknown",
+    "units": "unknown",
+    "affine_convention": "unknown",
+    "array_orientation": "unknown"
+   },
+   "basis": {
+    "world_frame": "unknown",
+    "units": "unknown",
+    "affine_convention": "unknown",
+    "array_orientation": "unknown"
+   },
+   "usable": false,
+   "declared": {
+    "world_frame": "RAS",
+    "units": "m",
+    "affine_convention": "voxel_center_to_world",
+    "array_orientation": null
+   },
+   "tokens": {
+    "prompt": 1322,
+    "completion": 201
+   },
+   "matches": false
+  },
+  {
+   "id": "M04_converted_twice",
+   "kind": "bug",
+   "suggested": {
+    "world_frame": "unknown",
+    "units": "unknown",
+    "affine_convention": "unknown",
+    "array_orientation": null
+   },
+   "basis": {
+    "world_frame": "unknown",
+    "units": "unknown",
+    "affine_convention": "unknown",
+    "array_orientation": "unknown"
+   },
+   "usable": false,
+   "declared": {
+    "world_frame": "RAS",
+    "units": "m",
+    "affine_convention": "voxel_center_to_world",
+    "array_orientation": null
+   },
+   "tokens": {
+    "prompt": 1350,
+    "completion": 331
+   },
+   "matches": false
+  },
+  {
+   "id": "K01_R_reference",
+   "kind": "control",
+   "suggested": {
+    "world_frame": "RAS",
+    "units": "unknown",
+    "affine_convention": "voxel_center_to_world",
+    "array_orientation": "RAS"
+   },
+   "basis": {
+    "world_frame": "inferred",
+    "units": "unknown",
+    "affine_convention": "inferred",
+    "array_orientation": "inferred"
+   },
+   "usable": false,
+   "declared": {
+    "world_frame": "RAS",
+    "units": "mm",
+    "affine_convention": "voxel_center_to_world",
+    "array_orientation": "RAS"
+   },
+   "tokens": {
+    "prompt": 1392,
+    "completion": 280
+   },
+   "matches": false
+  },
+  {
+   "id": "K02_R_float32",
+   "kind": "control",
+   "suggested": {
+    "world_frame": "RAS",
+    "units": "unknown",
+    "affine_convention": "voxel_center_to_world",
+    "array_orientation": "RAS"
+   },
+   "basis": {
+    "world_frame": "inferred",
+    "units": "unknown",
+    "affine_convention": "stated",
+    "array_orientation": "inferred"
+   },
+   "usable": false,
+   "declared": {
+    "world_frame": "RAS",
+    "units": "mm",
+    "affine_convention": "voxel_center_to_world",
+    "array_orientation": "RAS"
+   },
+   "tokens": {
+    "prompt": 1408,
+    "completion": 296
+   },
+   "matches": false
+  },
+  {
+   "id": "K03_S_reference",
+   "kind": "control",
+   "suggested": {
+    "world_frame": "unknown",
+    "units": "unknown",
+    "affine_convention": "unknown",
+    "array_orientation": null
+   },
+   "basis": {
+    "world_frame": "unknown",
+    "units": "unknown",
+    "affine_convention": "unknown",
+    "array_orientation": "inferred"
+   },
+   "usable": false,
+   "declared": {
+    "world_frame": "RAS",
+    "units": "mm",
+    "affine_convention": "voxel_center_to_world",
+    "array_orientation": null
+   },
+   "tokens": {
+    "prompt": 1646,
+    "completion": 244
+   },
+   "matches": false
+  },
+  {
+   "id": "K04_S_3mm",
+   "kind": "control",
+   "suggested": {
+    "world_frame": "unknown",
+    "units": "unknown",
+    "affine_convention": "unknown",
+    "array_orientation": "unknown"
+   },
+   "basis": {
+    "world_frame": "unknown",
+    "units": "unknown",
+    "affine_convention": "unknown",
+    "array_orientation": "unknown"
+   },
+   "usable": false,
+   "declared": {
+    "world_frame": "RAS",
+    "units": "mm",
+    "affine_convention": "voxel_center_to_world",
+    "array_orientation": null
+   },
+   "tokens": {
+    "prompt": 1646,
+    "completion": 161
+   },
+   "matches": false
+  },
+  {
+   "id": "K05_C_reference",
+   "kind": "control",
+   "suggested": {
+    "world_frame": "unknown",
+    "units": "unknown",
+    "affine_convention": "unknown",
+    "array_orientation": "unknown"
+   },
+   "basis": {
+    "world_frame": "unknown",
+    "units": "unknown",
+    "affine_convention": "unknown",
+    "array_orientation": "unknown"
+   },
+   "usable": false,
+   "declared": {
+    "world_frame": "RAS",
+    "units": "mm",
+    "affine_convention": "voxel_center_to_world",
+    "array_orientation": null
+   },
+   "tokens": {
+    "prompt": 1441,
+    "completion": 156
+   },
+   "matches": false
+  },
+  {
+   "id": "K06_C_margin5",
+   "kind": "control",
+   "suggested": {
+    "world_frame": "unknown",
+    "units": "unknown",
+    "affine_convention": "unknown",
+    "array_orientation": "unknown"
+   },
+   "basis": {
+    "world_frame": "unknown",
+    "units": "unknown",
+    "affine_convention": "unknown",
+    "array_orientation": "unknown"
+   },
+   "usable": false,
+   "declared": {
+    "world_frame": "RAS",
+    "units": "mm",
+    "affine_convention": "voxel_center_to_world",
+    "array_orientation": null
+   },
+   "tokens": {
+    "prompt": 1441,
+    "completion": 156
+   },
+   "matches": false
+  },
+  {
+   "id": "K07_L_reference",
+   "kind": "control",
+   "suggested": {
+    "world_frame": "LPS",
+    "units": "mm",
+    "affine_convention": "voxel_center_to_world",
+    "array_orientation": null
+   },
+   "basis": {
+    "world_frame": "inferred",
+    "units": "inferred",
+    "affine_convention": "inferred",
+    "array_orientation": "unknown"
+   },
+   "usable": true,
+   "declared": {
+    "world_frame": "LPS",
+    "units": "mm",
+    "affine_convention": "voxel_center_to_world",
+    "array_orientation": null
+   },
+   "tokens": {
+    "prompt": 1351,
+    "completion": 377
+   },
+   "matches": true
+  },
+  {
+   "id": "K08_M_reference",
+   "kind": "control",
+   "suggested": {
+    "world_frame": "RAS",
+    "units": "m",
+    "affine_convention": "voxel_center_to_world",
+    "array_orientation": null
+   },
+   "basis": {
+    "world_frame": "inferred",
+    "units": "inferred",
+    "affine_convention": "inferred",
+    "array_orientation": "unknown"
+   },
+   "usable": true,
+   "declared": {
+    "world_frame": "RAS",
+    "units": "m",
+    "affine_convention": "voxel_center_to_world",
+    "array_orientation": null
+   },
+   "tokens": {
+    "prompt": 1336,
+    "completion": 298
+   },
+   "matches": true
+  },
+  {
+   "id": "K09_noop_copy",
+   "kind": "control",
+   "suggested": {
+    "world_frame": "unknown",
+    "units": "unknown",
+    "affine_convention": "unknown",
+    "array_orientation": "unknown"
+   },
+   "basis": {
+    "world_frame": "unknown",
+    "units": "unknown",
+    "affine_convention": "unknown",
+    "array_orientation": "unknown"
+   },
+   "usable": false,
+   "declared": {
+    "world_frame": "RAS",
+    "units": "mm",
+    "affine_convention": "voxel_center_to_world",
+    "array_orientation": null
+   },
+   "tokens": {
+    "prompt": 1339,
+    "completion": 207
+   },
+   "matches": false
+  },
+  {
+   "id": "K10_R_as_closest_canonical",
+   "kind": "control",
+   "suggested": {
+    "world_frame": "RAS",
+    "units": "mm",
+    "affine_convention": "voxel_center_to_world",
+    "array_orientation": "RAS"
+   },
+   "basis": {
+    "world_frame": "inferred",
+    "units": "inferred",
+    "affine_convention": "inferred",
+    "array_orientation": "inferred"
+   },
+   "usable": true,
+   "declared": {
+    "world_frame": "RAS",
+    "units": "mm",
+    "affine_convention": "voxel_center_to_world",
+    "array_orientation": "RAS"
+   },
+   "tokens": {
+    "prompt": 1307,
+    "completion": 204
+   },
+   "matches": true
+  },
+  {
+   "id": "K11_S_nibabel_resample",
+   "kind": "control",
+   "suggested": {
+    "world_frame": "unknown",
+    "units": "unknown",
+    "affine_convention": "unknown",
+    "array_orientation": "unknown"
+   },
+   "basis": {
+    "world_frame": "unknown",
+    "units": "unknown",
+    "affine_convention": "unknown",
+    "array_orientation": "unknown"
+   },
+   "usable": false,
+   "declared": {
+    "world_frame": "RAS",
+    "units": "mm",
+    "affine_convention": "voxel_center_to_world",
+    "array_orientation": null
+   },
+   "tokens": {
+    "prompt": 1324,
+    "completion": 190
+   },
+   "matches": false
+  },
+  {
+   "id": "A01_no_contract_clean",
+   "kind": "abstain",
+   "suggested": {
+    "world_frame": "RAS",
+    "units": "mm",
+    "affine_convention": "voxel_center_to_world",
+    "array_orientation": "RAS"
+   },
+   "basis": {
+    "world_frame": "inferred",
+    "units": "inferred",
+    "affine_convention": "inferred",
+    "array_orientation": "stated"
+   },
+   "usable": true,
+   "declared": null,
+   "tokens": {
+    "prompt": 1392,
+    "completion": 428
+   }
+  },
+  {
+   "id": "A02_no_contract_buggy",
+   "kind": "abstain",
+   "suggested": {
+    "world_frame": "unknown",
+    "units": "unknown",
+    "affine_convention": "unknown",
+    "array_orientation": "unknown"
+   },
+   "basis": {
+    "world_frame": "unknown",
+    "units": "unknown",
+    "affine_convention": "unknown",
+    "array_orientation": "unknown"
+   },
+   "usable": false,
+   "declared": null,
+   "tokens": {
+    "prompt": 1390,
+    "completion": 213
+   }
+  },
+  {
+   "id": "A03_no_contract_buggy_S",
+   "kind": "abstain",
+   "suggested": {
+    "world_frame": "unknown",
+    "units": "unknown",
+    "affine_convention": "unknown",
+    "array_orientation": "unknown"
+   },
+   "basis": {
+    "world_frame": "unknown",
+    "units": "unknown",
+    "affine_convention": "unknown",
+    "array_orientation": "unknown"
+   },
+   "usable": false,
+   "declared": null,
+   "tokens": {
+    "prompt": 1650,
+    "completion": 174
+   }
+  },
+  {
+   "id": "A04_units_unknown",
+   "kind": "abstain",
+   "suggested": {
+    "world_frame": "RAS",
+    "units": "mm",
+    "affine_convention": "voxel_center_to_world",
+    "array_orientation": "RAS"
+   },
+   "basis": {
+    "world_frame": "inferred",
+    "units": "inferred",
+    "affine_convention": "inferred",
+    "array_orientation": "inferred"
+   },
+   "usable": true,
+   "declared": {
+    "world_frame": "RAS",
+    "units": "unknown",
+    "affine_convention": "voxel_center_to_world",
+    "array_orientation": "RAS"
+   },
+   "tokens": {
+    "prompt": 1392,
+    "completion": 396
+   }
+  },
+  {
+   "id": "A05_corner_convention",
+   "kind": "abstain",
+   "suggested": {
+    "world_frame": "unknown",
+    "units": "unknown",
+    "affine_convention": "unknown",
+    "array_orientation": "unknown"
+   },
+   "basis": {
+    "world_frame": "unknown",
+    "units": "unknown",
+    "affine_convention": "unknown",
+    "array_orientation": "unknown"
+   },
+   "usable": false,
+   "declared": {
+    "world_frame": "RAS",
+    "units": "mm",
+    "affine_convention": "voxel_corner_to_world",
+    "array_orientation": null
+   },
+   "tokens": {
+    "prompt": 1439,
+    "completion": 157
+   }
+  },
+  {
+   "id": "A06_frame_missing",
+   "kind": "abstain",
+   "suggested": {
+    "world_frame": "LPS",
+    "units": "mm",
+    "affine_convention": "voxel_center_to_world",
+    "array_orientation": null
+   },
+   "basis": {
+    "world_frame": "inferred",
+    "units": "inferred",
+    "affine_convention": "inferred",
+    "array_orientation": "unknown"
+   },
+   "usable": true,
+   "declared": {
+    "world_frame": null,
+    "units": "mm",
+    "affine_convention": "voxel_center_to_world",
+    "array_orientation": null
+   },
+   "tokens": {
+    "prompt": 1351,
+    "completion": 368
+   }
+  },
+  {
+   "id": "A07_units_ambiguous",
+   "kind": "abstain",
+   "suggested": {
+    "world_frame": "unknown",
+    "units": "unknown",
+    "affine_convention": "unknown",
+    "array_orientation": "unknown"
+   },
+   "basis": {
+    "world_frame": "unknown",
+    "units": "unknown",
+    "affine_convention": "unknown",
+    "array_orientation": "unknown"
+   },
+   "usable": false,
+   "declared": {
+    "world_frame": "RAS",
+    "units": "mm/m",
+    "affine_convention": "voxel_center_to_world",
+    "array_orientation": null
+   },
+   "tokens": {
+    "prompt": 1322,
+    "completion": 190
+   }
+  }
+ ]
+}

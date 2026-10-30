@@ -1,0 +1,20 @@
+--- a/torchio/data/backends.py
++++ b/torchio/data/backends.py
+@@ -142,8 +142,13 @@
+     @property
+     def affine(self) -> TypeAffineMatrix:
+-        return torch.as_tensor(
+-            self._nii.header.get_best_affine(),
+-            dtype=torch.float64,
+-        )
++        import torch
++        aff = self._nii.header.get_best_affine()
++        # Convert from LPS+ (NiBabel default) to RAS+
++        lps_to_ras = torch.tensor([[-1, 0, 0, 0],
++                                   [0, -1, 0, 0],
++                                   [0, 0, 1, 0],
++                                   [0, 0, 0, 1]], dtype=torch.float64)
++        aff_ras = lps_to_ras @ torch.as_tensor(aff, dtype=torch.float64)
++        return aff_ras
+ 
+     @property

@@ -79,6 +79,9 @@ CASES = [
     RealCase("torchio_sitk_ras_lps", "torchio", "a5102eeaa9a22866d9d64ebf5d11b4c9004882ac", "09138e0e0cebed1bace4e72b1b1eddcdbe4dd375",
              "modern", "flipped_axis", "SimpleITK writer received RAS affines without RAS->LPS conversion, double-flipping x/y on save",
              "2026-04-05", src_subdir="src"),
+    RealCase("monai_orientation_lps", "MONAI", "d4ba52e31574982300b37a99305d772ba41a1ac4", "0968da200ec86a4fb4216acc9257ab4a8eabce41",
+             "modern", "flipped_axis", "Orientation ignored meta['space']=LPS and read LPS affines as RAS, so axcodes='RAS' produced an LPS array (PR #8473, issue #8467)",
+             "2025-09-01", notes="world positions stay correct (affine is updated consistently); only the declared array_orientation contract catches it"),
 ]
 
 

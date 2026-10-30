@@ -26,6 +26,8 @@ def main() -> int:
     ap.add_argument("--max-tokens", type=int, default=8000)
     ap.add_argument("--parallel", type=int, default=3)
     ap.add_argument("--model", default=None)
+    ap.add_argument("--localize", action="store_true", help="add the runtime-trace ranking and get_suspects (locate.py)")
+    ap.add_argument("--no-diagnose", action="store_true", help="oracle feedback without the misplacement pattern (as in real3)")
     ap.add_argument("--run-id", default=time.strftime("%Y%m%d-%H%M%S"))
     a = ap.parse_args()
 
@@ -38,14 +40,15 @@ def main() -> int:
     done = {(r["case"], r["rep"]) for r in map(json.loads, raw.read_text(encoding="utf-8").splitlines())} if raw.exists() else set()
     cases = [c for c in realbugs.CASES if not a.cases or c.id in a.cases]
     tasks = [(c, r) for r in range(a.reps) for c in cases if (c.id, r) not in done]
-    print("model:", client.model, "| tasks:", len(tasks), flush=True)
+    print("model:", client.model, "| tasks:", len(tasks), "| localize:", a.localize, "| diagnose:", not a.no_diagnose, flush=True)
 
     def work(t):
         case, rep = t
         t0 = time.time()
         try:
             res = libagent.repair_library(case, client, max_steps=a.max_steps, max_oracle_runs=a.max_oracle_runs, max_tokens=a.max_tokens,
-                                          log_path=out / "logs" / f"{case.id}_r{rep}.jsonl", run_seed=rep)
+                                          log_path=out / "logs" / f"{case.id}_r{rep}.jsonl", run_seed=rep,
+                                          localize=a.localize, diagnose=not a.no_diagnose)
             row = res.to_dict() | {"rep": rep, "seconds": round(time.time() - t0, 1), "model": client.model}
             (out / "logs").mkdir(exist_ok=True)
             (out / "logs" / f"{case.id}_r{rep}.diff").write_text(res.diff, encoding="utf-8")

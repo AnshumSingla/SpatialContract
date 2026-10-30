@@ -1,0 +1,23 @@
+--- a/torchio/transforms/reorient.py
++++ b/torchio/transforms/reorient.py
+@@ -153,18 +153,15 @@
+ 
+         for _name, img_batch in self._get_images(batch).items():
++            spatial_shape = img_batch.data.shape[-3:]
+             img_batch.data = _apply_reorientation(img_batch.data, ornt)
+ 
+             for affine in img_batch.affines:
+-                spatial_shape = img_batch.data.shape[-3:]
+                 inv_aff = orientations.inv_ornt_aff(ornt, spatial_shape)
+-                new_matrix = affine.numpy() @ inv_aff
++                new_matrix = inv_aff @ affine.numpy()
+                 affine._matrix = torch.as_tensor(
+                     new_matrix,
+                     dtype=torch.float64,
+                 )
+-
+         return batch
+-
+-    @property
+     def invertible(self) -> bool:
+         return True

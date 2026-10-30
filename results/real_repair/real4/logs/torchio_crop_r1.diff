@@ -1,0 +1,9 @@
+--- a/torchio/transforms/preprocessing/spatial/crop.py
++++ b/torchio/transforms/preprocessing/spatial/crop.py
+@@ -31,5 +31,5 @@
+         index_fin = np.array(sample.spatial_shape) - high
+         for image in self.get_images(sample):
+-            new_origin = nib.affines.apply_affine(image.affine, index_ini)
++            new_origin = nib.affines.apply_affine(image.affine, index_ini) - (image.affine[:3, :3] @ np.array([0.5, 0.5, 0.5]))
+             new_affine = image.affine.copy()
+             new_affine[:3, 3] = new_origin

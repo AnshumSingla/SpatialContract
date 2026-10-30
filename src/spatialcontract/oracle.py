@@ -20,6 +20,7 @@ from pathlib import Path
 import nibabel as nib
 import numpy as np
 
+from . import diagnose
 from .contract import SpatialContract, UNIT_TO_MM, load_from_source
 from .phantom import Phantom, make_phantom
 
@@ -60,6 +61,7 @@ class PhantomResult:
     orientation_ok: bool | None = None
     tol_mm_used: float | None = None
     lossless: bool | None = None
+    pattern: dict | None = None    # diagnose.describe of the misplacement, FAIL only
     detail: str = ""
 
 
@@ -70,6 +72,7 @@ class Report:
     reasons: list = field(default_factory=list)
     phantoms: list = field(default_factory=list)
     tol_mm: float = DEFAULT_TOL_MM
+    diagnose: bool = True          # include the fitted misplacement pattern in feedback() (False reproduces the original text)
 
     @property
     def passed(self) -> bool:
@@ -99,7 +102,9 @@ class Report:
                 f"phantom seed={p.seed}: {p.status}; input axcodes={p.in_axcodes} zooms_mm={p.in_zooms_mm} -> output axcodes={p.out_axcodes} "
                 f"zooms_mm={p.out_zooms_mm}; orientation_ok={p.orientation_ok}; "
                 f"lossless={p.lossless} tol_used={p.tol_mm_used} mm; {len(bad)}/{len(p.landmarks)} landmarks off")
-            for lm in bad[:3]:
+            if self.diagnose and p.pattern:
+                lines.append(f"  pattern: {p.pattern['text']}")
+            for lm in bad[:2 if self.diagnose and p.pattern else 3]:
                 err = "LOST" if lm.error_mm is None else f"{lm.error_mm:.2f} mm"
                 lines.append(f"  landmark {lm.label}: expected {_fmt(lm.expected)} got {_fmt(lm.got)} error {err}")
         return "\n".join(lines[:max_lines])
@@ -114,9 +119,11 @@ def _fmt(v):
 
 
 def _run_code(code_path: Path, in_path: Path, out_path: Path, cwd: Path,
-              python: str | None = None, pythonpath: list | None = None) -> tuple[bool, str]:
+              python: str | None = None, pythonpath: list | None = None, runner: str = _RUNNER,
+              extra_args: tuple = ()) -> tuple[bool, str]:
     """Run ``process`` in a subprocess. ``python``/``pythonpath`` select an interpreter and extra import roots
-    (used by the real-bug corpus to run a library at a specific commit); isolated mode (-I) is used otherwise."""
+    (used by the real-bug corpus to run a library at a specific commit); isolated mode (-I) is used otherwise.
+    ``runner``/``extra_args`` swap in another driver (``locate`` runs the same call under a tracer)."""
     env = {k: os.environ[k] for k in _ENV_KEEP if k in os.environ}
     cmd = [python or sys.executable]
     if pythonpath:
@@ -125,7 +132,7 @@ def _run_code(code_path: Path, in_path: Path, out_path: Path, cwd: Path,
     else:
         cmd += ["-I"]
     try:
-        r = subprocess.run(cmd + ["-c", _RUNNER, str(code_path), str(in_path), str(out_path)],
+        r = subprocess.run(cmd + ["-c", runner, str(code_path), str(in_path), str(out_path), *map(str, extra_args)],
                            capture_output=True, text=True, timeout=TIMEOUT_S, cwd=cwd, env=env)
     except subprocess.TimeoutExpired:
         return False, f"timeout after {TIMEOUT_S}s"
@@ -136,13 +143,18 @@ def _run_code(code_path: Path, in_path: Path, out_path: Path, cwd: Path,
 
 
 def _check_one_inner(code_path: Path, contract: SpatialContract, ph: Phantom, tol_mm: float, tmp: Path,
-               python: str | None = None, pythonpath: list | None = None) -> PhantomResult:
+               python: str | None = None, pythonpath: list | None = None, run=None) -> PhantomResult:
     in_path = tmp / f"phantom_{ph.seed}.nii.gz"
     out_path = tmp / f"out_{ph.seed}.nii.gz"
     ph.save(in_path)
-    ok, err = _run_code(code_path, in_path, out_path, tmp, python, pythonpath)
+    ok, err = (run or _run_code)(code_path, in_path, out_path, tmp, python, pythonpath)
     if not ok:
         return PhantomResult(ph.seed, "ERROR", detail=str(err))
+    return measure(out_path, contract, ph, tol_mm)
+
+
+def measure(out_path: Path, contract: SpatialContract, ph: Phantom, tol_mm: float = DEFAULT_TOL_MM) -> PhantomResult:
+    """Score an output file that ``process`` wrote for phantom ``ph``. Raises on output it cannot analyse (see _check_one)."""
     try:
         out = nib.load(str(out_path))
         data = np.asarray(out.dataobj)
@@ -172,23 +184,105 @@ def _check_one_inner(code_path: Path, contract: SpatialContract, ph: Phantom, to
     else:
         tol_mm = min(max(tol_mm, HALF_VOXEL_DIAG * max(res.out_zooms_mm)), MAX_TOL_MM)
     res.tol_mm_used = round(tol_mm, 3)
+    def landmarks(centre_of) -> list:
+        out = []
+        for label, true_ras in ph.world_ras_mm.items():
+            expected = contract.ras_mm_to_contract(true_ras)
+            lm = LandmarkResult(label, expected=expected.tolist())
+            centre = centre_of(label)
+            if centre is not None:                      # None => lost
+                got = (aff @ np.append(centre, 1.0))[:3]
+                lm.got = got.tolist()
+                lm.error_mm = float(np.linalg.norm(got - expected) * UNIT_TO_MM[contract.units])
+                lm.ok = lm.error_mm <= tol_mm
+            out.append(lm)
+        return out
 
-    for label, true_ras in ph.world_ras_mm.items():
-        expected = contract.ras_mm_to_contract(true_ras)
-        lm = LandmarkResult(label, expected=expected.tolist())
+    def exact(label):
         idx = np.argwhere(np.abs(data - label) < 0.25)
-        if len(idx) == 0:
-            res.landmarks.append(lm)  # lost
-            continue
-        got = (aff @ np.append(idx.mean(axis=0), 1.0))[:3]
-        lm.got = got.tolist()
-        lm.error_mm = float(np.linalg.norm(got - expected) * UNIT_TO_MM[contract.units])
-        lm.ok = lm.error_mm <= tol_mm
-        res.landmarks.append(lm)
+        return idx.mean(axis=0) if len(idx) else None
+
+    res.landmarks = landmarks(exact)
+    # Linear or cubic resampling blends labels, so exact matching misplaces or loses landmarks of a CORRECT pipeline. The blob
+    # reading may only turn such a failure into a pass, when it finds every landmark where it belongs; any other verdict and
+    # every number of the exact reading stand unchanged.
+    if not all(lm.ok for lm in res.landmarks) and not res.lossless and _values_changed(data, ph, ras_aff):
+        for i, cand in enumerate(_soft_landmarks(data, ph, ras_aff)):
+            alt = landmarks(cand.get)
+            if all(lm.ok for lm in alt):
+                res.landmarks = alt
+                res.detail = ("landmarks located as blobs (weighted centroids) because output values are not the phantom's labels; "
+                              + ("labels read from values" if i == 0 else "labels read from the blobs' intensity order"))
+                break
 
     if res.orientation_ok is False or not all(lm.ok for lm in res.landmarks):
         res.status = "FAIL"
+        if not all(lm.ok for lm in res.landmarks):
+            res.pattern = diagnose.describe([lm.expected for lm in res.landmarks], [lm.got for lm in res.landmarks],
+                                            out_affine=aff, unit_mm=UNIT_TO_MM[contract.units], frame=contract.world_frame,
+                                            noise_mm=tol_mm)
     return res
+
+
+def _ball_mm3(ph: Phantom) -> float:
+    """Physical volume of one landmark ball; all balls share it (integer centres, same voxel radius)."""
+    return np.count_nonzero(ph.data == 1) * abs(np.linalg.det(ph.affine[:3, :3]))
+
+
+def _values_changed(data: np.ndarray, ph: Phantom, ras_aff: np.ndarray) -> bool:
+    """True when the output's values are not the phantom's whole labels: blended by linear/cubic resampling, or remapped by an
+    intensity normalisation. Float output shows it as non-integer values; integer output (nibabel keeps the int16 dtype) as a
+    label covering far more physical volume than one ball (rounded edges of other balls take its value), or as a label missing."""
+    if not np.issubdtype(data.dtype, np.integer):
+        nz = data[np.abs(data) > 0.05]
+        if nz.size and float(np.mean(np.abs(nz - np.round(nz)) > 0.05)) > 0.02:
+            return True
+    vox = abs(np.linalg.det(ras_aff[:3, :3]))
+    vols = [np.count_nonzero(np.abs(data - lb) < 0.25) * vox / _ball_mm3(ph) for lb in ph.world_ras_mm]
+    return any(v > 1.5 for v in vols) or not all(vols)
+
+
+def _soft_landmarks(data: np.ndarray, ph: Phantom, ras_aff: np.ndarray) -> list[dict]:
+    """Candidate landmark centres (voxel index) for an output whose values no longer equal the phantom's labels: linear or cubic
+    resampling blends each ball with the background, and an intensity normalisation (z-score, rescaling) changes every value.
+    Each ball is still a blob standing out from the background (the median value); its intensity-weighted centroid is its centre.
+    Two readings name the blobs: (1) values kept their meaning, so a blob's plateau value, or its intensity mass over the one
+    physical volume every ball shares, is its label; (2) values were remapped monotonically, so with exactly one blob per
+    landmark the blobs' mass order is the label order. A label claimed twice, or by no blob, is lost in that reading."""
+    from scipy import ndimage
+
+    w = np.nan_to_num(data.astype(float))
+    w = w - float(np.median(w))
+    if abs(w.min()) > abs(w.max()):                      # a decreasing intensity map
+        w = -w
+    w = np.clip(w, 0, None)
+    if w.max() <= 0:
+        return []
+    core, n = ndimage.label(w > w.max() / 12)            # label 1 sits at 1/6 of the top label's plateau
+    if n == 0:
+        return []
+    ids = np.arange(1, n + 1)
+    sizes = np.asarray(ndimage.sum(np.ones_like(w), core, ids))
+    keep = ids[sizes >= 0.2 * np.median(sizes)]          # drop specks (cubic ringing)
+    region = ndimage.grey_dilation(np.where(np.isin(core, keep), core, 0), size=(5, 5, 5))   # take in the faint tails
+    region[w <= 0] = 0
+    mass = np.asarray(ndimage.sum(w, region, keep)) * abs(np.linalg.det(ras_aff[:3, :3])) / _ball_mm3(ph)
+    with np.errstate(invalid="ignore", divide="ignore"):
+        centres = [np.asarray(c) for c in ndimage.center_of_mass(w, region, keep)]
+    labels = sorted(ph.world_ras_mm)
+
+    absolute: dict = {}
+    for m, c in zip(mass, centres):
+        if not np.all(np.isfinite(c)):
+            continue
+        v = float(w[tuple(np.clip(np.round(c).astype(int), 0, np.array(w.shape) - 1))])
+        lb = int(round(v)) if abs(v - round(v)) < 0.25 and round(v) in ph.world_ras_mm else int(round(m))
+        if lb in ph.world_ras_mm and (abs(v - lb) < 0.25 or abs(m - lb) < 0.35):
+            absolute[lb] = None if lb in absolute else c
+    candidates = [{lb: c for lb, c in absolute.items() if c is not None}]
+    if len(keep) == len(labels):
+        candidates.append({lb: centres[i] for lb, i in zip(labels, np.argsort(mass)) if np.all(np.isfinite(centres[i]))})
+    return candidates
 
 
 def _check_one(*args, **kwargs) -> PhantomResult:
@@ -201,8 +295,9 @@ def _check_one(*args, **kwargs) -> PhantomResult:
 
 
 def check(code_path, contract: SpatialContract | None, seeds=DEFAULT_SEEDS, tol_mm: float = DEFAULT_TOL_MM,
-          python: str | None = None, pythonpath: list | None = None, phantoms: list | None = None) -> Report:
-    """Run the oracle on the code at ``code_path`` under ``contract`` (None => read it from the source)."""
+          python: str | None = None, pythonpath: list | None = None, phantoms: list | None = None, run=None) -> Report:
+    """Run the oracle on the code at ``code_path`` under ``contract`` (None => read it from the source). ``run`` replaces the
+    subprocess runner (same signature as ``_run_code``); api.check_function uses it to run a function in-process."""
     code_path = Path(code_path).resolve()
     if contract is None:
         contract = load_from_source(code_path.read_text(encoding="utf-8"))
@@ -216,9 +311,9 @@ def check(code_path, contract: SpatialContract | None, seeds=DEFAULT_SEEDS, tol_
     with tempfile.TemporaryDirectory(prefix="sc_oracle_") as d:
         tmp = Path(d)
         for ph in (phantoms if phantoms is not None else [make_phantom(s) for s in seeds]):
-            res = _check_one(code_path, contract, ph, tol_mm, tmp, python, pythonpath)
+            res = _check_one(code_path, contract, ph, tol_mm, tmp, python, pythonpath, run)
             if res.status == "ERROR":      # one retry: a transient Windows file-lock/subprocess blip once turned a control into an ERROR
-                again = _check_one(code_path, contract, ph, tol_mm, tmp, python, pythonpath)
+                again = _check_one(code_path, contract, ph, tol_mm, tmp, python, pythonpath, run)
                 again.detail = f"{again.detail} (after 1 retry; first attempt: {res.detail})" if again.status == "ERROR" else again.detail
                 res = again
             rep.phantoms.append(res)

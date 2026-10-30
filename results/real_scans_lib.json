@@ -1,0 +1,1602 @@
+[
+ {
+  "run": "real3/nilearn_reorder_r0",
+  "case": "nilearn_reorder",
+  "scan": "t1_nibabel_LAS_2mm",
+  "pre": {
+   "r": 1.0,
+   "covered_fraction": 1.0,
+   "orientation_ok": null,
+   "out_axcodes": "RAS"
+  },
+  "upstream": {
+   "r": 1.0,
+   "covered_fraction": 1.0,
+   "orientation_ok": null,
+   "out_axcodes": "RAS"
+  },
+  "agent": {
+   "r": 1.0,
+   "covered_fraction": 1.0,
+   "orientation_ok": null,
+   "out_axcodes": "RAS"
+  },
+  "agent_equals_upstream": true,
+  "agent_vs_upstream_max_affine_diff_mm": 0.0
+ },
+ {
+  "run": "real3/nilearn_reorder_r0",
+  "case": "nilearn_reorder",
+  "scan": "epi_nibabel_LAS_oblique",
+  "pre": {
+   "r": 0.9806,
+   "covered_fraction": 1.0,
+   "orientation_ok": null,
+   "out_axcodes": "RAS"
+  },
+  "upstream": {
+   "r": 0.9806,
+   "covered_fraction": 1.0,
+   "orientation_ok": null,
+   "out_axcodes": "RAS"
+  },
+  "agent": {
+   "r": 0.9806,
+   "covered_fraction": 1.0,
+   "orientation_ok": null,
+   "out_axcodes": "RAS"
+  },
+  "agent_equals_upstream": true,
+  "agent_vs_upstream_max_affine_diff_mm": 0.0
+ },
+ {
+  "run": "real3/nilearn_reorder_r0",
+  "case": "nilearn_reorder",
+  "scan": "colin27_RAS_2mm",
+  "pre": {
+   "r": 1.0,
+   "covered_fraction": 1.0,
+   "orientation_ok": null,
+   "out_axcodes": "RAS"
+  },
+  "upstream": {
+   "r": 1.0,
+   "covered_fraction": 1.0,
+   "orientation_ok": null,
+   "out_axcodes": "RAS"
+  },
+  "agent": {
+   "r": 1.0,
+   "covered_fraction": 1.0,
+   "orientation_ok": null,
+   "out_axcodes": "RAS"
+  },
+  "agent_equals_upstream": true,
+  "agent_vs_upstream_max_affine_diff_mm": 0.0
+ },
+ {
+  "run": "real3/nilearn_reorder_r0",
+  "case": "nilearn_reorder",
+  "scan": "colin27_PIR_2mm",
+  "pre": {
+   "r": 0.9834,
+   "covered_fraction": 1.0,
+   "orientation_ok": null,
+   "out_axcodes": "RAS"
+  },
+  "upstream": {
+   "r": 1.0,
+   "covered_fraction": 1.0,
+   "orientation_ok": null,
+   "out_axcodes": "RAS"
+  },
+  "agent": {
+   "r": 1.0,
+   "covered_fraction": 1.0,
+   "orientation_ok": null,
+   "out_axcodes": "RAS"
+  },
+  "agent_equals_upstream": true,
+  "agent_vs_upstream_max_affine_diff_mm": 0.0
+ },
+ {
+  "run": "real3/nilearn_reorder_r1",
+  "case": "nilearn_reorder",
+  "scan": "t1_nibabel_LAS_2mm",
+  "pre": {
+   "r": 1.0,
+   "covered_fraction": 1.0,
+   "orientation_ok": null,
+   "out_axcodes": "RAS"
+  },
+  "upstream": {
+   "r": 1.0,
+   "covered_fraction": 1.0,
+   "orientation_ok": null,
+   "out_axcodes": "RAS"
+  },
+  "agent": {
+   "r": 1.0,
+   "covered_fraction": 1.0,
+   "orientation_ok": null,
+   "out_axcodes": "RAS"
+  },
+  "agent_equals_upstream": true,
+  "agent_vs_upstream_max_affine_diff_mm": 0.0
+ },
+ {
+  "run": "real3/nilearn_reorder_r1",
+  "case": "nilearn_reorder",
+  "scan": "epi_nibabel_LAS_oblique",
+  "pre": {
+   "r": 0.9806,
+   "covered_fraction": 1.0,
+   "orientation_ok": null,
+   "out_axcodes": "RAS"
+  },
+  "upstream": {
+   "r": 0.9806,
+   "covered_fraction": 1.0,
+   "orientation_ok": null,
+   "out_axcodes": "RAS"
+  },
+  "agent": {
+   "r": 0.9806,
+   "covered_fraction": 1.0,
+   "orientation_ok": null,
+   "out_axcodes": "RAS"
+  },
+  "agent_equals_upstream": true,
+  "agent_vs_upstream_max_affine_diff_mm": 0.0
+ },
+ {
+  "run": "real3/nilearn_reorder_r1",
+  "case": "nilearn_reorder",
+  "scan": "colin27_RAS_2mm",
+  "pre": {
+   "r": 1.0,
+   "covered_fraction": 1.0,
+   "orientation_ok": null,
+   "out_axcodes": "RAS"
+  },
+  "upstream": {
+   "r": 1.0,
+   "covered_fraction": 1.0,
+   "orientation_ok": null,
+   "out_axcodes": "RAS"
+  },
+  "agent": {
+   "r": 1.0,
+   "covered_fraction": 1.0,
+   "orientation_ok": null,
+   "out_axcodes": "RAS"
+  },
+  "agent_equals_upstream": true,
+  "agent_vs_upstream_max_affine_diff_mm": 0.0
+ },
+ {
+  "run": "real3/nilearn_reorder_r1",
+  "case": "nilearn_reorder",
+  "scan": "colin27_PIR_2mm",
+  "pre": {
+   "r": 0.9834,
+   "covered_fraction": 1.0,
+   "orientation_ok": null,
+   "out_axcodes": "RAS"
+  },
+  "upstream": {
+   "r": 1.0,
+   "covered_fraction": 1.0,
+   "orientation_ok": null,
+   "out_axcodes": "RAS"
+  },
+  "agent": {
+   "r": 1.0,
+   "covered_fraction": 1.0,
+   "orientation_ok": null,
+   "out_axcodes": "RAS"
+  },
+  "agent_equals_upstream": true,
+  "agent_vs_upstream_max_affine_diff_mm": 0.0
+ },
+ {
+  "run": "real3/torchio_sitk_ras_lps_r1",
+  "case": "torchio_sitk_ras_lps",
+  "scan": "t1_nibabel_LAS_2mm",
+  "pre": {
+   "r": -0.041,
+   "covered_fraction": 1.0,
+   "orientation_ok": null,
+   "out_axcodes": "RPS"
+  },
+  "upstream": {
+   "r": 1.0,
+   "covered_fraction": 1.0,
+   "orientation_ok": null,
+   "out_axcodes": "LAS"
+  },
+  "agent": {
+   "r": 1.0,
+   "covered_fraction": 1.0,
+   "orientation_ok": null,
+   "out_axcodes": "LAS"
+  },
+  "agent_equals_upstream": true,
+  "agent_vs_upstream_max_affine_diff_mm": 0.0
+ },
+ {
+  "run": "real3/torchio_sitk_ras_lps_r1",
+  "case": "torchio_sitk_ras_lps",
+  "scan": "epi_nibabel_LAS_oblique",
+  "pre": {
+   "r": 0.4446,
+   "covered_fraction": 0.3579,
+   "orientation_ok": null,
+   "out_axcodes": "RPS"
+  },
+  "upstream": {
+   "r": 1.0,
+   "covered_fraction": 1.0,
+   "orientation_ok": null,
+   "out_axcodes": "LAS"
+  },
+  "agent": {
+   "r": 1.0,
+   "covered_fraction": 1.0,
+   "orientation_ok": null,
+   "out_axcodes": "LAS"
+  },
+  "agent_equals_upstream": true,
+  "agent_vs_upstream_max_affine_diff_mm": 0.0
+ },
+ {
+  "run": "real3/torchio_sitk_ras_lps_r1",
+  "case": "torchio_sitk_ras_lps",
+  "scan": "colin27_RAS_2mm",
+  "pre": {
+   "r": 0.4701,
+   "covered_fraction": 0.844,
+   "orientation_ok": null,
+   "out_axcodes": "LPS"
+  },
+  "upstream": {
+   "r": 1.0,
+   "covered_fraction": 1.0,
+   "orientation_ok": null,
+   "out_axcodes": "RAS"
+  },
+  "agent": {
+   "r": 1.0,
+   "covered_fraction": 1.0,
+   "orientation_ok": null,
+   "out_axcodes": "RAS"
+  },
+  "agent_equals_upstream": true,
+  "agent_vs_upstream_max_affine_diff_mm": 0.0
+ },
+ {
+  "run": "real3/torchio_sitk_ras_lps_r1",
+  "case": "torchio_sitk_ras_lps",
+  "scan": "colin27_PIR_2mm",
+  "pre": {
+   "r": 0.4701,
+   "covered_fraction": 0.844,
+   "orientation_ok": null,
+   "out_axcodes": "AIL"
+  },
+  "upstream": {
+   "r": 1.0,
+   "covered_fraction": 1.0,
+   "orientation_ok": null,
+   "out_axcodes": "PIR"
+  },
+  "agent": {
+   "r": 1.0,
+   "covered_fraction": 1.0,
+   "orientation_ok": null,
+   "out_axcodes": "PIR"
+  },
+  "agent_equals_upstream": true,
+  "agent_vs_upstream_max_affine_diff_mm": 0.0
+ },
+ {
+  "run": "real4/nilearn_reorder_r0",
+  "case": "nilearn_reorder",
+  "scan": "t1_nibabel_LAS_2mm",
+  "pre": {
+   "r": 1.0,
+   "covered_fraction": 1.0,
+   "orientation_ok": null,
+   "out_axcodes": "RAS"
+  },
+  "upstream": {
+   "r": 1.0,
+   "covered_fraction": 1.0,
+   "orientation_ok": null,
+   "out_axcodes": "RAS"
+  },
+  "agent": {
+   "r": 1.0,
+   "covered_fraction": 1.0,
+   "orientation_ok": null,
+   "out_axcodes": "RAS"
+  },
+  "agent_equals_upstream": true,
+  "agent_vs_upstream_max_affine_diff_mm": 0.0
+ },
+ {
+  "run": "real4/nilearn_reorder_r0",
+  "case": "nilearn_reorder",
+  "scan": "epi_nibabel_LAS_oblique",
+  "pre": {
+   "r": 0.9806,
+   "covered_fraction": 1.0,
+   "orientation_ok": null,
+   "out_axcodes": "RAS"
+  },
+  "upstream": {
+   "r": 0.9806,
+   "covered_fraction": 1.0,
+   "orientation_ok": null,
+   "out_axcodes": "RAS"
+  },
+  "agent": {
+   "r": 0.9806,
+   "covered_fraction": 1.0,
+   "orientation_ok": null,
+   "out_axcodes": "RAS"
+  },
+  "agent_equals_upstream": true,
+  "agent_vs_upstream_max_affine_diff_mm": 0.0
+ },
+ {
+  "run": "real4/nilearn_reorder_r0",
+  "case": "nilearn_reorder",
+  "scan": "colin27_RAS_2mm",
+  "pre": {
+   "r": 1.0,
+   "covered_fraction": 1.0,
+   "orientation_ok": null,
+   "out_axcodes": "RAS"
+  },
+  "upstream": {
+   "r": 1.0,
+   "covered_fraction": 1.0,
+   "orientation_ok": null,
+   "out_axcodes": "RAS"
+  },
+  "agent": {
+   "r": 1.0,
+   "covered_fraction": 1.0,
+   "orientation_ok": null,
+   "out_axcodes": "RAS"
+  },
+  "agent_equals_upstream": true,
+  "agent_vs_upstream_max_affine_diff_mm": 0.0
+ },
+ {
+  "run": "real4/nilearn_reorder_r0",
+  "case": "nilearn_reorder",
+  "scan": "colin27_PIR_2mm",
+  "pre": {
+   "r": 0.9834,
+   "covered_fraction": 1.0,
+   "orientation_ok": null,
+   "out_axcodes": "RAS"
+  },
+  "upstream": {
+   "r": 1.0,
+   "covered_fraction": 1.0,
+   "orientation_ok": null,
+   "out_axcodes": "RAS"
+  },
+  "agent": {
+   "r": 1.0,
+   "covered_fraction": 1.0,
+   "orientation_ok": null,
+   "out_axcodes": "RAS"
+  },
+  "agent_equals_upstream": true,
+  "agent_vs_upstream_max_affine_diff_mm": 0.0
+ },
+ {
+  "run": "real4/nilearn_reorder_r1",
+  "case": "nilearn_reorder",
+  "scan": "t1_nibabel_LAS_2mm",
+  "pre": {
+   "r": 1.0,
+   "covered_fraction": 1.0,
+   "orientation_ok": null,
+   "out_axcodes": "RAS"
+  },
+  "upstream": {
+   "r": 1.0,
+   "covered_fraction": 1.0,
+   "orientation_ok": null,
+   "out_axcodes": "RAS"
+  },
+  "agent": {
+   "r": 1.0,
+   "covered_fraction": 1.0,
+   "orientation_ok": null,
+   "out_axcodes": "RAS"
+  },
+  "agent_equals_upstream": true,
+  "agent_vs_upstream_max_affine_diff_mm": 0.0
+ },
+ {
+  "run": "real4/nilearn_reorder_r1",
+  "case": "nilearn_reorder",
+  "scan": "epi_nibabel_LAS_oblique",
+  "pre": {
+   "r": 0.9806,
+   "covered_fraction": 1.0,
+   "orientation_ok": null,
+   "out_axcodes": "RAS"
+  },
+  "upstream": {
+   "r": 0.9806,
+   "covered_fraction": 1.0,
+   "orientation_ok": null,
+   "out_axcodes": "RAS"
+  },
+  "agent": {
+   "r": 0.9806,
+   "covered_fraction": 1.0,
+   "orientation_ok": null,
+   "out_axcodes": "RAS"
+  },
+  "agent_equals_upstream": true,
+  "agent_vs_upstream_max_affine_diff_mm": 0.0
+ },
+ {
+  "run": "real4/nilearn_reorder_r1",
+  "case": "nilearn_reorder",
+  "scan": "colin27_RAS_2mm",
+  "pre": {
+   "r": 1.0,
+   "covered_fraction": 1.0,
+   "orientation_ok": null,
+   "out_axcodes": "RAS"
+  },
+  "upstream": {
+   "r": 1.0,
+   "covered_fraction": 1.0,
+   "orientation_ok": null,
+   "out_axcodes": "RAS"
+  },
+  "agent": {
+   "r": 1.0,
+   "covered_fraction": 1.0,
+   "orientation_ok": null,
+   "out_axcodes": "RAS"
+  },
+  "agent_equals_upstream": true,
+  "agent_vs_upstream_max_affine_diff_mm": 0.0
+ },
+ {
+  "run": "real4/nilearn_reorder_r1",
+  "case": "nilearn_reorder",
+  "scan": "colin27_PIR_2mm",
+  "pre": {
+   "r": 0.9834,
+   "covered_fraction": 1.0,
+   "orientation_ok": null,
+   "out_axcodes": "RAS"
+  },
+  "upstream": {
+   "r": 1.0,
+   "covered_fraction": 1.0,
+   "orientation_ok": null,
+   "out_axcodes": "RAS"
+  },
+  "agent": {
+   "r": 1.0,
+   "covered_fraction": 1.0,
+   "orientation_ok": null,
+   "out_axcodes": "RAS"
+  },
+  "agent_equals_upstream": true,
+  "agent_vs_upstream_max_affine_diff_mm": 0.0
+ },
+ {
+  "run": "real4/torchio_sitk_ras_lps_r1",
+  "case": "torchio_sitk_ras_lps",
+  "scan": "t1_nibabel_LAS_2mm",
+  "pre": {
+   "r": -0.041,
+   "covered_fraction": 1.0,
+   "orientation_ok": null,
+   "out_axcodes": "RPS"
+  },
+  "upstream": {
+   "r": 1.0,
+   "covered_fraction": 1.0,
+   "orientation_ok": null,
+   "out_axcodes": "LAS"
+  },
+  "agent": {
+   "r": 1.0,
+   "covered_fraction": 1.0,
+   "orientation_ok": null,
+   "out_axcodes": "LAS"
+  },
+  "agent_equals_upstream": true,
+  "agent_vs_upstream_max_affine_diff_mm": 0.0
+ },
+ {
+  "run": "real4/torchio_sitk_ras_lps_r1",
+  "case": "torchio_sitk_ras_lps",
+  "scan": "epi_nibabel_LAS_oblique",
+  "pre": {
+   "r": 0.4446,
+   "covered_fraction": 0.3579,
+   "orientation_ok": null,
+   "out_axcodes": "RPS"
+  },
+  "upstream": {
+   "r": 1.0,
+   "covered_fraction": 1.0,
+   "orientation_ok": null,
+   "out_axcodes": "LAS"
+  },
+  "agent": {
+   "r": 1.0,
+   "covered_fraction": 1.0,
+   "orientation_ok": null,
+   "out_axcodes": "LAS"
+  },
+  "agent_equals_upstream": true,
+  "agent_vs_upstream_max_affine_diff_mm": 0.0
+ },
+ {
+  "run": "real4/torchio_sitk_ras_lps_r1",
+  "case": "torchio_sitk_ras_lps",
+  "scan": "colin27_RAS_2mm",
+  "pre": {
+   "r": 0.4701,
+   "covered_fraction": 0.844,
+   "orientation_ok": null,
+   "out_axcodes": "LPS"
+  },
+  "upstream": {
+   "r": 1.0,
+   "covered_fraction": 1.0,
+   "orientation_ok": null,
+   "out_axcodes": "RAS"
+  },
+  "agent": {
+   "r": 1.0,
+   "covered_fraction": 1.0,
+   "orientation_ok": null,
+   "out_axcodes": "RAS"
+  },
+  "agent_equals_upstream": true,
+  "agent_vs_upstream_max_affine_diff_mm": 0.0
+ },
+ {
+  "run": "real4/torchio_sitk_ras_lps_r1",
+  "case": "torchio_sitk_ras_lps",
+  "scan": "colin27_PIR_2mm",
+  "pre": {
+   "r": 0.4701,
+   "covered_fraction": 0.844,
+   "orientation_ok": null,
+   "out_axcodes": "AIL"
+  },
+  "upstream": {
+   "r": 1.0,
+   "covered_fraction": 1.0,
+   "orientation_ok": null,
+   "out_axcodes": "PIR"
+  },
+  "agent": {
+   "r": 1.0,
+   "covered_fraction": 1.0,
+   "orientation_ok": null,
+   "out_axcodes": "PIR"
+  },
+  "agent_equals_upstream": true,
+  "agent_vs_upstream_max_affine_diff_mm": 0.0
+ },
+ {
+  "run": "real4/monai_orientation_lps_r1",
+  "case": "monai_orientation_lps",
+  "scan": "t1_nibabel_LAS_2mm",
+  "pre": {
+   "r": 1.0,
+   "covered_fraction": 1.0,
+   "orientation_ok": false,
+   "out_axcodes": "LPS"
+  },
+  "upstream": {
+   "r": 1.0,
+   "covered_fraction": 1.0,
+   "orientation_ok": true,
+   "out_axcodes": "RAS"
+  },
+  "agent": {
+   "r": 1.0,
+   "covered_fraction": 1.0,
+   "orientation_ok": true,
+   "out_axcodes": "RAS"
+  },
+  "agent_equals_upstream": true,
+  "agent_vs_upstream_max_affine_diff_mm": 0.0
+ },
+ {
+  "run": "real4/monai_orientation_lps_r1",
+  "case": "monai_orientation_lps",
+  "scan": "epi_nibabel_LAS_oblique",
+  "pre": {
+   "r": 1.0,
+   "covered_fraction": 1.0,
+   "orientation_ok": false,
+   "out_axcodes": "LPS"
+  },
+  "upstream": {
+   "r": 1.0,
+   "covered_fraction": 1.0,
+   "orientation_ok": true,
+   "out_axcodes": "RAS"
+  },
+  "agent": {
+   "r": 1.0,
+   "covered_fraction": 1.0,
+   "orientation_ok": true,
+   "out_axcodes": "RAS"
+  },
+  "agent_equals_upstream": true,
+  "agent_vs_upstream_max_affine_diff_mm": 0.0
+ },
+ {
+  "run": "real4/monai_orientation_lps_r1",
+  "case": "monai_orientation_lps",
+  "scan": "colin27_RAS_2mm",
+  "pre": {
+   "r": 1.0,
+   "covered_fraction": 1.0,
+   "orientation_ok": false,
+   "out_axcodes": "LPS"
+  },
+  "upstream": {
+   "r": 1.0,
+   "covered_fraction": 1.0,
+   "orientation_ok": true,
+   "out_axcodes": "RAS"
+  },
+  "agent": {
+   "r": 1.0,
+   "covered_fraction": 1.0,
+   "orientation_ok": true,
+   "out_axcodes": "RAS"
+  },
+  "agent_equals_upstream": true,
+  "agent_vs_upstream_max_affine_diff_mm": 0.0
+ },
+ {
+  "run": "real4/monai_orientation_lps_r1",
+  "case": "monai_orientation_lps",
+  "scan": "colin27_PIR_2mm",
+  "pre": {
+   "r": 1.0,
+   "covered_fraction": 1.0,
+   "orientation_ok": false,
+   "out_axcodes": "LPS"
+  },
+  "upstream": {
+   "r": 1.0,
+   "covered_fraction": 1.0,
+   "orientation_ok": true,
+   "out_axcodes": "RAS"
+  },
+  "agent": {
+   "r": 1.0,
+   "covered_fraction": 1.0,
+   "orientation_ok": true,
+   "out_axcodes": "RAS"
+  },
+  "agent_equals_upstream": true,
+  "agent_vs_upstream_max_affine_diff_mm": 0.0
+ },
+ {
+  "run": "staged1/nilearn_reorder_r0",
+  "case": "nilearn_reorder",
+  "scan": "t1_nibabel_LAS_2mm",
+  "pre": {
+   "r": 1.0,
+   "covered_fraction": 1.0,
+   "orientation_ok": null,
+   "out_axcodes": "RAS"
+  },
+  "upstream": {
+   "r": 1.0,
+   "covered_fraction": 1.0,
+   "orientation_ok": null,
+   "out_axcodes": "RAS"
+  },
+  "agent": {
+   "r": 1.0,
+   "covered_fraction": 1.0,
+   "orientation_ok": null,
+   "out_axcodes": "RAS"
+  },
+  "agent_equals_upstream": true,
+  "agent_vs_upstream_max_affine_diff_mm": 0.0
+ },
+ {
+  "run": "staged1/nilearn_reorder_r0",
+  "case": "nilearn_reorder",
+  "scan": "epi_nibabel_LAS_oblique",
+  "pre": {
+   "r": 0.9806,
+   "covered_fraction": 1.0,
+   "orientation_ok": null,
+   "out_axcodes": "RAS"
+  },
+  "upstream": {
+   "r": 0.9806,
+   "covered_fraction": 1.0,
+   "orientation_ok": null,
+   "out_axcodes": "RAS"
+  },
+  "agent": {
+   "r": 0.9806,
+   "covered_fraction": 1.0,
+   "orientation_ok": null,
+   "out_axcodes": "RAS"
+  },
+  "agent_equals_upstream": true,
+  "agent_vs_upstream_max_affine_diff_mm": 0.0
+ },
+ {
+  "run": "staged1/nilearn_reorder_r0",
+  "case": "nilearn_reorder",
+  "scan": "colin27_RAS_2mm",
+  "pre": {
+   "r": 1.0,
+   "covered_fraction": 1.0,
+   "orientation_ok": null,
+   "out_axcodes": "RAS"
+  },
+  "upstream": {
+   "r": 1.0,
+   "covered_fraction": 1.0,
+   "orientation_ok": null,
+   "out_axcodes": "RAS"
+  },
+  "agent": {
+   "r": 1.0,
+   "covered_fraction": 1.0,
+   "orientation_ok": null,
+   "out_axcodes": "RAS"
+  },
+  "agent_equals_upstream": true,
+  "agent_vs_upstream_max_affine_diff_mm": 0.0
+ },
+ {
+  "run": "staged1/nilearn_reorder_r0",
+  "case": "nilearn_reorder",
+  "scan": "colin27_PIR_2mm",
+  "pre": {
+   "r": 0.9834,
+   "covered_fraction": 1.0,
+   "orientation_ok": null,
+   "out_axcodes": "RAS"
+  },
+  "upstream": {
+   "r": 1.0,
+   "covered_fraction": 1.0,
+   "orientation_ok": null,
+   "out_axcodes": "RAS"
+  },
+  "agent": {
+   "r": 1.0,
+   "covered_fraction": 1.0,
+   "orientation_ok": null,
+   "out_axcodes": "RAS"
+  },
+  "agent_equals_upstream": true,
+  "agent_vs_upstream_max_affine_diff_mm": 0.0
+ },
+ {
+  "run": "staged1/monai_orientation_lps_r0",
+  "case": "monai_orientation_lps",
+  "scan": "t1_nibabel_LAS_2mm",
+  "pre": {
+   "r": 1.0,
+   "covered_fraction": 1.0,
+   "orientation_ok": false,
+   "out_axcodes": "LPS"
+  },
+  "upstream": {
+   "r": 1.0,
+   "covered_fraction": 1.0,
+   "orientation_ok": true,
+   "out_axcodes": "RAS"
+  },
+  "agent": {
+   "r": 1.0,
+   "covered_fraction": 1.0,
+   "orientation_ok": true,
+   "out_axcodes": "RAS"
+  },
+  "agent_equals_upstream": true,
+  "agent_vs_upstream_max_affine_diff_mm": 0.0
+ },
+ {
+  "run": "staged1/monai_orientation_lps_r0",
+  "case": "monai_orientation_lps",
+  "scan": "epi_nibabel_LAS_oblique",
+  "pre": {
+   "r": 1.0,
+   "covered_fraction": 1.0,
+   "orientation_ok": false,
+   "out_axcodes": "LPS"
+  },
+  "upstream": {
+   "r": 1.0,
+   "covered_fraction": 1.0,
+   "orientation_ok": true,
+   "out_axcodes": "RAS"
+  },
+  "agent": {
+   "r": 1.0,
+   "covered_fraction": 1.0,
+   "orientation_ok": true,
+   "out_axcodes": "RAS"
+  },
+  "agent_equals_upstream": true,
+  "agent_vs_upstream_max_affine_diff_mm": 0.0
+ },
+ {
+  "run": "staged1/monai_orientation_lps_r0",
+  "case": "monai_orientation_lps",
+  "scan": "colin27_RAS_2mm",
+  "pre": {
+   "r": 1.0,
+   "covered_fraction": 1.0,
+   "orientation_ok": false,
+   "out_axcodes": "LPS"
+  },
+  "upstream": {
+   "r": 1.0,
+   "covered_fraction": 1.0,
+   "orientation_ok": true,
+   "out_axcodes": "RAS"
+  },
+  "agent": {
+   "r": 1.0,
+   "covered_fraction": 1.0,
+   "orientation_ok": true,
+   "out_axcodes": "RAS"
+  },
+  "agent_equals_upstream": true,
+  "agent_vs_upstream_max_affine_diff_mm": 0.0
+ },
+ {
+  "run": "staged1/monai_orientation_lps_r0",
+  "case": "monai_orientation_lps",
+  "scan": "colin27_PIR_2mm",
+  "pre": {
+   "r": 1.0,
+   "covered_fraction": 1.0,
+   "orientation_ok": false,
+   "out_axcodes": "LPS"
+  },
+  "upstream": {
+   "r": 1.0,
+   "covered_fraction": 1.0,
+   "orientation_ok": true,
+   "out_axcodes": "RAS"
+  },
+  "agent": {
+   "r": 1.0,
+   "covered_fraction": 1.0,
+   "orientation_ok": true,
+   "out_axcodes": "RAS"
+  },
+  "agent_equals_upstream": true,
+  "agent_vs_upstream_max_affine_diff_mm": 0.0
+ },
+ {
+  "run": "staged1/torchio_crop_r1",
+  "case": "torchio_crop",
+  "scan": "t1_nibabel_LAS_2mm",
+  "pre": {
+   "r": 0.0744,
+   "covered_fraction": 0.4917,
+   "orientation_ok": null,
+   "out_axcodes": "LAS"
+  },
+  "upstream": {
+   "r": 1.0,
+   "covered_fraction": 0.4917,
+   "orientation_ok": null,
+   "out_axcodes": "LAS"
+  },
+  "agent": {
+   "r": 1.0,
+   "covered_fraction": 0.4917,
+   "orientation_ok": null,
+   "out_axcodes": "LAS"
+  },
+  "agent_equals_upstream": true,
+  "agent_vs_upstream_max_affine_diff_mm": 0.0
+ },
+ {
+  "run": "staged1/torchio_crop_r1",
+  "case": "torchio_crop",
+  "scan": "epi_nibabel_LAS_oblique",
+  "pre": {
+   "r": 0.8162,
+   "covered_fraction": 0.6239,
+   "orientation_ok": null,
+   "out_axcodes": "LAS"
+  },
+  "upstream": {
+   "r": 1.0,
+   "covered_fraction": 0.6239,
+   "orientation_ok": null,
+   "out_axcodes": "LAS"
+  },
+  "agent": {
+   "r": 1.0,
+   "covered_fraction": 0.6239,
+   "orientation_ok": null,
+   "out_axcodes": "LAS"
+  },
+  "agent_equals_upstream": true,
+  "agent_vs_upstream_max_affine_diff_mm": 0.0
+ },
+ {
+  "run": "staged1/torchio_crop_r1",
+  "case": "torchio_crop",
+  "scan": "colin27_RAS_2mm",
+  "pre": {
+   "r": 0.7455,
+   "covered_fraction": 0.8083,
+   "orientation_ok": null,
+   "out_axcodes": "RAS"
+  },
+  "upstream": {
+   "r": 1.0,
+   "covered_fraction": 0.8083,
+   "orientation_ok": null,
+   "out_axcodes": "RAS"
+  },
+  "agent": {
+   "r": 1.0,
+   "covered_fraction": 0.8083,
+   "orientation_ok": null,
+   "out_axcodes": "RAS"
+  },
+  "agent_equals_upstream": true,
+  "agent_vs_upstream_max_affine_diff_mm": 0.0
+ },
+ {
+  "run": "staged1/torchio_crop_r1",
+  "case": "torchio_crop",
+  "scan": "colin27_PIR_2mm",
+  "pre": {
+   "r": 0.7476,
+   "covered_fraction": 0.8033,
+   "orientation_ok": null,
+   "out_axcodes": "PIR"
+  },
+  "upstream": {
+   "r": 1.0,
+   "covered_fraction": 0.8033,
+   "orientation_ok": null,
+   "out_axcodes": "PIR"
+  },
+  "agent": {
+   "r": 1.0,
+   "covered_fraction": 0.8033,
+   "orientation_ok": null,
+   "out_axcodes": "PIR"
+  },
+  "agent_equals_upstream": true,
+  "agent_vs_upstream_max_affine_diff_mm": 0.0
+ },
+ {
+  "run": "staged1/torchio_sitk_ras_lps_r1",
+  "case": "torchio_sitk_ras_lps",
+  "scan": "t1_nibabel_LAS_2mm",
+  "pre": {
+   "r": -0.041,
+   "covered_fraction": 1.0,
+   "orientation_ok": null,
+   "out_axcodes": "RPS"
+  },
+  "upstream": {
+   "r": 1.0,
+   "covered_fraction": 1.0,
+   "orientation_ok": null,
+   "out_axcodes": "LAS"
+  },
+  "agent": {
+   "r": 1.0,
+   "covered_fraction": 1.0,
+   "orientation_ok": null,
+   "out_axcodes": "LAS"
+  },
+  "agent_equals_upstream": true,
+  "agent_vs_upstream_max_affine_diff_mm": 0.0
+ },
+ {
+  "run": "staged1/torchio_sitk_ras_lps_r1",
+  "case": "torchio_sitk_ras_lps",
+  "scan": "epi_nibabel_LAS_oblique",
+  "pre": {
+   "r": 0.4446,
+   "covered_fraction": 0.3579,
+   "orientation_ok": null,
+   "out_axcodes": "RPS"
+  },
+  "upstream": {
+   "r": 1.0,
+   "covered_fraction": 1.0,
+   "orientation_ok": null,
+   "out_axcodes": "LAS"
+  },
+  "agent": {
+   "r": 1.0,
+   "covered_fraction": 1.0,
+   "orientation_ok": null,
+   "out_axcodes": "LAS"
+  },
+  "agent_equals_upstream": true,
+  "agent_vs_upstream_max_affine_diff_mm": 0.0
+ },
+ {
+  "run": "staged1/torchio_sitk_ras_lps_r1",
+  "case": "torchio_sitk_ras_lps",
+  "scan": "colin27_RAS_2mm",
+  "pre": {
+   "r": 0.4701,
+   "covered_fraction": 0.844,
+   "orientation_ok": null,
+   "out_axcodes": "LPS"
+  },
+  "upstream": {
+   "r": 1.0,
+   "covered_fraction": 1.0,
+   "orientation_ok": null,
+   "out_axcodes": "RAS"
+  },
+  "agent": {
+   "r": 1.0,
+   "covered_fraction": 1.0,
+   "orientation_ok": null,
+   "out_axcodes": "RAS"
+  },
+  "agent_equals_upstream": true,
+  "agent_vs_upstream_max_affine_diff_mm": 0.0
+ },
+ {
+  "run": "staged1/torchio_sitk_ras_lps_r1",
+  "case": "torchio_sitk_ras_lps",
+  "scan": "colin27_PIR_2mm",
+  "pre": {
+   "r": 0.4701,
+   "covered_fraction": 0.844,
+   "orientation_ok": null,
+   "out_axcodes": "AIL"
+  },
+  "upstream": {
+   "r": 1.0,
+   "covered_fraction": 1.0,
+   "orientation_ok": null,
+   "out_axcodes": "PIR"
+  },
+  "agent": {
+   "r": 1.0,
+   "covered_fraction": 1.0,
+   "orientation_ok": null,
+   "out_axcodes": "PIR"
+  },
+  "agent_equals_upstream": true,
+  "agent_vs_upstream_max_affine_diff_mm": 0.0
+ },
+ {
+  "run": "staged1/monai_orientation_lps_r1",
+  "case": "monai_orientation_lps",
+  "scan": "t1_nibabel_LAS_2mm",
+  "pre": {
+   "r": 1.0,
+   "covered_fraction": 1.0,
+   "orientation_ok": false,
+   "out_axcodes": "LPS"
+  },
+  "upstream": {
+   "r": 1.0,
+   "covered_fraction": 1.0,
+   "orientation_ok": true,
+   "out_axcodes": "RAS"
+  },
+  "agent": {
+   "r": 1.0,
+   "covered_fraction": 1.0,
+   "orientation_ok": true,
+   "out_axcodes": "RAS"
+  },
+  "agent_equals_upstream": true,
+  "agent_vs_upstream_max_affine_diff_mm": 0.0
+ },
+ {
+  "run": "staged1/monai_orientation_lps_r1",
+  "case": "monai_orientation_lps",
+  "scan": "epi_nibabel_LAS_oblique",
+  "pre": {
+   "r": 1.0,
+   "covered_fraction": 1.0,
+   "orientation_ok": false,
+   "out_axcodes": "LPS"
+  },
+  "upstream": {
+   "r": 1.0,
+   "covered_fraction": 1.0,
+   "orientation_ok": true,
+   "out_axcodes": "RAS"
+  },
+  "agent": {
+   "r": 1.0,
+   "covered_fraction": 1.0,
+   "orientation_ok": true,
+   "out_axcodes": "RAS"
+  },
+  "agent_equals_upstream": true,
+  "agent_vs_upstream_max_affine_diff_mm": 0.0
+ },
+ {
+  "run": "staged1/monai_orientation_lps_r1",
+  "case": "monai_orientation_lps",
+  "scan": "colin27_RAS_2mm",
+  "pre": {
+   "r": 1.0,
+   "covered_fraction": 1.0,
+   "orientation_ok": false,
+   "out_axcodes": "LPS"
+  },
+  "upstream": {
+   "r": 1.0,
+   "covered_fraction": 1.0,
+   "orientation_ok": true,
+   "out_axcodes": "RAS"
+  },
+  "agent": {
+   "r": 1.0,
+   "covered_fraction": 1.0,
+   "orientation_ok": true,
+   "out_axcodes": "RAS"
+  },
+  "agent_equals_upstream": true,
+  "agent_vs_upstream_max_affine_diff_mm": 0.0
+ },
+ {
+  "run": "staged1/monai_orientation_lps_r1",
+  "case": "monai_orientation_lps",
+  "scan": "colin27_PIR_2mm",
+  "pre": {
+   "r": 1.0,
+   "covered_fraction": 1.0,
+   "orientation_ok": false,
+   "out_axcodes": "LPS"
+  },
+  "upstream": {
+   "r": 1.0,
+   "covered_fraction": 1.0,
+   "orientation_ok": true,
+   "out_axcodes": "RAS"
+  },
+  "agent": {
+   "r": 1.0,
+   "covered_fraction": 1.0,
+   "orientation_ok": true,
+   "out_axcodes": "RAS"
+  },
+  "agent_equals_upstream": true,
+  "agent_vs_upstream_max_affine_diff_mm": 0.0
+ },
+ {
+  "run": "staged1/nilearn_reorder_r1",
+  "case": "nilearn_reorder",
+  "scan": "t1_nibabel_LAS_2mm",
+  "pre": {
+   "r": 1.0,
+   "covered_fraction": 1.0,
+   "orientation_ok": null,
+   "out_axcodes": "RAS"
+  },
+  "upstream": {
+   "r": 1.0,
+   "covered_fraction": 1.0,
+   "orientation_ok": null,
+   "out_axcodes": "RAS"
+  },
+  "agent": {
+   "r": 1.0,
+   "covered_fraction": 1.0,
+   "orientation_ok": null,
+   "out_axcodes": "RAS"
+  },
+  "agent_equals_upstream": true,
+  "agent_vs_upstream_max_affine_diff_mm": 0.0
+ },
+ {
+  "run": "staged1/nilearn_reorder_r1",
+  "case": "nilearn_reorder",
+  "scan": "epi_nibabel_LAS_oblique",
+  "pre": {
+   "r": 0.9806,
+   "covered_fraction": 1.0,
+   "orientation_ok": null,
+   "out_axcodes": "RAS"
+  },
+  "upstream": {
+   "r": 0.9806,
+   "covered_fraction": 1.0,
+   "orientation_ok": null,
+   "out_axcodes": "RAS"
+  },
+  "agent": {
+   "r": 0.9806,
+   "covered_fraction": 1.0,
+   "orientation_ok": null,
+   "out_axcodes": "RAS"
+  },
+  "agent_equals_upstream": true,
+  "agent_vs_upstream_max_affine_diff_mm": 0.0
+ },
+ {
+  "run": "staged1/nilearn_reorder_r1",
+  "case": "nilearn_reorder",
+  "scan": "colin27_RAS_2mm",
+  "pre": {
+   "r": 1.0,
+   "covered_fraction": 1.0,
+   "orientation_ok": null,
+   "out_axcodes": "RAS"
+  },
+  "upstream": {
+   "r": 1.0,
+   "covered_fraction": 1.0,
+   "orientation_ok": null,
+   "out_axcodes": "RAS"
+  },
+  "agent": {
+   "r": 1.0,
+   "covered_fraction": 1.0,
+   "orientation_ok": null,
+   "out_axcodes": "RAS"
+  },
+  "agent_equals_upstream": true,
+  "agent_vs_upstream_max_affine_diff_mm": 0.0
+ },
+ {
+  "run": "staged1/nilearn_reorder_r1",
+  "case": "nilearn_reorder",
+  "scan": "colin27_PIR_2mm",
+  "pre": {
+   "r": 0.9834,
+   "covered_fraction": 1.0,
+   "orientation_ok": null,
+   "out_axcodes": "RAS"
+  },
+  "upstream": {
+   "r": 1.0,
+   "covered_fraction": 1.0,
+   "orientation_ok": null,
+   "out_axcodes": "RAS"
+  },
+  "agent": {
+   "r": 1.0,
+   "covered_fraction": 1.0,
+   "orientation_ok": null,
+   "out_axcodes": "RAS"
+  },
+  "agent_equals_upstream": true,
+  "agent_vs_upstream_max_affine_diff_mm": 0.0
+ },
+ {
+  "run": "staged2/nilearn_reorder_r0",
+  "case": "nilearn_reorder",
+  "scan": "t1_nibabel_LAS_2mm",
+  "pre": {
+   "r": 1.0,
+   "covered_fraction": 1.0,
+   "orientation_ok": null,
+   "out_axcodes": "RAS"
+  },
+  "upstream": {
+   "r": 1.0,
+   "covered_fraction": 1.0,
+   "orientation_ok": null,
+   "out_axcodes": "RAS"
+  },
+  "agent": {
+   "r": 1.0,
+   "covered_fraction": 1.0,
+   "orientation_ok": null,
+   "out_axcodes": "RAS"
+  },
+  "agent_equals_upstream": true,
+  "agent_vs_upstream_max_affine_diff_mm": 0.0
+ },
+ {
+  "run": "staged2/nilearn_reorder_r0",
+  "case": "nilearn_reorder",
+  "scan": "epi_nibabel_LAS_oblique",
+  "pre": {
+   "r": 0.9806,
+   "covered_fraction": 1.0,
+   "orientation_ok": null,
+   "out_axcodes": "RAS"
+  },
+  "upstream": {
+   "r": 0.9806,
+   "covered_fraction": 1.0,
+   "orientation_ok": null,
+   "out_axcodes": "RAS"
+  },
+  "agent": {
+   "r": 0.9806,
+   "covered_fraction": 1.0,
+   "orientation_ok": null,
+   "out_axcodes": "RAS"
+  },
+  "agent_equals_upstream": true,
+  "agent_vs_upstream_max_affine_diff_mm": 0.0
+ },
+ {
+  "run": "staged2/nilearn_reorder_r0",
+  "case": "nilearn_reorder",
+  "scan": "colin27_RAS_2mm",
+  "pre": {
+   "r": 1.0,
+   "covered_fraction": 1.0,
+   "orientation_ok": null,
+   "out_axcodes": "RAS"
+  },
+  "upstream": {
+   "r": 1.0,
+   "covered_fraction": 1.0,
+   "orientation_ok": null,
+   "out_axcodes": "RAS"
+  },
+  "agent": {
+   "r": 1.0,
+   "covered_fraction": 1.0,
+   "orientation_ok": null,
+   "out_axcodes": "RAS"
+  },
+  "agent_equals_upstream": true,
+  "agent_vs_upstream_max_affine_diff_mm": 0.0
+ },
+ {
+  "run": "staged2/nilearn_reorder_r0",
+  "case": "nilearn_reorder",
+  "scan": "colin27_PIR_2mm",
+  "pre": {
+   "r": 0.9834,
+   "covered_fraction": 1.0,
+   "orientation_ok": null,
+   "out_axcodes": "RAS"
+  },
+  "upstream": {
+   "r": 1.0,
+   "covered_fraction": 1.0,
+   "orientation_ok": null,
+   "out_axcodes": "RAS"
+  },
+  "agent": {
+   "r": 1.0,
+   "covered_fraction": 1.0,
+   "orientation_ok": null,
+   "out_axcodes": "RAS"
+  },
+  "agent_equals_upstream": true,
+  "agent_vs_upstream_max_affine_diff_mm": 0.0
+ },
+ {
+  "run": "staged2/torchio_sitk_ras_lps_r0",
+  "case": "torchio_sitk_ras_lps",
+  "scan": "t1_nibabel_LAS_2mm",
+  "pre": {
+   "r": -0.041,
+   "covered_fraction": 1.0,
+   "orientation_ok": null,
+   "out_axcodes": "RPS"
+  },
+  "upstream": {
+   "r": 1.0,
+   "covered_fraction": 1.0,
+   "orientation_ok": null,
+   "out_axcodes": "LAS"
+  },
+  "agent": {
+   "r": 1.0,
+   "covered_fraction": 1.0,
+   "orientation_ok": null,
+   "out_axcodes": "LAS"
+  },
+  "agent_equals_upstream": true,
+  "agent_vs_upstream_max_affine_diff_mm": 0.0
+ },
+ {
+  "run": "staged2/torchio_sitk_ras_lps_r0",
+  "case": "torchio_sitk_ras_lps",
+  "scan": "epi_nibabel_LAS_oblique",
+  "pre": {
+   "r": 0.4446,
+   "covered_fraction": 0.3579,
+   "orientation_ok": null,
+   "out_axcodes": "RPS"
+  },
+  "upstream": {
+   "r": 1.0,
+   "covered_fraction": 1.0,
+   "orientation_ok": null,
+   "out_axcodes": "LAS"
+  },
+  "agent": {
+   "r": 1.0,
+   "covered_fraction": 1.0,
+   "orientation_ok": null,
+   "out_axcodes": "LAS"
+  },
+  "agent_equals_upstream": true,
+  "agent_vs_upstream_max_affine_diff_mm": 0.0
+ },
+ {
+  "run": "staged2/torchio_sitk_ras_lps_r0",
+  "case": "torchio_sitk_ras_lps",
+  "scan": "colin27_RAS_2mm",
+  "pre": {
+   "r": 0.4701,
+   "covered_fraction": 0.844,
+   "orientation_ok": null,
+   "out_axcodes": "LPS"
+  },
+  "upstream": {
+   "r": 1.0,
+   "covered_fraction": 1.0,
+   "orientation_ok": null,
+   "out_axcodes": "RAS"
+  },
+  "agent": {
+   "r": 1.0,
+   "covered_fraction": 1.0,
+   "orientation_ok": null,
+   "out_axcodes": "RAS"
+  },
+  "agent_equals_upstream": true,
+  "agent_vs_upstream_max_affine_diff_mm": 0.0
+ },
+ {
+  "run": "staged2/torchio_sitk_ras_lps_r0",
+  "case": "torchio_sitk_ras_lps",
+  "scan": "colin27_PIR_2mm",
+  "pre": {
+   "r": 0.4701,
+   "covered_fraction": 0.844,
+   "orientation_ok": null,
+   "out_axcodes": "AIL"
+  },
+  "upstream": {
+   "r": 1.0,
+   "covered_fraction": 1.0,
+   "orientation_ok": null,
+   "out_axcodes": "PIR"
+  },
+  "agent": {
+   "r": 1.0,
+   "covered_fraction": 1.0,
+   "orientation_ok": null,
+   "out_axcodes": "PIR"
+  },
+  "agent_equals_upstream": true,
+  "agent_vs_upstream_max_affine_diff_mm": 0.0
+ },
+ {
+  "run": "staged2/monai_orientation_lps_r0",
+  "case": "monai_orientation_lps",
+  "scan": "t1_nibabel_LAS_2mm",
+  "pre": {
+   "r": 1.0,
+   "covered_fraction": 1.0,
+   "orientation_ok": false,
+   "out_axcodes": "LPS"
+  },
+  "upstream": {
+   "r": 1.0,
+   "covered_fraction": 1.0,
+   "orientation_ok": true,
+   "out_axcodes": "RAS"
+  },
+  "agent": {
+   "r": 1.0,
+   "covered_fraction": 1.0,
+   "orientation_ok": true,
+   "out_axcodes": "RAS"
+  },
+  "agent_equals_upstream": true,
+  "agent_vs_upstream_max_affine_diff_mm": 0.0
+ },
+ {
+  "run": "staged2/monai_orientation_lps_r0",
+  "case": "monai_orientation_lps",
+  "scan": "epi_nibabel_LAS_oblique",
+  "pre": {
+   "r": 1.0,
+   "covered_fraction": 1.0,
+   "orientation_ok": false,
+   "out_axcodes": "LPS"
+  },
+  "upstream": {
+   "r": 1.0,
+   "covered_fraction": 1.0,
+   "orientation_ok": true,
+   "out_axcodes": "RAS"
+  },
+  "agent": {
+   "r": 1.0,
+   "covered_fraction": 1.0,
+   "orientation_ok": true,
+   "out_axcodes": "RAS"
+  },
+  "agent_equals_upstream": true,
+  "agent_vs_upstream_max_affine_diff_mm": 0.0
+ },
+ {
+  "run": "staged2/monai_orientation_lps_r0",
+  "case": "monai_orientation_lps",
+  "scan": "colin27_RAS_2mm",
+  "pre": {
+   "r": 1.0,
+   "covered_fraction": 1.0,
+   "orientation_ok": false,
+   "out_axcodes": "LPS"
+  },
+  "upstream": {
+   "r": 1.0,
+   "covered_fraction": 1.0,
+   "orientation_ok": true,
+   "out_axcodes": "RAS"
+  },
+  "agent": {
+   "r": 1.0,
+   "covered_fraction": 1.0,
+   "orientation_ok": true,
+   "out_axcodes": "RAS"
+  },
+  "agent_equals_upstream": true,
+  "agent_vs_upstream_max_affine_diff_mm": 0.0
+ },
+ {
+  "run": "staged2/monai_orientation_lps_r0",
+  "case": "monai_orientation_lps",
+  "scan": "colin27_PIR_2mm",
+  "pre": {
+   "r": 1.0,
+   "covered_fraction": 1.0,
+   "orientation_ok": false,
+   "out_axcodes": "LPS"
+  },
+  "upstream": {
+   "r": 1.0,
+   "covered_fraction": 1.0,
+   "orientation_ok": true,
+   "out_axcodes": "RAS"
+  },
+  "agent": {
+   "r": 1.0,
+   "covered_fraction": 1.0,
+   "orientation_ok": true,
+   "out_axcodes": "RAS"
+  },
+  "agent_equals_upstream": true,
+  "agent_vs_upstream_max_affine_diff_mm": 0.0
+ }
+]

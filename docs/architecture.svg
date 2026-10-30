@@ -1,0 +1,137 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1240 650" width="1240" height="650" role="img"
+     aria-label="SpatialContract architecture: a deterministic gate, oracle, deterministic fix, patch guard and held-out validation decide every verdict; the Nemotron model, inside the dashed box, only proposes patches, and only when the measured misplacement differs between inputs."
+     font-family="'Segoe UI', Helvetica, Arial, sans-serif" font-size="13" fill="#1b2530">
+  <defs>
+    <marker id="a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#1b2530"/>
+    </marker>
+    <marker id="am" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#0b7383"/>
+    </marker>
+  </defs>
+  <rect x="0" y="0" width="1240" height="650" fill="#ffffff"/>
+
+  <text x="30" y="30" font-size="18" font-weight="700">SpatialContract: the model proposes, deterministic checks decide</text>
+
+  <!-- your pipeline -->
+  <rect x="30" y="190" width="180" height="120" rx="6" fill="#f4f7f8" stroke="#9aa6ae"/>
+  <text x="120" y="214" text-anchor="middle" font-size="14" font-weight="700">Your pipeline</text>
+  <text x="44" y="240" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="12">process(in, out)</text>
+  <text x="44" y="258" font-size="12" fill="#5b6773">or a decorated function</text>
+  <text x="44" y="282" font-family="Consolas, 'DejaVu Sans Mono', monospace" font-size="12" font-weight="700">SPATIAL_CONTRACT</text>
+  <text x="44" y="299" font-size="12" fill="#5b6773">frame · units · orientation</text>
+
+  <!-- gate -->
+  <line x1="210" y1="250" x2="248" y2="250" stroke="#1b2530" stroke-width="1.5" marker-end="url(#a)"/>
+  <rect x="250" y="215" width="140" height="70" rx="6" fill="#f4f7f8" stroke="#9aa6ae"/>
+  <text x="320" y="243" text-anchor="middle" font-size="14" font-weight="700">Gate</text>
+  <text x="320" y="264" text-anchor="middle" font-size="12">contract usable?</text>
+  <line x1="320" y1="285" x2="320" y2="378" stroke="#1b2530" stroke-width="1.5" marker-end="url(#a)"/>
+  <text x="312" y="330" text-anchor="end" font-size="11" fill="#5b6773">missing or</text>
+  <text x="312" y="345" text-anchor="end" font-size="11" fill="#5b6773">ambiguous</text>
+  <rect x="250" y="380" width="140" height="56" rx="6" fill="#eceff1" stroke="#9aa6ae"/>
+  <text x="320" y="404" text-anchor="middle" font-size="14" font-weight="700">ABSTAIN</text>
+  <text x="320" y="424" text-anchor="middle" font-size="12" fill="#5b6773">no model call</text>
+  <line x1="390" y1="250" x2="438" y2="250" stroke="#1b2530" stroke-width="1.5" marker-end="url(#a)"/>
+  <text x="414" y="242" text-anchor="middle" font-size="11" fill="#5b6773">yes</text>
+
+  <!-- oracle -->
+  <rect x="440" y="150" width="230" height="200" rx="6" fill="#f4f7f8" stroke="#1b2530" stroke-width="1.5"/>
+  <text x="555" y="175" text-anchor="middle" font-size="15" font-weight="700">Oracle</text>
+  <text x="456" y="200" font-size="13">1. write a landmark phantom</text>
+  <text x="472" y="216" font-size="11" fill="#5b6773">6 balls, non-RAS, anisotropic, oblique</text>
+  <text x="456" y="240" font-size="13">2. run the code, sandboxed</text>
+  <text x="456" y="264" font-size="13">3. error per landmark, in mm</text>
+  <text x="456" y="288" font-size="13">4. fit and name the error map</text>
+  <text x="472" y="305" font-size="11" font-family="Consolas, 'DejaVu Sans Mono', monospace" fill="#5b6773">"x and y negated"</text>
+  <text x="456" y="334" font-size="11" fill="#5b6773">verdict: PASS · FAIL · ERROR</text>
+
+  <!-- pass before any edit -->
+  <line x1="555" y1="150" x2="555" y2="106" stroke="#1b2530" stroke-width="1.5" marker-end="url(#a)"/>
+  <text x="547" y="132" text-anchor="end" font-size="11" fill="#5b6773">pass, before any edit</text>
+  <rect x="455" y="60" width="200" height="44" rx="6" fill="#eceff1" stroke="#9aa6ae"/>
+  <text x="555" y="87" text-anchor="middle" font-size="13" font-weight="600">leave the code alone</text>
+
+  <!-- locate -->
+  <polyline points="670,165 730,165 730,85 778,85" fill="none" stroke="#1b2530" stroke-width="1.2" stroke-dasharray="4 3" marker-end="url(#a)"/>
+  <text x="724" y="128" text-anchor="end" font-size="11" fill="#5b6773">same phantoms</text>
+  <text x="724" y="142" text-anchor="end" font-size="11" fill="#5b6773">and scoring</text>
+  <rect x="780" y="40" width="220" height="92" rx="6" fill="#f4f7f8" stroke="#9aa6ae"/>
+  <text x="890" y="63" text-anchor="middle" font-size="14" font-weight="700">Locate (library bugs)</text>
+  <text x="890" y="84" text-anchor="middle" font-size="12">profile the library on right</text>
+  <text x="890" y="101" text-anchor="middle" font-size="12">and wrong phantoms; rank the</text>
+  <text x="890" y="118" text-anchor="middle" font-size="12">functions that ran</text>
+  <line x1="950" y1="132" x2="950" y2="178" stroke="#0b7383" stroke-width="1.5" marker-end="url(#am)"/>
+  <text x="958" y="160" font-size="11" fill="#0b7383">top suspects</text>
+
+  <!-- model zone -->
+  <rect x="768" y="168" width="242" height="157" rx="8" fill="none" stroke="#0b7383" stroke-width="1.5" stroke-dasharray="6 4"/>
+  <text x="775" y="160" font-size="11" font-weight="700" fill="#0b7383" letter-spacing="1">MODEL PROPOSES</text>
+  <rect x="780" y="180" width="220" height="132" rx="6" fill="#e1f0f2" stroke="#0b7383"/>
+  <text x="890" y="205" text-anchor="middle" font-size="14" font-weight="700">Nemotron 3 Super</text>
+  <text x="890" y="223" text-anchor="middle" font-size="12" fill="#5b6773">via Nebius Token Factory</text>
+  <text x="890" y="248" text-anchor="middle" font-size="12" font-family="Consolas, 'DejaVu Sans Mono', monospace">submit_patch</text>
+  <text x="890" y="266" text-anchor="middle" font-size="12" font-family="Consolas, 'DejaVu Sans Mono', monospace">read · search · edit</text>
+  <text x="890" y="284" text-anchor="middle" font-size="12" font-family="Consolas, 'DejaVu Sans Mono', monospace">run_oracle · get_suspects</text>
+  <text x="890" y="303" text-anchor="middle" font-size="11" fill="#5b6773">token, dollar and credit caps</text>
+
+  <!-- oracle -> model -->
+  <line x1="670" y1="235" x2="778" y2="235" stroke="#1b2530" stroke-width="1.5" marker-end="url(#a)"/>
+  <text x="718" y="227" text-anchor="middle" font-size="12" font-weight="600">fail</text>
+  <text x="718" y="252" text-anchor="middle" font-size="11" fill="#5b6773">map differs</text>
+  <text x="718" y="266" text-anchor="middle" font-size="11" fill="#5b6773">between inputs</text>
+
+  <!-- deterministic fix -->
+  <polyline points="660,350 660,371 778,371" fill="none" stroke="#1b2530" stroke-width="1.5" marker-end="url(#a)"/>
+  <text x="719" y="363" text-anchor="middle" font-size="11" fill="#5b6773">fail, same map</text>
+  <text x="719" y="388" text-anchor="middle" font-size="11" fill="#5b6773">on every phantom</text>
+  <rect x="780" y="346" width="220" height="50" rx="6" fill="#f4f7f8" stroke="#1b2530" stroke-width="1.5"/>
+  <text x="890" y="367" text-anchor="middle" font-size="13" font-weight="700">Deterministic fix, no model</text>
+  <text x="890" y="385" text-anchor="middle" font-size="11" fill="#5b6773">apply the inverse of the measured map</text>
+  <polyline points="1000,371 1090,371 1090,288" fill="none" stroke="#1b2530" stroke-width="1.5" marker-end="url(#a)"/>
+  <text x="1045" y="363" text-anchor="middle" font-size="11" fill="#5b6773">patch</text>
+
+  <!-- guard -->
+  <line x1="1000" y1="220" x2="1063" y2="220" stroke="#1b2530" stroke-width="1.5" marker-end="url(#a)"/>
+  <text x="1038" y="212" text-anchor="middle" font-size="11" fill="#5b6773">patch</text>
+  <line x1="1065" y1="264" x2="1002" y2="264" stroke="#1b2530" stroke-width="1.2" stroke-dasharray="4 3" marker-end="url(#a)"/>
+  <text x="1038" y="281" text-anchor="middle" font-size="11" fill="#5b6773">rejected</text>
+  <rect x="1065" y="190" width="150" height="96" rx="6" fill="#f4f7f8" stroke="#1b2530" stroke-width="1.5"/>
+  <text x="1140" y="214" text-anchor="middle" font-size="14" font-weight="700">Patch guard</text>
+  <text x="1140" y="236" text-anchor="middle" font-size="12">contract immutable</text>
+  <text x="1140" y="254" text-anchor="middle" font-size="12">import allow-list</text>
+  <text x="1140" y="272" text-anchor="middle" font-size="12">no exec · eval · open</text>
+
+  <!-- re-run loop -->
+  <polyline points="1170,286 1170,420 620,420 620,352" fill="none" stroke="#1b2530" stroke-width="1.5" marker-end="url(#a)"/>
+  <text x="895" y="438" text-anchor="middle" font-size="11" fill="#5b6773">accepted patch: run the oracle again (at most 4 iterations, or 40 steps for a library)</text>
+
+  <!-- held-out -->
+  <polyline points="555,350 555,525 778,525" fill="none" stroke="#1b2530" stroke-width="1.5" marker-end="url(#a)"/>
+  <text x="667" y="517" text-anchor="middle" font-size="11" fill="#5b6773">pass after a patch</text>
+  <rect x="780" y="480" width="270" height="116" rx="6" fill="#f4f7f8" stroke="#1b2530" stroke-width="1.5"/>
+  <text x="915" y="504" text-anchor="middle" font-size="14" font-weight="700">Held-out validation</text>
+  <text x="915" y="522" text-anchor="middle" font-size="12" fill="#0b7383" font-weight="600">never shown to the model</text>
+  <text x="915" y="544" text-anchor="middle" font-size="12">7 hidden phantoms · fresh phantom</text>
+  <text x="915" y="562" text-anchor="middle" font-size="12">re-oriented copy · SimpleITK image · not a no-op</text>
+  <text x="915" y="582" text-anchor="middle" font-size="12">library: its own tests · loader unchanged</text>
+  <line x1="1050" y1="502" x2="1098" y2="502" stroke="#1b2530" stroke-width="1.5" marker-end="url(#a)"/>
+  <text x="1074" y="495" text-anchor="middle" font-size="11" fill="#5b6773">pass</text>
+  <line x1="1050" y1="558" x2="1098" y2="558" stroke="#1b2530" stroke-width="1.5" marker-end="url(#a)"/>
+  <text x="1074" y="576" text-anchor="middle" font-size="11" fill="#5b6773">fail</text>
+  <rect x="1100" y="480" width="110" height="44" rx="6" fill="#e5f2e8" stroke="#2d7a3e" stroke-width="1.5"/>
+  <text x="1155" y="507" text-anchor="middle" font-size="14" font-weight="700" fill="#2d7a3e">REPAIRED</text>
+  <rect x="1100" y="536" width="110" height="44" rx="6" fill="#fbefdc" stroke="#a86500" stroke-width="1.5"/>
+  <text x="1155" y="563" text-anchor="middle" font-size="14" font-weight="700" fill="#a86500">OVERFIT</text>
+
+  <!-- use without the agent -->
+  <rect x="30" y="500" width="200" height="96" rx="6" fill="#f4f7f8" stroke="#9aa6ae"/>
+  <text x="130" y="524" text-anchor="middle" font-size="14" font-weight="700">Use it without the agent</text>
+  <text x="130" y="546" text-anchor="middle" font-size="12" font-family="Consolas, 'DejaVu Sans Mono', monospace">spatialcontract check</text>
+  <text x="130" y="566" text-anchor="middle" font-size="12">pytest fixture · check_function</text>
+  <text x="130" y="585" text-anchor="middle" font-size="12" fill="#5b6773">GitHub Actions example</text>
+  <polyline points="230,548 480,548 480,352" fill="none" stroke="#1b2530" stroke-width="1.5" marker-end="url(#a)"/>
+  <text x="245" y="540" font-size="11" fill="#5b6773">verdict + exit code, no model</text>
+
+  <text x="30" y="630" font-size="13" fill="#5b6773">Everything outside the dashed box is deterministic code: no language model decides whether a patch is right.</text>
+</svg>
