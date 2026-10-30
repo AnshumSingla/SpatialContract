@@ -215,7 +215,7 @@ Rows: 343. Harness errors: none.
 
 ## Extra baselines: no feedback, and a stronger unit-test suite (added after the main evaluation)
 
-A judge's obvious objection was that the unit-test baseline is mine and weak (it flags 19 of 31 bugs), and that there was no arm showing what the model does with no feedback at all. I added two arms (`arm0`, `arm2s`; `results/eval/extra`, `python scripts/analyze_extra.py`; 294 rows, 344 model calls, about 0.68M tokens, no harness errors):
+An obvious objection was that the unit-test baseline is mine and weak (it flags 19 of 31 bugs), and that there was no arm showing what the model does with no feedback at all. I added two arms (`arm0`, `arm2s`; `results/eval/extra`, `python scripts/analyze_extra.py`; 294 rows, 344 model calls, about 0.68M tokens, no harness errors):
 
 - `arm0`: same model, same tools (`submit_patch`, `report_no_bug`, `abstain`), no tests and no measurements; the first patch is final.
 - `arm2s`: same as arm 2 but with a stronger suite: the original tests plus a landmark test (three blocks in a volume with oblique, anisotropic, non-RAS affines; the world centroid of each block in the output must be where the contract puts it). **I wrote this suite after seeing the first results and knowing the bug classes**, so it is deliberately strong and not independent. It flags 31 of 31 bugs and passes all 11 correct controls (`tests/test_seeded.py`).

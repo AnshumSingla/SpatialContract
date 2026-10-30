@@ -127,16 +127,6 @@ Reproduce the seeded evaluation: `python scripts/evaluate.py --arms arm1 --run-i
 - **Small samples.** 31 seeded bugs, 8 real bugs, 2-3 repetitions, one model, one prompt, no prompt search. One unexplained transient oracle failure (a correct control reported wrong once, not reproducible in seven full reruns) led to an automatic retry of ERROR verdicts.
 - **Demo server.** `demo/server.py` executes submitted Python in a subprocess with a scrubbed environment and an import allow-list. That is not a security boundary; it binds to localhost only and must not be exposed.
 
-## Questions a judge would ask
-- **Who writes the contract?** The pipeline's author, once: it is four fields of intent. `spatialcontract init` drafts it from docstrings and names with quoted evidence; on code with no stated intent it was right when it answered but answered rarely, and in 1 case it copied a bug into the draft, so a person has to confirm it.
-- **Every NIfTI pipeline is RAS and millimetres, so what does the contract add?** What the output must mean, which the code alone cannot tell you: whether the output array must also be re-oriented (`array_orientation`, the only signal for three of the eight real bugs, whose landmarks were all in the right place), whether a pipeline that hands data to ITK should be LPS, whether coordinates are in metres. When none of it is declared the agent stops instead of guessing; without that, the model guessed in 9 to 16 of 21 cases.
-- **Why a 120B model when a no-LLM mutation search repairs 77% of the seeded bugs?** Because the seeded bugs are single-edit mutations of known classes, which is exactly what a mutation search enumerates. And for 8 of them we do not use the model at all (deterministic fix first). Inside libraries the model-free search found no verified repair; its one "repair" deleted TorchIO's crop, which the checks reject. Every verified library repair came from the model.
-- **Did it find a bug nobody knew about?** No. Every real bug here was already fixed upstream; that is what lets us score repairs against a known answer.
-- **Wouldn't the libraries' own tests have caught them?** They did not: the covering test files passed at all 8 pre-fix commits. The tests written with the fixes catch the bug in 5 of 8, which is the same lesson as our seeded evaluation: a test that checks physical positions works once someone knows to write it; the contract asks for that knowledge up front, once per pipeline.
-- **Is it only tested on phantoms?** No. Phantoms give exact landmark positions, so they are the judge during repair. Every repair was then run on four real scans with real anatomy and real scanner headers, where the input scan is the ground truth; all pass, and every library repair matches the upstream fix voxel for voxel. Real brains are nearly left-right symmetric, so a mirror of one axis still correlates at 0.94-0.96 with the truth on the Colin27 and EPI scans, close to a correct resampler's 0.98: that thin margin is exactly why the oracle itself uses asymmetric phantoms.
-- **Is the nilearn repair memorised?** Possibly: both nilearn patches equal the 2018 upstream fix. The TorchIO and MONAI repairs differ from upstream and pass every held-out check.
-- **How much does a run cost?** A seeded repair is a few thousand tokens. A failed tool-calling library run uses its whole 300k-token cap, about $0.10 at Nemotron 3 Super's listed prices; a staged library run uses 4k-90k tokens ($0.001-0.03). Everything in this repository cost about $5 in tokens. Every call goes through a token and dollar cap and stops for good on the first out-of-credits error (`src/spatialcontract/llm.py`).
-
 ## Repository layout
 | path | what |
 |---|---|
@@ -149,7 +139,6 @@ Reproduce the seeded evaluation: `python scripts/evaluate.py --arms arm1 --run-i
 | `demo/`, `docs/index.html`, `scripts/demo.py` | demo server, recordings, static replay page with the 3D landmark view, the real-brain 3D view (`demo/brain3d.json`) and a try-it guide |
 | `docs/ENGINEERING_NOTES.md` | the detailed record: every number with its caveats, what went wrong, what was changed after |
 | `docs/architecture.svg`, `docs/architecture.png` | architecture diagram |
-| `docs/VIDEO_SCRIPT.md`, `docs/DEVPOST.md` | 3-minute video script, Devpost text |
 | `FEEDBACK.md` | written feedback on Nebius Token Factory and each NVIDIA model used |
 
 ## License

@@ -1,4 +1,4 @@
-"""Equal gating, recomputed from existing rows with no tokens. A judge's objection: the oracle arm skips the model when the oracle
+"""Equal gating, recomputed from existing rows with no tokens. An objection: the oracle arm skips the model when the oracle
 already passes, while the unit-test arms called the model even when every test passed. Here every arm gets the same rule: if its
 own check passes on the original script, the model is not called and the script is left unchanged (no feedback arm: no check,
 so no gate). Writes results/eval/gated.json.
