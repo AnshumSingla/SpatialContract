@@ -62,6 +62,11 @@ def main() -> int:
         print(f"{r['case']:24s} fail/pass={r['n_fail']}/{r['n_pass']} of {r['n_ranked']}: trace function/file rank "
               f"{r['rank_first_true_function']}/{r['rank_first_true_file']} | named-API {b['named_api'][0]}/{b['named_api'][1]} | "
               f"spectrum-only {b['spectrum_only'][0]}/{b['spectrum_only'][1]}")
+        if ids:                                    # a named case: show the ranked list itself
+            truth = {tuple(t) for t in r["truth"]}
+            for i, (f, line, q, score) in enumerate(r["top"][:8], 1):
+                mark = "   <- edited by the upstream fix" if (f, q) in truth else ""
+                print(f"  {i}. {f}:{line} {q}  (score {score}){mark}")
     n = len(rows)
     for k in KS:
         hit = lambda rank: rank is not None and rank <= k  # noqa: E731
