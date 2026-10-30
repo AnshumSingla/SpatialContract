@@ -70,6 +70,7 @@ def main() -> None:
         agent_lines = ar.changed_lines(rec["diff"])
         up = ar.upstream_changed_lines(cases[cid])
         rec["same_as_upstream"] = "yes" if agent_lines and agent_lines == up else ("partly" if agent_lines & up else "no")
+        rec["own_tests"] = own_tests(cid)
         records.append(rec)
         fin = rec.get("final") or {}
         print(f"{cid:24s} r{rep} LIBRARY outcome={rec['outcome']:9s} events={len(rec['events'])} initial={rec['initial']['verdict']} final={fin.get('verdict')} "
@@ -77,6 +78,15 @@ def main() -> None:
     out = ROOT / "demo" / "recordings.json"
     out.write_text(json.dumps({"model": MODEL, "recordings": records}, indent=1), encoding="utf-8")
     print("wrote", out, f"{out.stat().st_size // 1024} KB")
+
+
+
+def own_tests(cid: str) -> dict:
+    """The library's own covering test files at the pre-fix commit (results/real_bugs_own_tests.json, scripts/run_prefix_tests.py)."""
+    row = next(r for r in json.loads((ROOT / "results" / "real_bugs_own_tests.json").read_text(encoding="utf-8")) if r["id"] == cid)
+    pre = row["pre_tests_on_pre"]
+    return {"files": row["test_files"], "passed": pre["counts"].get("passed", 0), "missed": row["missed_by_existing_tests"],
+            "env_failures": len(row["environment_failures"]), "regression_test_catches_it": row["regression_test_catches_it"]}
 
 
 if __name__ == "__main__":

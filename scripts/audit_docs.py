@@ -182,6 +182,24 @@ print("suggester:", sg["controls"], sg["bugs"], sg["must_abstain"])
 check("README", f"usable for {sg['controls']['usable']} of {sg['controls']['n']} correct controls", "suggester controls")
 check("README", f"{sg['bugs']['usable']} of {sg['bugs']['n']} buggy scripts ({sg['bugs']['matches']} exact)", "suggester bugs")
 check("DEVPOST", f"it did in {sg['bugs']['hides_bug']} of {sg['bugs']['usable']} usable drafts", "suggester hides bug")
+# ---- samples (samples/summary.json)
+smp = json.loads((ROOT / "samples/summary.json").read_text(encoding="utf-8"))
+se = list(smp["phantom_seed1"]["buggy"]["landmark_error_mm"].values())
+print("samples:", min(se), max(se), smp["real_t1"]["buggy"]["correlation_with_input"])
+check("README", f"{min(se):.1f}-{max(se):.1f} mm from where they belong", "samples phantom error")
+check("README", f"correlates {smp['real_t1']['buggy']['correlation_with_input']:.2f} with the input", "samples T1 correlation")
+check("DEVPOST", f"({min(se):.1f}-{max(se):.1f} mm off; correlation {smp['real_t1']['buggy']['correlation_with_input']:.2f}", "samples (Devpost)")
+# ---- tool calls in the two final library runs (results/real_repair/real3, real4 logs)
+n_calls = n_tool = 0
+for run in ("real3", "real4"):
+    for f in (ROOT / "results/real_repair" / run / "logs").glob("*.jsonl"):
+        for line in f.read_text(encoding="utf-8").splitlines():
+            e = json.loads(line)
+            if e.get("event") == "llm_response":
+                n_calls += 1
+                n_tool += (e.get("n_tool_calls") or 0) >= 1 and e.get("finish") == "tool_calls"
+print("library tool calls:", n_tool, "of", n_calls)
+check("README", f"{n_tool} of {n_calls} calls in the two final library runs", "library tool calls")
 # ---- localisation baselines
 nm_file10 = sum(1 for r in loc if r["baselines"]["named_api"][1] and r["baselines"]["named_api"][1] <= 10)
 nm_fn5 = sum(1 for r in loc if r["baselines"]["named_api"][0] and r["baselines"]["named_api"][0] <= 5)

@@ -24,7 +24,12 @@ from . import oracle
 from .contract import SpatialContract
 
 ROOT = Path(__file__).resolve().parents[2]
-COLIN = ROOT / "_work" / "repos" / "ANTsPy" / "data" / "ch2.nii.gz"
+COLIN = ROOT / "_work" / "data" / "ch2.nii.gz"                       # scripts/fetch_colin27.py puts it here
+_COLIN_ANTSPY = ROOT / "_work" / "repos" / "ANTsPy" / "data" / "ch2.nii.gz"   # same file, from a full ANTsPy checkout
+
+
+def _colin() -> Path | None:
+    return next((p for p in (COLIN, _COLIN_ANTSPY) if p.exists()), None)
 
 
 def _clean(data: np.ndarray, affine: np.ndarray) -> nib.Nifti1Image:
@@ -42,9 +47,9 @@ def scans() -> list[tuple[str, nib.Nifti1Image]]:
     out.append(("t1_nibabel_LAS_2mm", _clean(np.asarray(anat.dataobj).astype(np.float32), anat.affine)))
     epi = nib.load(str(data_dir / "example4d.nii.gz"))
     out.append(("epi_nibabel_LAS_oblique", _clean(np.asarray(epi.dataobj)[..., 0].astype(np.float32), epi.affine)))
-    if COLIN.exists():
+    if _colin():
         from nibabel.processing import resample_to_output
-        colin = resample_to_output(nib.load(str(COLIN)), voxel_sizes=(2.0, 2.0, 2.0), order=1)
+        colin = resample_to_output(nib.load(str(_colin())), voxel_sizes=(2.0, 2.0, 2.0), order=1)
         data, aff = np.asarray(colin.dataobj).astype(np.float32), colin.affine
         out.append(("colin27_RAS_2mm", _clean(data, aff)))
         ornt = nib.orientations.ornt_transform(nib.orientations.io_orientation(aff), nib.orientations.axcodes2ornt(tuple("PIR")))

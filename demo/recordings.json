@@ -9441,7 +9441,16 @@
     "any_lost": false,
     "feedback": "VERDICT: PASS  (tolerance 1.5 mm; contract {'world_frame': 'RAS', 'units': 'mm', 'affine_convention': 'voxel_center_to_world', 'array_orientation': None})\nphantom seed=0: PASS; input axcodes=RSA zooms_mm=[1.732, 2.063, 1.275] -> output axcodes=RAS zooms_mm=[1.732, 1.275, 2.063]; orientation_ok=None; lossless=True tol_used=0.05 mm; 0/6 landmarks off\nphantom seed=1: PASS; input axcodes=PLS zooms_mm=[2.185, 1.545, 1.6] -> output axcodes=RAS zooms_mm=[1.545, 2.185, 1.6]; orientation_ok=None; lossless=False tol_used=1.892 mm; 0/6 landmarks off\nphantom seed=2: PASS; input axcodes=IAR zooms_mm=[1.35, 2.009, 0.818] -> output axcodes=RAS zooms_mm=[0.818, 2.009, 1.35]; orientation_ok=None; lossless=True tol_used=0.05 mm; 0/6 landmarks off"
    },
-   "same_as_upstream": "yes"
+   "same_as_upstream": "yes",
+   "own_tests": {
+    "files": [
+     "nilearn/image/tests/test_resampling.py"
+    ],
+    "passed": 16,
+    "missed": true,
+    "env_failures": 2,
+    "regression_test_catches_it": true
+   }
   },
   {
    "kind": "library",
@@ -10324,7 +10333,16 @@
     "any_lost": false,
     "feedback": "VERDICT: PASS  (tolerance 1.5 mm; contract {'world_frame': 'RAS', 'units': 'mm', 'affine_convention': 'voxel_center_to_world', 'array_orientation': None})\nphantom seed=0: PASS; input axcodes=RSA zooms_mm=[1.732, 2.063, 1.275] -> output axcodes=RSA zooms_mm=[1.732, 2.063, 1.275]; orientation_ok=None; lossless=True tol_used=0.05 mm; 0/6 landmarks off\nphantom seed=1: PASS; input axcodes=PLS zooms_mm=[2.185, 1.545, 1.6] -> output axcodes=PLS zooms_mm=[2.185, 1.545, 1.6]; orientation_ok=None; lossless=True tol_used=0.05 mm; 0/6 landmarks off\nphantom seed=2: PASS; input axcodes=IAR zooms_mm=[1.35, 2.009, 0.818] -> output axcodes=IAR zooms_mm=[1.35, 2.009, 0.818]; orientation_ok=None; lossless=True tol_used=0.05 mm; 0/6 landmarks off"
    },
-   "same_as_upstream": "partly"
+   "same_as_upstream": "partly",
+   "own_tests": {
+    "files": [
+     "tests/test_image.py"
+    ],
+    "passed": 87,
+    "missed": true,
+    "env_failures": 2,
+    "regression_test_catches_it": true
+   }
   },
   {
    "kind": "library",
@@ -10903,7 +10921,16 @@
     "any_lost": false,
     "feedback": "VERDICT: ERROR  (tolerance 1.5 mm; contract {'world_frame': 'RAS', 'units': 'mm', 'affine_convention': 'voxel_center_to_world', 'array_orientation': None})\nphantom seed=0: ERROR exit 1: AttributeError: property 'affine' of 'ScalarImage' object has no setter (after 1 retry; first attempt: exit 1: AttributeError: property 'affine' of 'ScalarImage' object has no setter)\nphantom seed=1: ERROR exit 1: AttributeError: property 'affine' of 'ScalarImage' object has no setter (after 1 retry; first attempt: exit 1: AttributeError: property 'affine' of 'ScalarImage' object has no setter)\nphantom seed=2: ERROR exit 1: AttributeError: property 'affine' of 'ScalarImage' object has no setter (after 1 retry; first attempt: exit 1: AttributeError: property 'affine' of 'ScalarImage' object has no setter)"
    },
-   "same_as_upstream": "no"
+   "same_as_upstream": "no",
+   "own_tests": {
+    "files": [
+     "tests/transforms/preprocessing/test_crop.py"
+    ],
+    "passed": 2,
+    "missed": true,
+    "env_failures": 0,
+    "regression_test_catches_it": false
+   }
   }
  ]
 }

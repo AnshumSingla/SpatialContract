@@ -1,20 +1,26 @@
 # SpatialContract
 
-**Finds and repairs the bugs that put medical images in the wrong place, and checks every fix against physics instead of the model's opinion.**
+**Finds the bugs that put medical images in the wrong place, repairs them with NVIDIA Nemotron, and verifies every fix against physical ground truth.**
 
 Built for the Nebius x NVIDIA Global AI Hackathon (track: Coding and Agentic Engineering). Imaging pipelines in Python: nibabel, SimpleITK, MONAI, TorchIO, nilearn.
 
 ## Why this matters
 - **Spatial bugs are silent.** A flipped axis, an affine left stale after a crop, RAS read as LPS, or millimetres written where metres were declared: nothing crashes and the image looks valid, it is just in the wrong place. The data-side version of the same error, a wrong orientation in the image header, is "surprisingly common" in public MRI datasets and invisible by eye, because brains are nearly symmetric ([Glen et al. 2020](https://doi.org/10.3389/fninf.2020.00018)); code that writes headers is one way it gets there.
 - **They ship.** A bug in TorchIO 2.0a (fixed in April 2026) handed RAS affines to SimpleITK without converting to LPS, so every image saved that way moved by up to 123 mm. This repo reproduces eight such fixed bugs from TorchIO, nibabel, MONAI and nilearn. In our seeded corpus, 12 of 31 bugs pass the ordinary unit tests written for their pipelines.
-- **A coding agent needs something it cannot argue with.** Given a script "reported as wrong" and no check that passes correct code, the same Nemotron model rewrote already-correct code in 16 to 26 of 33 runs and guessed a convention in 9 to 16 of 21 cases where the convention could not be known, even with an `abstain` tool available. Agents special-casing or editing tests is a measured failure mode in general ([ImpossibleBench](https://arxiv.org/abs/2510.20270)).
+- **A coding agent is only as reliable as the check it is given.** Told a script was "reported as wrong", with no check that could confirm correct code, the model did what the request implied: it rewrote already-correct code in 16 to 26 of 33 runs and picked a convention in 9 to 16 of 21 cases where none could be known, even with an `abstain` tool available. With the oracle as its check, the same Nemotron model repaired 98% of the seeded bugs and left every correct script alone. Weak checks misleading agents is a measured problem across models ([ImpossibleBench](https://arxiv.org/abs/2510.20270)); the answer is a better signal.
 
 ## What it does
-![SpatialContract architecture: a deterministic gate, oracle, patch guard and held-out validation decide every verdict; the Nemotron model, inside the dashed box, only proposes patches.](docs/architecture.svg)
+![SpatialContract architecture: a deterministic gate, oracle, patch guard and held-out validation decide every verdict; the Nemotron model, inside the dashed boxes, only proposes patches or drafts a contract a person confirms.](docs/architecture.svg)
 
 A pipeline declares a contract; a gate abstains when it is missing or ambiguous. The oracle measures where landmarks land and describes the error. Only on a failure does the model get involved, and every patch it proposes goes back through the guard, the oracle and finally checks it never saw. For bugs inside a library, a runtime trace ranks suspect functions first. The same oracle runs on its own from the CLI, pytest or CI.
 
-**See it:** the demo page (`docs/index.html`, self-contained, 12 recorded real runs, including three repairs inside real libraries) shows each phantom's landmarks in 3D world millimetres: blue rings where each landmark must be, orange dots where the original code put it, green diamonds where it lands after the agent's patch. Or run `python scripts/demo.py replay L04_right_multiply` in a terminal.
+**See it:** the demo page (`docs/index.html`, self-contained, 12 recorded real runs, including three inside real libraries: two repairs and one failure) shows each phantom's landmarks in 3D world millimetres: blue rings where each landmark must be, orange dots where the original code put it, green diamonds where it lands after the agent's patch. Or run `python scripts/demo.py replay L04_right_multiply` in a terminal.
+
+**Open the files yourself:** `samples/` holds real inputs and outputs you can load in any NIfTI viewer (ITK-SNAP, 3D Slicer, FSLeyes): a landmark phantom and nibabel's real T1 scan, each run through a seeded bug (R01, which swaps two array axes and leaves the affine alone), Nemotron's recorded repair of it, and the reference pipeline. On the phantom the bug puts landmarks 10.7-61.5 mm from where they belong and the repair 0.00 mm; on the T1 the buggy output correlates 0.04 with the input at the same physical points and the repair 1.00 (`samples/summary.json`, regenerate with `python scripts/export_samples.py`, no tokens).
+
+![Axial slices, each output placed by its own affine: input, buggy output, Nemotron's repair, reference; top a landmark phantom, bottom nibabel's real T1 scan. The buggy column is rotated and shifted; the repair matches the reference.](samples/preview.png)
+
+*Columns: input, buggy output, Nemotron's repair, reference. Rows: landmark phantom, real T1. Every output is drawn where its own affine says it is.*
 
 ## What we found
 | question | answer |
@@ -60,10 +66,13 @@ Python 3.10+. No GPU.
 ```bash
 python -m venv .venv
 .venv/Scripts/pip install -e ".[dev]"      # Linux/macOS: .venv/bin/pip
-pytest                                      # 121 tests, about 4-5 minutes, no network, no API key (tests that need the library worktrees under _work/ skip themselves in a fresh clone)
+pytest                                      # 150 tests, about 5-7 minutes, no network, no API key (tests that need the library worktrees under _work/ skip themselves in a fresh clone)
 python scripts/audit_docs.py                 # re-checks the numbers quoted in the docs against results/*
 python scripts/demo.py replay L04_right_multiply   # terminal walkthrough of a recorded real run, no tokens
 python scripts/demo.py serve                       # local web UI; paste any script that declares a SPATIAL_CONTRACT
+python scripts/export_samples.py                   # rebuilds samples/ (inputs, outputs, preview.png), no tokens
+python scripts/fetch_colin27.py                    # downloads the Colin27 brain (1.9 MB, pinned commit, SHA-256 checked) for the 4-scan real-scan checks
+python scripts/validate_real_scans.py              # real-scan check of every seeded repair; on 2 scans without Colin27
 ```
 To use the real model (Nebius Token Factory):
 ```bash
@@ -93,7 +102,7 @@ Reproduce the seeded evaluation: `python scripts/evaluate.py --arms arm1 --run-i
 ## How Nemotron and Nebius Token Factory are used
 - **Model:** `nvidia/nemotron-3-super-120b-a12b` through the Nebius Token Factory OpenAI-compatible API (`https://api.tokenfactory.nebius.com/v1/`), default reasoning, tool calling. It is the only model in the evaluation.
 - **Why Super and not the cheapest model:** `nvidia/NVIDIA-Nemotron-3-Nano-30B-A3B` was tried first and repaired 2 of 3 trial cases with default thinking, 1 of 3 with thinking off or low (runaway output, a hallucinated nibabel function, calls ending on the length limit). Super repaired 3 of 3 on the same cases and used fewer tokens per solved case because it reasons less. These are small single runs; the table is in `docs/ENGINEERING_NOTES.md`.
-- **Where Token Factory helped:** `GET /models?verbose=true` gave pricing, rate limits and `supported_features`, so models could be chosen and a budget set before the first completion; `usage` on every response made a hard, thread-safe token cap easy; tool calling returned a well-formed call on all 271 evaluation requests and on 697 of 697 calls in the two final library runs, with no throttling or transport errors. Complaints and details: `FEEDBACK.md`.
+- **Where Token Factory helped:** `GET /models?verbose=true` gave pricing, rate limits and `supported_features`, so models could be chosen and a budget set before the first completion; `usage` on every response made a hard, thread-safe token cap easy; tool calling returned a well-formed call on all 271 evaluation requests and on 931 of 931 calls in the two final library runs, with no throttling or transport errors. Complaints and details: `FEEDBACK.md`.
 - **Other Nebius tools:** none. No GPU instance was needed. No Tavily call is made.
 
 ## Related work
@@ -105,7 +114,7 @@ Reproduce the seeded evaluation: `python scripts/evaluate.py --arms arm1 --run-i
 
 ## Limitations and failure cases
 - **Circular seeded results.** The 31 bugs are the oracle's own six classes and each was created by a single edit; the oracle was adjusted after it missed a bug or false-alarmed (phantom bounding-box asymmetry, voxel-scaled tolerance, a lossless tolerance and a strong-oblique bank after real bugs). The seeded numbers are not a blind test. A model-free single-mutation search repairs 77% of them for the same reason.
-- **Library repair is not a blind test.** `real3` repaired 3 of 14 runs (2 of 7 bugs). The first full run was invalid because of a bug in our search tool; the tool set was changed four times after we looked at failures on these same 7 bugs; both repaired nilearn patches are identical to the public 2018 upstream fix (possible training-data contamination); the one TorchIO repair differs from upstream and is a valid fix. The trace ranking and `real4` were built after seeing those results (the trace weights were fixed before its first measurement). The two `real4` repairs that were not there before are the TorchIO RAS/LPS bug once and the new MONAI case once, the latter with a fix in a different file from upstream that passed every held-out check. The libraries' own covering tests are the only test baseline for the real bugs, and they were run for detection, not used as repair feedback. Fewer than the targeted 10 real bugs were found, from four libraries we chose, and 3 of the first 7 only reproduced after we changed the oracle or the repro.
+- **Library repair is not a blind test.** `real3` repaired 3 of 14 runs (2 of 7 bugs). The first full run was invalid because of a bug in our search tool; the tool set was changed four times after we looked at failures on these same 7 bugs; both repaired nilearn patches are identical to the public 2018 upstream fix (possible training-data contamination); the one TorchIO repair differs from upstream and is a valid fix. The trace ranking and `real4` were built after seeing those results (the trace weights were fixed before its first measurement). `real4` repaired the same three runs as `real3` (nilearn twice, the TorchIO RAS/LPS bug once) plus the new MONAI case once, with a fix in a different file from upstream that passed every held-out check. The libraries' own covering tests are the only test baseline for the real bugs, and they were run for detection, not used as repair feedback. Fewer than the targeted 10 real bugs were found, from four libraries we chose, and 3 of the first 7 only reproduced after we changed the oracle or the repro.
 - **The repair-rate lift disappears against a stronger test suite.** Our original tests flag 19 of 31 bugs; most of the gap to the oracle arm is on the 12 they do not flag (94% vs 72%). The stronger suite (the same tests plus a landmark test on oblique, non-RAS inputs; it flags 31 of 31 bugs and passes every correct control) repairs 97% against 98% for oracle feedback (paired +1 point, CI 0 to +3). It was written by us after the first evaluation, knowing the bug classes, so it is a deliberately strong baseline; it is also essentially a miniature oracle. A model given no feedback at all repairs 86%, the same as the original tests. Run `python scripts/analyze_extra.py`.
 - **By-construction numbers.** The gated arm cannot damage correct code or guess a convention because a deterministic gate decides before the model is called. The test arms were originally run without a gate; the gated comparison above is recomputed from the same rows, not re-run.
 - **Overfit is rare in our runs, and the held-out checks are barely exercised.** In the seeded evaluation 0 of 91 oracle passes failed held-out validation. One overfit occurred in an earlier, superseded library run (`real2`, TorchIO `Reorient`: it passed the visible oracle and failed hidden phantoms and the paired orientation), and in the diagnosis re-run one S06 patch passed the visible oracle on the first try and failed the hidden phantoms, labelled OVERFIT. So the checks caught a real LLM patch twice; that is two observations, not a measured catch rate.
@@ -130,13 +139,15 @@ Reproduce the seeded evaluation: `python scripts/evaluate.py --arms arm1 --run-i
 ## Repository layout
 | path | what |
 |---|---|
-| `src/spatialcontract/` | contract, phantom, oracle, diagnosis, localisation, held-out validation, script agent, library agent, mutation search, repo-style tests, evaluation, public API and CLI, Token Factory client with token ledger |
+| `src/spatialcontract/` | contract, phantom, oracle, diagnosis (`diagnose.py`), localisation (`locate.py`), held-out validation, real-scan check (`realscan.py`), deterministic fix (`autofix.py`), script agent, library agent, staged repair (`staged.py`), mutation search (`libmutate.py`), library gates (`libverify.py`), contract suggester (`suggest.py`), repo-style tests, evaluation, public API, CLI and pytest plugin, Token Factory client with token and dollar caps |
 | `corpus/seeded/` | 49 generated cases: 31 seeded bugs, 11 correct controls, 7 must-abstain (readable scripts + manifest) |
 | `corpus/real/` | repro scripts for the 8 real library bugs (pinned commits in `src/spatialcontract/realbugs.py`); `results/real_repair/` holds the library-repair runs, logs and diffs |
-| `results/` | raw evaluation rows and logs (`results/eval/main`), oracle results, localisation ranking (`results/localisation.json`), model listing, smoke test |
-| `examples/` | in-memory API example and a GitHub Actions workflow |
+| `results/` | raw evaluation rows and logs (`results/eval/main`, `extra`, `diag`, `gated.json`, `autofix.json`), oracle results, localisation ranking, own-test analysis, real-scan results, repair comparison and gate checks (`repair_comparison.json`, `regression_check.json`, `reader_check.json`, `noop_check.json`), suggester evaluation, token ledger, model listing, smoke test |
+| `samples/` | example inputs and outputs (phantom and real T1: buggy, repaired, reference), `preview.png`, `summary.json` |
+| `examples/` | in-memory API example, a script without a contract for `spatialcontract init`, and a GitHub Actions workflow |
 | `demo/`, `docs/index.html`, `scripts/demo.py` | demo server, recordings, static replay page with the 3D landmark view |
 | `docs/ENGINEERING_NOTES.md` | the detailed record: every number with its caveats, what went wrong, what was changed after |
+| `docs/architecture.svg`, `docs/architecture.png` | architecture diagram |
 | `docs/VIDEO_SCRIPT.md`, `docs/DEVPOST.md` | 3-minute video script, Devpost text |
 | `FEEDBACK.md` | written feedback on Nebius Token Factory and each NVIDIA model used |
 

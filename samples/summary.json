@@ -1,0 +1,105 @@
+{
+ "bug": "R01_swap_transpose: reorients to RAS, then swaps array axes 0 and 1 without updating the affine",
+ "contract": {
+  "world_frame": "RAS",
+  "units": "mm",
+  "affine_convention": "voxel_center_to_world",
+  "array_orientation": "RAS"
+ },
+ "code": {
+  "buggy": "corpus/seeded/R01_swap_transpose.py",
+  "repaired": "results/eval/main/logs/arm3_r0/R01_swap_transpose_work/R01_swap_transpose_iter1.py",
+  "reference": "corpus/seeded/K01_R_reference.py"
+ },
+ "phantom_seed1": {
+  "input_axcodes": "PLS",
+  "ground_truth_ras_mm": {
+   "1": [
+    -10.66,
+    50.24,
+    47.4
+   ],
+   "2": [
+    30.97,
+    44.26,
+    18.31
+   ],
+   "3": [
+    31.47,
+    10.02,
+    49.17
+   ],
+   "4": [
+    25.28,
+    56.25,
+    44.12
+   ],
+   "5": [
+    -1.08,
+    50.88,
+    18.99
+   ],
+   "6": [
+    23.64,
+    1.76,
+    26.73
+   ]
+  },
+  "buggy": {
+   "status": "FAIL",
+   "out_axcodes": "RAS",
+   "landmark_error_mm": {
+    "1": 61.54,
+    "2": 10.7,
+    "3": 61.54,
+    "4": 10.7,
+    "5": 50.84,
+    "6": 56.19
+   }
+  },
+  "repaired": {
+   "status": "PASS",
+   "out_axcodes": "RAS",
+   "landmark_error_mm": {
+    "1": 0.0,
+    "2": 0.0,
+    "3": 0.0,
+    "4": 0.0,
+    "5": 0.0,
+    "6": 0.0
+   }
+  },
+  "reference": {
+   "status": "PASS",
+   "out_axcodes": "RAS",
+   "landmark_error_mm": {
+    "1": 0.0,
+    "2": 0.0,
+    "3": 0.0,
+    "4": 0.0,
+    "5": 0.0,
+    "6": 0.0
+   }
+  }
+ },
+ "real_t1": {
+  "scan": "t1_nibabel_LAS_2mm",
+  "source": "nibabel/tests/data/anatomical.nii",
+  "input_axcodes": "LAS",
+  "buggy": {
+   "correlation_with_input": 0.0419,
+   "covered_fraction": 0.8049,
+   "out_axcodes": "RAS"
+  },
+  "repaired": {
+   "correlation_with_input": 1.0,
+   "covered_fraction": 1.0,
+   "out_axcodes": "RAS"
+  },
+  "reference": {
+   "correlation_with_input": 1.0,
+   "covered_fraction": 1.0,
+   "out_axcodes": "RAS"
+  }
+ }
+}
